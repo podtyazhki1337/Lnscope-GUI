@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LnScope.Core\LnScope.Core.csproj" />
+    <ProjectReference Include="..\LnScope.Devices.LuigsNeumann\LnScope.Devices.LuigsNeumann.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="devices.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

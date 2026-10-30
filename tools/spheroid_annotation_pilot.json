@@ -1,0 +1,20 @@
+{
+  "class_name": "spheroid_mass",
+  "status": "AI visual draft; requires domain review",
+  "annotations": [
+    {
+      "image": "19_Eminus_20260917_T_S_01_02_f000236.png",
+      "crop": [0, 0, 640, 480],
+      "truncated": true,
+      "polygon": [[0,0],[157,0],[176,26],[190,55],[204,88],[220,121],[233,157],[244,197],[250,231],[277,235],[298,245],[319,264],[332,286],[337,308],[330,334],[316,353],[296,367],[280,378],[270,408],[259,440],[251,479],[0,479]]
+    },
+    {
+      "image": "18_Eminus_20260917_T_S_01_01_f000483.png",
+      "crop": [0, 0, 640, 480],
+      "truncated": true,
+      "polygon": [[0,142],[28,140],[54,147],[81,136],[111,115],[141,91],[178,67],[212,42],[249,22],[280,6],[302,0],[330,0],[368,12],[405,28],[442,51],[473,80],[498,110],[521,147],[539,185],[552,226],[560,254],[572,282],[599,309],[621,325],[639,333],[639,479],[0,479]]
+    }
+  ],
+  "review_queue": [],
+  "readme": "# Spheroid mass pilot\n\nTwo AI visual draft masks from E-minus videos. Class 0: spheroid_mass.\nThis is a separate first-stage task; class 0 in the cell dataset means visible_cell. Do not merge the labels without an explicit class mapping and exhaustive annotation policy.\n\nOutline the visible connected tissue mass including attached peripheral cells. Exclude pipette, optical halo and detached objects. Do not split internal cells or infer tissue outside the image. Border-clipped masks are marked truncated; their centroid is not the full spheroid centre.\n\nStage 1: locate mass in a full frame. Stage 2: search native-resolution regions near the mass boundary, including a margin outside it, for individual visible cells. Do not enlarge crops and claim recovered detail or infer depth from this mask.\n\nCurrent cell examples are isolated extracted cells; more attached peripheral cell annotations are needed for the second stage. Both stages need held-out annotated videos before training evaluation. These two masks are a visual pilot, not a trained model. Original 232 images and the accepted cell pilot remain unchanged.\n\nannotations.json stores original polygon coordinates and source hashes. preview.jpg compares source and overlay.\n"
+}

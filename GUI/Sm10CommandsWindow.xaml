@@ -1,0 +1,49 @@
+<Window x:Class="GUI.Sm10CommandsWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="SM-10 — Documented commands"
+        Width="960" Height="880" MinWidth="760" MinHeight="760" WindowStartupLocation="CenterOwner"
+        Style="{StaticResource {x:Type Window}}">
+    <DockPanel Margin="20">
+        <StackPanel DockPanel.Dock="Top">
+            <TextBlock Text="SM-10 commands · Python" FontSize="24" FontWeight="SemiBold"/>
+            <TextBlock Text="One connection for the controller. Close LNconfig's COM connection first. Opening the port sends no commands."
+                       TextWrapping="Wrap" Margin="0,8"/>
+            <WrapPanel Margin="0,4,0,12">
+                <ComboBox x:Name="Port" IsEditable="True" Width="130" Margin="0,0,8,0"/>
+                <Button x:Name="Connect" Content="Open port" Click="OnConnect" Margin="0,0,8,0"/>
+                <Button Content="Disconnect" Click="OnDisconnect" Margin="0,0,8,0"/>
+                <Button Content="STOP + abort pending" Click="OnStop" Foreground="#B33447" FontWeight="Bold"/>
+            </WrapPanel>
+            <TextBlock Text="STOP interrupts reply waiting and sends group Stop to axes targeted in this session and the current axis list. It latches the connection until reconnect. A communication failure can prevent physical stopping."
+                       Foreground="#B33447" TextWrapping="Wrap" Margin="0,0,0,12"/>
+            <CheckBox x:Name="AllowWrites" Content="Enable commands that move axes or change controller settings (advanced; no automatic travel limits)" Margin="0,0,0,12"/>
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="220"/></Grid.ColumnDefinitions>
+                <ComboBox x:Name="Category" SelectionChanged="OnCategoryChanged" Margin="0,0,8,0" ToolTip="Command category"/>
+                <TextBox x:Name="Search" Grid.Column="1" TextChanged="OnSearchChanged" ToolTip="Search command name or hexadecimal ID"/>
+            </Grid>
+            <ComboBox x:Name="Command" SelectionChanged="OnCommandChanged" Margin="0,0,0,8"/>
+            <TextBlock x:Name="Help" TextWrapping="Wrap" Margin="0,0,0,10"/>
+            <WrapPanel Margin="0,0,0,8">
+                <ComboBox x:Name="DeviceAxes" Width="180" ToolTip="Configured device axis addresses" Margin="0,0,8,0"/>
+                <Button Content="Use device axes" Click="OnUseDeviceAxes"/>
+            </WrapPanel>
+            <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                <TextBlock Text="Axis address(es)" VerticalAlignment="Center"/>
+                <TextBox x:Name="Axes" Grid.Column="1" Text="1" Margin="0,0,0,8"/>
+                <TextBlock Grid.Row="1" Text="Value(s)" VerticalAlignment="Center"/>
+                <TextBox x:Name="Values" Grid.Row="1" Grid.Column="1" Margin="0,0,0,8"/>
+            </Grid>
+            <TextBlock Text="Separate axes and values with spaces or semicolons. Use a dot for decimals. Nothing is sent when selecting a command."
+                       TextWrapping="Wrap" Foreground="#62758B" Margin="0,0,0,8"/>
+            <WrapPanel Margin="0,0,0,12">
+                <Button Content="Preview packet" Click="OnPreview" Margin="0,0,8,0"/>
+                <Button x:Name="Send" Content="Send once" Click="OnSend" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0"/>
+                <Button Content="Save log" Click="OnSave"/>
+            </WrapPanel>
+        </StackPanel>
+        <TextBox x:Name="Log" IsReadOnly="True" FontFamily="Consolas" TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
+    </DockPanel>
+</Window>

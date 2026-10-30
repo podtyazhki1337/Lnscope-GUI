@@ -1,0 +1,14 @@
+{
+  "id": "manipulator",
+  "transport": "simulated",
+  "portName": "COM3",
+  "baudRate": 115200,
+  "feedbackIntervalMs": 200,
+  "switchToAsciiOnConnect": true,
+  "responseTimeoutMs": 2000,
+  "axes": [
+    { "id": "X", "hardwareAxis": 1, "unit": "um", "minPosition": -20000, "maxPosition": 20000 },
+    { "id": "Y", "hardwareAxis": 2, "unit": "um", "minPosition": -20000, "maxPosition": 20000 },
+    { "id": "Z", "hardwareAxis": 3, "unit": "um", "minPosition": -10000, "maxPosition": 10000 }
+  ]
+}

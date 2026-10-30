@@ -1,0 +1,7 @@
+{
+ "class_name":"visible_cell",
+ "status":"AI visual draft; not expert ground truth",
+ "annotations":[{"image":"24_S_260731122808-H-S-13_f000876.png","crop":[262,157,352,245],"polygon":[[291,173],[305,169],[319,172],[330,182],[336,194],[336,208],[329,220],[318,230],[303,233],[290,229],[278,219],[273,205],[274,190],[281,180]]}],
+ "review_queue":[],
+ "readme":"# Isolated cell validation example\n\nOne isolated cell crop, original val split preserved. Class 0: visible_cell. Adjacent out-of-focus tissue lies outside the selected crop. Draft visual boundary, not expert ground truth. Do not move this video into train when combining batches.\n"
+}

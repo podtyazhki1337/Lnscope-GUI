@@ -8,4 +8,28 @@
         <UseWPF>true</UseWPF>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Content Include="ThirdParty\python\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+      <Content Include="PythonBackend\**\*.py;PythonBackend\*.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+      <Content Include="ThirdParty\ffmpeg\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+      <ProjectReference Include="..\lnscope\LnScope.Core\LnScope.Core.csproj" />
+      <ProjectReference Include="..\lnscope\LnScope.Devices.LuigsNeumann\LnScope.Devices.LuigsNeumann.csproj" />
+      <ProjectReference Include="..\lnscope\LnScope.Devices.Simulation\LnScope.Devices.Simulation.csproj" />
+    </ItemGroup>
+
+    <Target Name="CheckBundledEncoder" BeforeTargets="BeforeBuild;PrepareForPublish">
+      <Error Condition="!Exists('$(MSBuildProjectDirectory)\ThirdParty\python\Lib\site-packages\cv2\cv2.pyd') Or !Exists('$(MSBuildProjectDirectory)\ThirdParty\python\Lib\site-packages\numpy\__init__.py')"
+             Text="Bundled video-analysis dependencies are missing. Restore OpenCV and NumPy under GUI/ThirdParty/python/Lib/site-packages." />
+      <Error Condition="!Exists('$(MSBuildProjectDirectory)\ThirdParty\python\python.exe') Or !Exists('$(MSBuildProjectDirectory)\ThirdParty\python\python313.dll') Or !Exists('$(MSBuildProjectDirectory)\ThirdParty\python\python313.zip') Or !Exists('$(MSBuildProjectDirectory)\PythonBackend\backend.py')"
+             Text="Bundled Python runtime/backend is incomplete. Restore GUI/ThirdParty/python and GUI/PythonBackend from the complete source distribution." />
+      <Error Condition="!Exists('$(MSBuildProjectDirectory)\ThirdParty\ffmpeg\ffmpeg.exe')"
+             Text="Bundled recording component is missing: GUI/ThirdParty/ffmpeg/ffmpeg.exe. Restore the complete source distribution." />
+    </Target>
+
+    <ItemGroup>
+      <None Update="devices.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

@@ -1,0 +1,5 @@
+Vision dependencies bundled for CPython 3.13 / Windows x64:
+- opencv-python-headless 4.12.0.88 (OpenCV 4.12.0), PyPI wheel.
+- numpy 2.2.6, PyPI cp313-win_amd64 wheel.
+Upstream licenses and third-party notices are retained in Lib/site-packages.
+The Python ._pth adds Lib/site-packages; no global site-packages are enabled.

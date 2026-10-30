@@ -1,0 +1,38 @@
+<Window x:Class="GUI.ObjectMapWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="LNscope — Object map"
+        Width="1050" Height="650" MinWidth="800" MinHeight="500" WindowStartupLocation="CenterOwner"
+        Style="{StaticResource {x:Type Window}}">
+    <DockPanel Margin="20">
+        <StackPanel DockPanel.Dock="Top">
+            <TextBlock Text="Object map" FontSize="24" FontWeight="SemiBold"/>
+            <TextBlock Text="Save the current view of a cell, spheroid or pipette with controller coordinates. These bookmarks require visual reacquisition before return or approach."
+                       TextWrapping="Wrap" Margin="0,8,0,14"/>
+            <WrapPanel Margin="0,0,0,10">
+                <TextBox x:Name="ObjectName" Text="Object 1" Width="180" Margin="0,0,8,0"/>
+                <ComboBox x:Name="ObjectKind" Width="130" SelectedIndex="0" Margin="0,0,8,0">
+                    <ComboBoxItem Content="cell"/><ComboBoxItem Content="cell_group"/>
+                    <ComboBoxItem Content="spheroid"/><ComboBoxItem Content="pipette"/><ComboBoxItem Content="region"/>
+                </ComboBox>
+                <Button Content="Read coordinates and save view" Click="OnCapture"/>
+            </WrapPanel>
+            <TextBox x:Name="Note" ToolTip="Observation notes" Margin="0,0,0,10"/>
+            <WrapPanel Margin="0,0,0,12">
+                <Button Content="Sample moved / mark all uncertain" Click="OnInvalidate" Margin="0,0,8,0"/>
+                <Button Content="Export map" Click="OnExport" Margin="0,0,8,0"/>
+                <Button Content="Import map" Click="OnImport" Margin="0,0,8,0"/>
+                <Button Content="Remove selected" Click="OnRemove"/>
+            </WrapPanel>
+        </StackPanel>
+        <TextBlock x:Name="Status" DockPanel.Dock="Bottom" TextWrapping="Wrap" Margin="0,12,0,0"
+                   Text="Coordinates are read sequentially. Stop all movement before saving. No movement is sent by this window."/>
+        <DataGrid x:Name="Objects" IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="130"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding Kind}" Width="100"/>
+                <DataGridTextColumn Header="State" Binding="{Binding Status}" Width="160"/>
+                <DataGridTextColumn Header="Saved C1 coordinates" Binding="{Binding Coordinates}" Width="*"/>
+                <DataGridTextColumn Header="Note" Binding="{Binding Note}" Width="150"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>

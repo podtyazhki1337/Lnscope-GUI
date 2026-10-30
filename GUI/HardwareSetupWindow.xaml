@@ -1,0 +1,115 @@
+<Window x:Class="GUI.HardwareSetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="LNscope — Hardware setup" Width="1000" Height="780" MinWidth="860" MinHeight="620"
+        WindowStartupLocation="CenterOwner" FontFamily="Segoe UI" FontSize="13"
+        Style="{StaticResource {x:Type Window}}">
+    <DockPanel Margin="20">
+        <StackPanel DockPanel.Dock="Top">
+            <TextBlock Text="Hardware setup" FontSize="24" FontWeight="SemiBold" />
+            <TextBlock Text="Select the Windows camera driver and the controller's USB-COM / RS232 port."
+                       Foreground="#62758B" Margin="0,5,0,14" />
+            <WrapPanel>
+                <Button Content="Refresh devices" Click="OnRefresh" Margin="0,0,8,0" />
+                <Button Content="KERN ODC 825 + L&amp;N SM-10 preset" Click="OnPreset" Margin="0,0,8,0" />
+                <Button Content="Use simulation" Click="OnSimulation" />
+            </WrapPanel>
+            <TextBlock Text="{Binding DiscoveryStatus}" TextWrapping="Wrap" Foreground="#52667D" Margin="0,10,0,14" />
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom">
+            <TextBlock Text="{Binding Error}" Foreground="#B33447" TextWrapping="Wrap" Margin="0,8" />
+            <TextBlock Text="Apply saves this profile and disconnects current devices. Connect them explicitly in the main window."
+                       Foreground="#62758B" TextWrapping="Wrap" Margin="0,0,0,8" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Cancel" IsCancel="True" Margin="0,0,8,0" />
+                <Button Content="Apply configuration" Click="OnApply" Style="{StaticResource PrimaryButton}" />
+            </StackPanel>
+        </StackPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="Cameras" FontSize="17" FontWeight="SemiBold" Margin="0,0,0,8" />
+                <ItemsControl ItemsSource="{Binding Config.Cameras}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Id}" FontWeight="SemiBold" Margin="0,0,0,8" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="230" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <ComboBox SelectedValuePath="Tag" SelectedValue="{Binding Driver}" Margin="0,0,12,0">
+                                            <ComboBoxItem Content="Simulation" Tag="simulated" />
+                                            <ComboBoxItem Content="Windows USB / DirectShow" Tag="windows-dshow" />
+                                            <ComboBoxItem Content="KERN / MicroscopeVIS" Tag="kern-native" />
+                                        </ComboBox>
+                                        <ComboBox Grid.Column="1"
+                                                  ItemsSource="{Binding DataContext.Cameras, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                  DisplayMemberPath="Name" SelectedValuePath="DeviceId"
+                                                  SelectedValue="{Binding DeviceId}" />
+                                    </Grid>
+                                    <TextBlock Text="KERN ODC 825 needs a Windows driver that exposes video capture. USB alone does not guarantee UVC/DirectShow support."
+                                               TextWrapping="Wrap" Foreground="#62758B" FontSize="12" Margin="0,8,0,0" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Text="Positioners" FontSize="17" FontWeight="SemiBold" Margin="0,6,0,8" />
+                <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                    <StackPanel>
+                        <CheckBox Content="Stage and manipulator share one controller / cable" IsChecked="{Binding SharedController}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0" IsEnabled="{Binding SharedController}">
+                            <TextBlock Text="Controller COM port" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <ComboBox Width="200" IsEditable="True" ItemsSource="{Binding Ports}"
+                                      Text="{Binding ControllerPort, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <TextBlock Text="One SM-10 box, one COM connection. Stage and manipulator are separate axis groups within that controller."
+                                   TextWrapping="Wrap" Foreground="#62758B" Margin="0,8,0,0" />
+                    </StackPanel>
+                </Border>
+                <ItemsControl ItemsSource="{Binding Config.Positioners}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Id}" FontWeight="SemiBold" Margin="0,0,0,8" />
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="180" /><ColumnDefinition Width="200" /></Grid.ColumnDefinitions>
+                                        <ComboBox SelectedValuePath="Tag" SelectedValue="{Binding Driver}" Margin="0,0,10,0">
+                                            <ComboBoxItem Content="L&amp;N SM-10 binary (documented)" Tag="sm10-binary" />
+                                            <ComboBoxItem Content="L&amp;N NextLevel ASCII (legacy)" Tag="ln-nextlevel-ascii" />
+                                        </ComboBox>
+                                        <ComboBox Grid.Column="1" SelectedValuePath="Tag" SelectedValue="{Binding Transport}" Margin="0,0,10,0">
+                                            <ComboBoxItem Content="Simulation" Tag="simulated" />
+                                            <ComboBoxItem Content="USB-COM / RS232" Tag="serial" />
+                                        </ComboBox>
+                                        <ComboBox Grid.Column="2" IsEditable="True" Text="{Binding PortName, UpdateSourceTrigger=LostFocus}"
+                                                  IsEnabled="{Binding DataContext.SeparatePorts, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                  ItemsSource="{Binding DataContext.Ports, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                    </Grid>
+                                    <DataGrid ItemsSource="{Binding Axes}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                                              HeadersVisibility="Column">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Logical axis" Binding="{Binding Id}" IsReadOnly="True" Width="*" />
+                                            <DataGridTextColumn Header="Hardware address (1–72)" Width="180"
+                                                                Binding="{Binding HardwareAxis, ValidatesOnExceptions=True}" />
+                                            <DataGridTextColumn Header="Minimum (µm)" Width="180" Binding="{Binding MinPosition, ValidatesOnExceptions=True}" />
+                                            <DataGridTextColumn Header="Maximum (µm)" Width="180" Binding="{Binding MaxPosition, ValidatesOnExceptions=True}" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                    <CheckBox Content="Axis mapping and travel limits verified — enable real SM-10 motion"
+                                              IsChecked="{Binding MotionEnabled}" Margin="0,12,0,0" />
+                                    <CheckBox Content="SM-10 legacy replies: accept BBBB checksum (only for verified controllers)"
+                                              IsChecked="{Binding AllowLegacyReplyChecksum}" Margin="0,8,0,0" />
+                                    <CheckBox Content="Display counter 2 (panel coordinates); travel limits remain in counter 1"
+                                              IsChecked="{Binding DisplayUserCoordinates}" Margin="0,8,0,0" />
+                                    <TextBlock Text="Groups on the same controller must use the same COM port and different physical axis addresses. Baud rate: 115200, 8N1."
+                                               TextWrapping="Wrap" Foreground="#62758B" FontSize="12" Margin="0,8,0,0" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

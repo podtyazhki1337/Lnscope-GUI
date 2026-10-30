@@ -1,0 +1,207 @@
+{
+  "cameras": [
+    {
+      "id": "camera",
+      "driver": "simulated",
+      "modeIndex": 1,
+      "targetFps": 15,
+      "modes": [
+        {
+          "width": 2592,
+          "height": 1944,
+          "description": "full frame, 5.1 MP"
+        },
+        {
+          "width": 1280,
+          "height": 960,
+          "description": "2x2 binning"
+        },
+        {
+          "width": 640,
+          "height": 480,
+          "description": "4x4 binning"
+        }
+      ],
+      "flipHorizontal": false,
+      "flipVertical": false,
+      "zoom": 0.5
+    }
+  ],
+  "positioners": [
+    {
+      "id": "manipulator",
+      "transport": "simulated",
+      "portName": "COM3",
+      "baudRate": 115200,
+      "feedbackIntervalMs": 200,
+      "switchToAsciiOnConnect": true,
+      "responseTimeoutMs": 2000,
+      "axes": [
+        {
+          "id": "X",
+          "hardwareAxis": 1,
+          "unit": "um",
+          "minPosition": -20000,
+          "maxPosition": 20000
+        },
+        {
+          "id": "Y",
+          "hardwareAxis": 2,
+          "unit": "um",
+          "minPosition": -20000,
+          "maxPosition": 20000
+        },
+        {
+          "id": "Z",
+          "hardwareAxis": 3,
+          "unit": "um",
+          "minPosition": -10000,
+          "maxPosition": 10000
+        }
+      ]
+    },
+    {
+      "id": "stage",
+      "transport": "simulated",
+      "portName": "COM4",
+      "baudRate": 115200,
+      "feedbackIntervalMs": 200,
+      "switchToAsciiOnConnect": true,
+      "responseTimeoutMs": 2000,
+      "axes": [
+        {
+          "id": "X",
+          "hardwareAxis": 1,
+          "unit": "um",
+          "minPosition": -50000,
+          "maxPosition": 50000
+        },
+        {
+          "id": "Y",
+          "hardwareAxis": 2,
+          "unit": "um",
+          "minPosition": -50000,
+          "maxPosition": 50000
+        },
+        {
+          "id": "Z",
+          "hardwareAxis": 3,
+          "unit": "um",
+          "minPosition": -15000,
+          "maxPosition": 15000
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "id": "pipette-lock",
+      "name": "Keep pipette aligned",
+      "source": "stage",
+      "target": "manipulator",
+      "bidirectional": true,
+      "enabledByDefault": false,
+      "axisMap": [
+        {
+          "from": "X",
+          "to": "X",
+          "factor": 1
+        },
+        {
+          "from": "Y",
+          "to": "Y",
+          "factor": 1
+        },
+        {
+          "from": "Z",
+          "to": "Z",
+          "factor": 1
+        }
+      ]
+    }
+  ],
+  "jog": {
+    "stepUm": 5,
+    "intervalMs": 80,
+    "bindings": [
+      {
+        "key": "W",
+        "device": "manipulator",
+        "axis": "Y",
+        "direction": 1
+      },
+      {
+        "key": "S",
+        "device": "manipulator",
+        "axis": "Y",
+        "direction": -1
+      },
+      {
+        "key": "A",
+        "device": "manipulator",
+        "axis": "X",
+        "direction": -1
+      },
+      {
+        "key": "D",
+        "device": "manipulator",
+        "axis": "X",
+        "direction": 1
+      },
+      {
+        "key": "LeftShift",
+        "device": "manipulator",
+        "axis": "Z",
+        "direction": 1
+      },
+      {
+        "key": "LeftCtrl",
+        "device": "manipulator",
+        "axis": "Z",
+        "direction": -1
+      },
+      {
+        "key": "NumPad8",
+        "device": "stage",
+        "axis": "Y",
+        "direction": 1
+      },
+      {
+        "key": "NumPad2",
+        "device": "stage",
+        "axis": "Y",
+        "direction": -1
+      },
+      {
+        "key": "NumPad4",
+        "device": "stage",
+        "axis": "X",
+        "direction": -1
+      },
+      {
+        "key": "NumPad6",
+        "device": "stage",
+        "axis": "X",
+        "direction": 1
+      },
+      {
+        "key": "Add",
+        "device": "stage",
+        "axis": "Z",
+        "direction": 1
+      },
+      {
+        "key": "Subtract",
+        "device": "stage",
+        "axis": "Z",
+        "direction": -1
+      }
+    ]
+  },
+  "recording": {
+    "outputDirectory": "",
+    "fileNameTemplate": "{camera}_{timestamp}.mp4",
+    "codecArguments": "-c:v libx264 -preset veryfast -crf 18 -pix_fmt yuv420p",
+    "queueCapacity": 90
+  }
+}
