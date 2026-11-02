@@ -1,25 +1,52 @@
 # Offline tracking prototype
 
-Откройте **Camera → Offline tracking · video**. Этот режим получает только локальное видео, не имеет COM-транспорта и не отправляет движения. Горячие клавиши движения основного окна выключены, пока открыто окно анализа.
+Open **Camera → Offline tracking · video**. This mode receives only a local
+video, has no COM transport, and sends no motion commands. Main-window motion
+hotkeys are disabled while the analysis window is open.
 
-1. **Open video**: выберите исходный `showcase/20260803-H-M.mp4`, а не смонтированный showcase-ролик.
-2. Введите время, например `210`, нажмите **Seek / clear points**. При переходе все метки сбрасываются.
-3. Выберите **Pipette tip**, щёлкните по кончику; затем **Target** и щёлкните по выбранной видимой клетке или ориентиру сфероида. Координаты фиксируются в изображении, не на контроллере.
-4. **Next frame** или **Play** запускают сопровождение. Слабое или неоднозначное совпадение помечается красным и приостанавливает Play. Для продолжения укажите потерянную точку заново. Автоматического восстановления нет.
-5. **Export CSV** сохраняет последние 10 000 записей: кадр, время декодера, координаты, оценки совпадения, флаг потери, смещение. При потере одной точки смещение не вычисляется; красные координаты — последняя принятая позиция, не новая оценка.
+1. **Open video**: select the original `showcase/20260803-H-M.mp4`, not the edited showcase montage.
+2. Enter a time, for example `210`, and click **Seek / clear points**. Seeking clears all markers.
+3. Select **Pipette tip** and click the tip; then select **Target** and click a visible cell or spheroid landmark. Coordinates are recorded in the image, not on the controller.
+4. **Next frame** or **Play** starts tracking. Weak or ambiguous matches turn red and pause Play. Reselect the lost point to continue. There is no automatic recovery.
+5. **Export CSV** saves the last 10,000 records: frame, decoder time, coordinates, match scores, loss flag, and displacement. Displacement is not computed when either point is lost. Red coordinates are the last accepted position, not a new estimate.
 
-`tracking.py` содержит алгоритм и пороги; `vision.py` — декодирование видео, состояние, журнал и расчёт смещения. OpenCV 4.12.0.88 и NumPy 2.2.6 поставляются с embedded Python. GPU и отдельная установка Python не нужны. Поставляемые лицензии находятся в `ThirdParty/python/Lib/site-packages/*dist-info` и `cv2`.
+`tracking.py` contains the algorithm and thresholds; `vision.py` handles decoding,
+state, logging, and displacement calculation. OpenCV 4.12.0.88 and NumPy 2.2.6
+are bundled with embedded Python. No GPU or separate Python installation is
+required. Bundled licenses are in `ThirdParty/python/Lib/site-packages/*dist-info`
+and `cv2`.
 
-Основа — фиксированный образец 31×31 пиксель и локальное нормированное сопоставление OpenCV. Поиск ограничен окрестностью предыдущей позиции, проверяются уровень совпадения и неоднозначность. Оценка совпадения не является вероятностью правильного выбора клетки. Алгоритм не сегментирует клетки, не доказывает контакт и не восстанавливает Z. Похожие клетки, деформация и перекрытие всё ещё могут привести к неверному сопровождению, даже при высокой оценке. Нужна ручная проверка траекторий.
+The method uses a fixed 31×31 pixel template and local normalized OpenCV template
+matching. Search is limited to the neighborhood of the previous position;
+match strength and ambiguity are checked. The match score is not the probability
+of selecting the correct cell. The algorithm does not segment cells, establish
+contact, or reconstruct Z. Similar cells, deformation, and occlusion can still
+cause incorrect tracking even with a high score. Trajectories need manual review.
 
-Кадры больше 1280×960 уменьшаются пропорционально; scale записан в CSV и показан в окне. Координаты относятся к обработанному изображению (координаты исходника = координаты / scale). Воспроизведение последовательное, без пропуска кадров; темп задаётся номинальной частотой файла и может быть медленнее исходного. Для измерений используйте время кадра из CSV, а не время воспроизведения окна.
+Frames larger than 1280×960 are resized proportionally; scale is logged in CSV
+and displayed in the window. Coordinates refer to the processed image (original
+coordinates = coordinates / scale). Playback is sequential without skipped
+frames. Its pace follows the file's nominal frame rate and may be slower than
+the source. For measurements, use CSV frame times rather than window playback time.
 
-## Проверка на showcase
+## Showcase verification
 
-Исходник 640×480, переход к 210 с (фактическое время кадра около 209.957 с), вручную выбранные ориентиры tip=(335,194), target=(409,153). На 12-м следующем кадре (214.16 с) алгоритм объявил потерю кончика, оценка 0.723 ниже порога 0.78, и отключил расчёт смещения. Это диагностический пример, не измерение точности: эталонная ручная разметка траекторий ещё не создана. Наблюдаемая медиана обработки двух образцов около 0.49 мс не включает декодирование, IPC и отрисовку и не является оценкой FPS приложения.
+Source: 640×480, seek to 210 s (actual frame time about 209.957 s), manually
+selected landmarks tip=(335,194), target=(409,153). On the 12th subsequent frame
+(214.16 s), the algorithm declared the tip lost: score 0.723 was below the 0.78
+threshold, and displacement calculation was disabled. This is a diagnostic
+example, not an accuracy measurement: reference manual trajectories have not
+yet been annotated. The observed median processing time for two templates was
+about 0.49 ms; it excludes decoding, IPC, and rendering and is not an estimate
+of application FPS.
 
-## Следующий этап для установки
+## Next steps for the installation
 
-Вручную сфокусировать кончик и зафиксировать позиции манипулятора/платформы, затем выбрать цель и зафиксировать её положение и Z фокуса платформы. Эти записи должны включать обе системы координат, масштаб камеры, направления осей и смещения между ними. Только после калибровки можно вычислять машинную траекторию с безопасным зазором и проверять её сначала в режиме предварительного просмотра. Сохранённые аппаратные слоты сами по себе такой калибровкой не являются.
+Manually focus the tip and record manipulator/platform positions, then select
+the target and record its position and platform focus Z. These records must
+include both coordinate systems, camera scale, axis directions, and offsets
+between them. Only after calibration can a machine trajectory with safe
+clearance be computed and checked in preview mode first. Stored hardware slots
+alone do not constitute calibration.
 
 Reference: https://docs.opencv.org/4.x/d4/dc6/tutorial_py_template_matching.html

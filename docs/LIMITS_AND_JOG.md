@@ -1,39 +1,82 @@
-# Концевики, связанные перемещения и скорость
+# Limit switches, linked motion, and speed
 
-## Что читается из SM-10
+## What is read from SM-10
 
-Команда `0x0120` возвращает состояние концевика первым байтом: `0` — свободно, `1` — отрицательный, `2` — положительный. Неизвестное значение считается активным ограничением без известного направления. Основой служат SM10 Interface description V1.0, печатная стр.22, и немецкий оригинал, стр.18. В оригинале два резервных байта перед разрешением шага; состояние движения находится в байте 6.
+Command `0x0120` returns the limit-switch state in its first byte: `0` means
+clear, `1` means the negative limit, and `2` means the positive limit. Unknown
+values are treated as an active limit with unknown direction. Sources are
+SM10 Interface description V1.0, printed page 22, and the German original, page
+18. The original has two reserved bytes before step resolution; motion status
+is in byte 6.
 
-В переданном последовательном протоколе нет команды чтения численных минимальной и максимальной координат хода. Приложение не подменяет их координатами последнего срабатывания и не ищет границы движением/homing. Численные ограничения C1 в Hardware setup остаются отдельными программными пределами. При их достижении/выходе за них строка тоже красная, с подписью SOFTWARE C1 LIMIT. Аппаратный концевик отмечается HARDWARE LIMIT −/+. После свежего свободного статуса красная индикация снимается.
+The supplied serial protocol has no command for reading numeric minimum and
+maximum travel coordinates. The application does not substitute the coordinates
+of the last limit event or search for bounds through motion/homing. Numeric C1
+limits in Hardware setup remain separate software limits. Reaching or exceeding
+them also makes the row red, labelled SOFTWARE C1 LIMIT. Hardware switches are
+labelled HARDWARE LIMIT −/+. A fresh clear status removes the red indication.
 
-## Остановка
+## Stopping
 
-Перед движением считываются координаты и статус всех участников связки. Если у одного уже активен концевик в направлении движения, цель выходит за программные границы, устройство не готово или движение не разрешено, ведущая ось не запускается. Движение от известного активного концевика допускается, если цель проходит программные ограничения.
+Before moving, the application reads coordinates and status for every member of
+the linked operation. The leader does not start if a member has an active switch
+in the requested direction, the target exceeds software bounds, a device is not
+ready, or motion is disabled. Moving away from a known active switch is allowed
+if the target satisfies software limits.
 
-После отправки команды операция остаётся активной до подтверждённого достижения цели. Обновления позиций отслеживаются также после ACK. Срабатывание концевика в направлении перемещения, достижение программного предела, ошибка связи, остановка раньше цели или отсутствие обновлений более 3 секунд отменяют оставшиеся команды и останавливают все активные операции, включая одновременно удерживаемые независимые оси. Состав уже запущенной связки сохраняется даже при изменении её флажка.
+After sending a command, the operation remains active until arrival is confirmed.
+Position updates are monitored after ACK as well. A switch in the direction of
+travel, reaching a software limit, a communication error, stopping short of the
+target, or no updates for more than 3 seconds cancels remaining commands and
+stops all active operations, including independently held axes. Membership of
+an active linked operation is retained even if its checkbox changes.
 
-Аварийный SM-10 Stop отменяет ожидание текущего ответа и отправляет документированную групповую команду `0xA0FF` без ожидания ACK. Повторов движения нет. Соединение после аварии остаётся заблокированным: отключите и заново подключите все группы общего контроллера. Это исключает использование запоздалого ответа для следующей команды. Неудача Stop пишется в журнал, остальные участники всё равно получают попытку остановки.
+Emergency SM-10 Stop cancels the pending response wait and sends documented
+group command `0xA0FF` without waiting for ACK. Motion is not retried. After an
+emergency, the connection stays locked: disconnect and reconnect all groups on
+the shared controller. This prevents a late response from being used for the
+next command. Stop failures are logged; stopping the other members is still attempted.
 
-При отпускании клавиши или потере фокуса прекращаются новые шаги, завершившийся обмен не используется для запуска отложенной оси, а уже отправленные движения получают Stop. Перед следующими обычными командами выдерживается документированная пауза 160 мс. Обычный отпуск не требует переподключения при исправной связи.
+Releasing a key or losing focus prevents new steps. A completed exchange cannot
+start a deferred axis, and already issued moves receive Stop. The documented
+160 ms pause is observed before subsequent normal commands. Normal key release
+does not require reconnection when communication is healthy.
 
-Обнаружение концевика зависит от опроса (по умолчанию 200 мс плюс обмен и остальные оси). Это программная реакция, а не аппаратная синхронная блокировка; обрыв связи не позволяет гарантировать физический останов. Срабатывание реальных концевиков новой версией не испытывалось: на 30.09.2026 COM3 отсутствовал в Windows.
+Limit detection depends on polling: by default 200 ms plus exchanges and the
+other axes. This is a software response, not a synchronous hardware interlock;
+communication loss prevents guaranteeing a physical stop. Real limit switches
+had not been tested with this version: COM3 was absent from Windows on September
+30, 2026.
 
 ## L / M / H
 
-Руководство Tastenfeld-SM10_v05-eng, печатная стр.10, описывает L/M/H как настраиваемую чувствительность ручек, а C — грубый режим. Для позиционных команд протокол предлагает Fast/Slow. Не найдено документированной команды, переключающей физические кнопки L/M/H.
+Tastenfeld-SM10_v05-eng, printed page 10, describes L/M/H as configurable knob
+sensitivity and C as coarse mode. Position commands provide Fast/Slow. No
+documented command was found for switching the physical L/M/H buttons.
 
-Поэтому переключатель в GUI явно задаёт собственные режимы:
+The GUI selector therefore explicitly defines application modes:
 
-| GUI | Шаг при удержании клавиши | Режим моторной команды |
+| GUI | Step while a direction key is held | Motor command mode |
 |---|---:|---|
 | L | 1 × Keyboard step | Slow |
 | M | 5 × Keyboard step | Fast |
 | H | 20 × Keyboard step | Fast |
 
-Кнопки ± выполняют один указанный рядом шаг; Go и ± используют выбранный Slow/Fast. Настройки скоростей в памяти контроллера и выбор кнопок физического пульта не переписываются. Новые шаги не накапливаются, пока предыдущая цель не подтверждена; ошибки сбрасывают удержание, автоповтор клавиши не запускает его заново. Режим сохраняется вместе с остальной конфигурацией.
+The ± buttons execute one step of the adjacent value; Go and ± use the selected
+Slow/Fast mode. Stored controller speed settings and the physical keypad mode
+are not overwritten. New steps do not accumulate while the previous target is
+unconfirmed. Errors clear the held-key state; key auto-repeat does not restart
+it. The mode is saved with the configuration.
 
-Все перемещения ограничены конкретными целями. Непрерывные команды 0012–0015 не используются для удержания: документация запрещает во время них любые запросы кроме Stop, что мешает читать концевики.
+All moves have bounded targets. Continuous commands 0012–0015 are not used for
+held-key jogging: the documentation forbids requests other than Stop during
+these commands, preventing limit polling.
 
-## Проверки
+## Verification
 
-Автоматически проверены: запрет запуска ведущей при концевике/недопустимой цели ведомой; остановка обеих сторон при концевике после ACK; сохранение участников после выключения связки; остановка одновременно запущенных независимых осей; ошибка при частичной отправке; отпускание во время чтения/ACK; уход от концевика; потеря и устаревание обратной связи; красная индикация/её сброс; три режима скорости. Проверки используют имитатор транспорта и не двигают оборудование.
+Automated checks cover: rejecting the leader when a follower has an active
+limit or invalid target; stopping both sides on a limit after ACK; retaining
+members after disabling a link; stopping concurrent independent axes; failure
+after partial transmission; key release during reads/ACK; moving away from a
+limit; missing/stale feedback; red indication and reset; and all three speed
+modes. Tests use a simulated transport and do not move hardware.

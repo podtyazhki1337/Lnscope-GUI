@@ -1,98 +1,120 @@
-# Python-функции LNscope: инструкция для коллег
+# LNscope Python functions: guide for colleagues
 
-Эта папка содержит **исполняемую логику**, которую загружает GUI.exe.
-Для изменения движения не нужны Rider, Visual Studio и пересборка C#.
+This folder contains the **executable logic** loaded by GUI.exe. Changing motion
+behavior does not require Rider, Visual Studio, or a C# rebuild.
 
-## Где менять поведение
+## Where to change behavior
 
-| Файл | Функции |
+| File | Functions |
 | --- | --- |
-| `motion.py` | `MotionController.move`, `jog`, `poll`, `feedback`, `watchdog`, `cancel`, `stop`, `trip`: весь цикл движения и остановки |
-| `jogging.py` | `PROFILES` для L/M/H; `requests` объединяет направления нажатых клавиш |
-| `links.py` | `members`: ведущие/ведомые оси, обратные коэффициенты, конфликты связей |
-| `limits.py` | `blocks`, `target`: концевики, направление выхода из лимита, проверка цели |
-| `sm10.py` | `Positioner`: подключение только чтением, координаты C1/C2, команды движения/Stop, симуляция |
-| `commands.py` | Все 82 ID документации, категории GUI, проверка параметров, пакеты и расшифровка ответов расширенной консоли; 81 исполнимая команда |
-| `coordinates.py` | Проверка числовых координат |
-| `tests/` | Проверки логики на имитации оборудования |
-| `backend.py`, `motion_server.py` | JSON IPC с C#; обычно не требуют изменения |
+| `motion.py` | `MotionController.move`, `jog`, `poll`, `feedback`, `watchdog`, `cancel`, `stop`, `trip`: the complete motion and stopping lifecycle |
+| `jogging.py` | L/M/H `PROFILES`; `requests` combines directions from held keys |
+| `links.py` | `members`: leader/follower axes, inverse coefficients, and link conflicts |
+| `limits.py` | `blocks`, `target`: limit switches, motion away from a limit, and target validation |
+| `sm10.py` | `Positioner`: read-only connection, C1/C2 coordinates, motion/Stop commands, and simulation |
+| `commands.py` | All 82 documented IDs, GUI categories, parameter validation, packets, and response decoding for the advanced console; 81 executable commands |
+| `coordinates.py` | Numeric coordinate validation |
+| `tests/` | Logic checks using simulated hardware |
+| `backend.py`, `motion_server.py` | JSON IPC with C#; usually no changes needed |
 
-## Как применить правку в готовой программе
+## Applying a change to a published application
 
-1. Закрыть GUI.exe и сохранить копию изменяемого `.py`.
-2. Открыть **`PythonBackend` рядом с тем GUI.exe, который запускается**.
-   Например: `artifacts/LNscope/PythonBackend/jogging.py`.
-3. Изменить функцию, сохранить файл в UTF-8.
-4. В PowerShell из папки `LNscope` запустить:
+1. Close GUI.exe and back up the `.py` file you will edit.
+2. Open **`PythonBackend` beside the GUI.exe you actually run**, for example `artifacts/LNscope/PythonBackend/jogging.py`.
+3. Edit the function and save the file as UTF-8.
+4. Run the following in PowerShell from the `LNscope` folder:
 
    ```powershell
    ./ThirdParty/python/python.exe -I -X utf8 ./PythonBackend/check.py
    ```
 
-5. Открыть GUI.exe снова. Код загружается из `.py`, пересборка EXE/DLL не нужна.
-   Сначала проверить изменение в симуляции.
+5. Open GUI.exe again. Code loads from `.py`; no EXE/DLL rebuild is needed. Check the change in simulation first.
 
-Например, для менее крупного шага H заменить в `jogging.py`:
+For example, to reduce the H step, replace this entry in `jogging.py`:
 
 ```python
 "H": {"multiplier": 20.0, "speed": 1},
 ```
 
-на:
+with:
 
 ```python
 "H": {"multiplier": 10.0, "speed": 1},
 ```
 
-При базовом шаге 5 мкм удержание H будет запрашивать 50 мкм вместо 100 мкм.
-Подпись в GUI берётся из этого же Python-модуля. `speed: 0` — Slow, `1` — Fast.
-Это режимы приложения, а не перенастройка физических кнопок L/M/H пульта.
+With a base step of 5 µm, holding a direction key in H mode now requests 50 µm
+instead of 100 µm. The GUI label comes from the same Python module. `speed: 0`
+means Slow; `1` means Fast. These are application modes, not reconfiguration of
+the physical controller's L/M/H buttons.
 
-## Правки исходного проекта
+## Editing the source project
 
-В репозитории редактировать `GUI/PythonBackend`. `publish.ps1` копирует эти файлы
-в готовую сборку, поэтому перед повторной публикацией перенести туда коллегиальные
-правки из `artifacts/LNscope/PythonBackend`, иначе публикация их заменит.
-Для копирования только Python-кода из исходников в готовую сборку можно выполнить
-`./update-python.ps1` в корне проекта; C# при этом не компилируется.
+Edit `GUI/PythonBackend` in the repository. `publish.ps1` copies these files into
+the published build. Before publishing again, bring colleagues' edits from
+`artifacts/LNscope/PythonBackend` back into the source folder, or publishing will
+replace them. To copy only Python source files into the published build, run
+`./update-python.ps1` from the project root; this does not compile C#.
 
-## Как устроено управление
+## Control architecture
 
-`MotionController` работает в одном asyncio loop. Перед движением проверяет все
-связанные оси, затем отправляет команды через `host`. Опрос, события и отмена
-обрабатываются во время ожидания ответа оборудования. Обычный Stop ждёт завершения
-текущего обмена, аварийный Stop не ждёт очередь движений. Номера поколений подключений
-не дают старым ответам воздействовать на устройство после переподключения.
+`MotionController` runs in one asyncio loop. It checks all linked axes before
+motion, then sends commands through `host`. Polling, events, and cancellation
+are processed while waiting for hardware responses. Normal Stop waits for the
+current exchange; emergency Stop does not wait for the motion queue. Connection
+generation numbers prevent stale responses from affecting a device after reconnection.
 
-Для собственных тестов передайте в `MotionController` асинхронный адаптер
-`host(op, **args)` и функцию `emit(name, data)`; пример — `tests/test_motion.py`.
-Не вызывайте из UI новые функции напрямую: добавляйте их в `MotionController.call`
-и используйте существующий IPC-контракт либо композицию уже доступных операций.
+For custom tests, provide `MotionController` with an asynchronous
+`host(op, **args)` adapter and an `emit(name, data)` function; see
+`tests/test_motion.py`. Add new UI operations through `MotionController.call`
+and the existing IPC contract, or compose existing operations, rather than
+calling new functions directly from the UI.
 
-## Что осталось в C#
+## What remains in C#
 
-WPF и отображение данных; адаптеры COM/SDK, проверка кадров и ACK/no-ACK; транспорт IPC;
-не зависящий от Python аварийный Stop при падении/зависании процесса. В адаптере есть
-дополнительная проверка разрешённых адресов осей и конфигурационных границ.
-Перед каждой физической отправкой в COM выдерживается минимум 2 мс внутри общей
-очереди порта, включая команды без ACK, обычный и аварийный Stop. Эта пауза действует
-также для Python-консоли и режима отката; дополнительный sleep в Python не требуется.
-Камера, передача кадров в FFmpeg и старый ASCII-драйвер остаются C#.
-Расширенная консоль SM-10 использует `commands.py`; C# сохраняет UI, COM, аварийный Stop и независимую проверку допустимого пакета. Исходный C#-контроллер сохранён как `LegacyMotionService`
-только для режима отката `MotionBackend: csharp`; Python-режим его не вызывает.
+WPF and data presentation; COM/SDK adapters, frame validation and ACK/no-ACK
+handling; IPC transport; and an independent emergency Stop if Python crashes or
+hangs. The adapter also checks permitted axis addresses and configured bounds.
+Every physical COM transmission has a minimum 2 ms delay inside the shared port
+queue, including no-ACK commands and normal/emergency Stop. This also applies
+to the Python console and rollback mode; no extra Python sleep is needed.
+Camera capture, frame delivery to FFmpeg, and the legacy ASCII driver remain in C#.
+The advanced SM-10 console uses `commands.py`; C# retains its UI, COM transport,
+emergency Stop, and independent packet validation. The original C# controller
+is retained as `LegacyMotionService` only for `MotionBackend: csharp` rollback
+mode; Python mode does not call it.
 
-Обычная логика движений, опроса, связей, лимитов, клавиатурных шагов и остановки
-исполняется из этой папки. Не редактируйте `LegacyMotionService` для изменения Python-режима.
+Normal motion, polling, links, limits, keyboard steps, and stopping run from
+this folder. Do not edit `LegacyMotionService` to change Python-mode behavior.
 
+## Advanced commands through Python
 
-## Расширенные команды через Python
+Open **SM-10 commands** in the main window after disconnecting the positioner
+groups. Select a category or search by name/hex ID. **Use device axes** inserts
+the group's addresses; a single-axis command uses the first configured axis,
+which can be edited manually. Four-axis commands require exactly four addresses
+on the same controller.
 
-В главном окне откройте **SM-10 commands** после отключения positioner-групп. Выберите категорию или найдите команду по имени/hex ID. **Use device axes** подставляет адреса группы; для одиночной команды — первую настроенную ось, которую можно изменить вручную. Четырёхосевые команды требуют ровно четыре адреса одного контроллера.
+`commands.catalogue()` defines visible commands and help text; `build()` creates
+the payload; `describe()` decodes the response. `call("console_execute", args,
+exchange)` executes one command through the supplied adapter. Browsing the
+catalogue and previewing packets do not open the port. Changes to these
+functions take effect after restarting the GUI without rebuilding. The
+independent C# guard deliberately rejects undocumented IDs, incompatible
+formats, and values outside documented ranges; extending the protocol itself
+requires updating that guard.
 
-`commands.catalogue()` задаёт видимые команды и подсказки, `build()` строит payload, `describe()` разбирает ответ. `call("console_execute", args, exchange)` выполняет одну команду через переданный адаптер. Просмотр каталога и пакета не открывает порт. Изменения этих функций применяются после перезапуска GUI без пересборки. Независимый C# guard намеренно отклоняет недокументированные ID, несовместимые форматы и выход за документированные диапазоны; расширение самого протокола требует обновления guard.
+The advanced console is a manual service tool without the main MotionController's
+automatic software limits or links. Future automation should use MotionController
+and its feedback checks. During continuous motion, only Stop is allowed on the
+bus. An error locks the connection; if motion axes were involved, an independent
+emergency Stop is attempted. Commands are not retried automatically. 01E8 is
+blocked pending clarification of its format by the manufacturer.
 
-Расширенная консоль — ручной сервисный инструмент, без автоматических программных лимитов и связок основного MotionController. Для будущей автоматизации используйте MotionController и его контроль обратной связи. При непрерывном движении шина допускает только Stop; ошибка блокирует соединение, при затронутых движением осях выполняется независимый аварийный Stop. Нет автоматических повторов команд. 01E8 заблокирована до уточнения формата производителем.
+## Video processing
 
-## Обработка видео
-
-`tracking.py` — ручная инициализация и сопровождение двух ориентиров, пороги потери; `vision.py` — работа с записью и журнал. Доступ: Camera → Offline tracking · video. Инструкция: `docs/OFFLINE_TRACKING.md` в исходном проекте. Режим не имеет доступа к оборудованию. После обновления на эту версию переносите целиком папку приложения: кроме новых `.py`, добавлены bundled OpenCV и NumPy; старой команды обновления только Python-файлов недостаточно для первичной установки этих зависимостей.
+`tracking.py` implements manual initialization, two-landmark tracking, and loss
+thresholds; `vision.py` handles video and logging. Open Camera → Offline tracking ·
+video. See `docs/OFFLINE_TRACKING.md` in the source project. This mode has no
+hardware access. When first upgrading to this version, copy the entire
+application folder: bundled OpenCV and NumPy were added alongside the new `.py`
+files. Updating only Python source files does not install these dependencies.

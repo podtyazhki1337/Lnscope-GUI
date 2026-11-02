@@ -1,74 +1,115 @@
-# Команды SM-10
+# SM-10 commands
 
-Кнопка **SM-10 commands** в главном окне открывает отдельную консоль документированного бинарного протокола. Она работает с общей коробкой, к которой подключены столик и манипуляторы. Обычные подключения positioner должны быть отключены; LNconfig должен освободить COM-порт. Камера от этого порта не зависит.
+The **SM-10 commands** button in the main window opens a separate console for
+the documented binary protocol. It operates the shared controller box connected
+to the stage and manipulators. Normal positioner connections must be disconnected,
+and LNconfig must release the COM port. The camera is independent of this port.
 
-## Что реализовано
+## Implemented commands
 
-В каталоге представлены все **82 идентификатора** из указателя SM10 Interface description V1.0, страницы 33–34. Для **81 команды** реализованы построение и проверка пакета и соответствующий способ обработки ответа. Одна команда trackball 01E8 показана, но отправка заблокирована из-за противоречия в документации.
+The catalogue contains all **82 identifiers** in the index of SM10 Interface
+description V1.0, pages 33–34. Packet construction, validation, and the appropriate
+response handling are implemented for **81 commands**. Trackball command 01E8
+is displayed but blocked because the documentation contradicts itself.
 
-| Функции | Команды, hexadecimal |
+| Function | Commands, hexadecimal |
 |---|---|
-| Непрерывное движение ±, быстро/медленно | 0012–0015 |
-| Абсолютная и относительная позиция | 0048–004B |
-| Шаги, размер шага, разрешение | 0140, 0141, 0147, 044F, 0146 |
-| Home, возврат, прекращение Home | 0104, 0022, 013F |
-| Нулевая и сохранённые позиции | 0024, 00F0, 0132, 0110, 010A |
-| Питание оси и Stop | 0034, 0035, 00FF |
-| Скорости, режим, рампа, направление, коэффициент | 003A, 003C, 003D, 0134, 0135, 0139, 013C, 0144, 0158, 018F, 0191, 019F, 042F, 0430 |
-| Положение и статус | 0101, 0131, 0120, 011E, 011F |
-| Чтение параметров привода | 012F, 0130, 0138, 013D, 0143, 014B, 014D, 0159, 0160, 0161, 0190, 0192, 01A2, 0431 |
-| Групповые действия с 72-битной маской | A012–A015, A022, A024, A034, A035, A0F0, A0FF, A104, A110, A10A, A132, A13F, A140, A141 |
-| Четыре позиции/смещения за один пакет | A048–A04B |
-| Чтение четырёх осей | A101, A131, A120 |
+| Continuous motion ±, fast/slow | 0012–0015 |
+| Absolute and relative position | 0048–004B |
+| Steps, step size, resolution | 0140, 0141, 0147, 044F, 0146 |
+| Home, return, cancel Home | 0104, 0022, 013F |
+| Zero and stored positions | 0024, 00F0, 0132, 0110, 010A |
+| Axis power and Stop | 0034, 0035, 00FF |
+| Speeds, mode, ramp, direction, coefficient | 003A, 003C, 003D, 0134, 0135, 0139, 013C, 0144, 0158, 018F, 0191, 019F, 042F, 0430 |
+| Position and status | 0101, 0131, 0120, 011E, 011F |
+| Drive parameter reads | 012F, 0130, 0138, 013D, 0143, 014B, 014D, 0159, 0160, 0161, 0190, 0192, 01A2, 0431 |
+| Group actions with a 72-bit mask | A012–A015, A022, A024, A034, A035, A0F0, A0FF, A104, A110, A10A, A132, A13F, A140, A141 |
+| Four positions/displacements in one packet | A048–A04B |
+| Four-axis reads | A101, A131, A120 |
 
-Каталог и валидаторы: `lnscope/LnScope.Devices.LuigsNeumann/Sm10/Sm10Commands.cs`. Команды доступны программно через `Sm10Commands.Get(id).Build(axes, values)` и `ISm10Bus.RequestAsync`. Для no-ACK вызов возвращает пустой результат после записи в порт, не ожидая подтверждения.
+The independent C# catalogue and validators are in
+`lnscope/LnScope.Devices.LuigsNeumann/Sm10/Sm10Commands.cs`. Programmatic access
+uses `Sm10Commands.Get(id).Build(axes, values)` and `ISm10Bus.RequestAsync`.
+For no-ACK commands, the call returns an empty result after writing to the port,
+without waiting for acknowledgement. The GUI console's Python implementation
+is described in the October 5 update below.
 
-## Использование
+## Usage
 
-1. Открыть консоль, выбрать COM3 и **Open port**. Открытие порта не выполняет handshake, опрос, homing или чтение конфигурации.
-2. Выбрать команду и прочитать подсказку параметров. Для одиночной команды указать один адрес. Для маски — список адресов. Для четырёхосевого пакета — ровно четыре разных адреса одной коробки (диапазоны 1–18, 19–36, 37–54, 55–72). Заполнение неиспользуемых слотов нулями в документации не определено, поэтому такая догадка не используется.
-3. Значения разделять пробелом или точкой с запятой; десятичный разделитель — точка. Например: оси `1 2 3 4`, позиции `10 -20 30 40`.
-4. **Preview packet** показывает байты без отправки. **Send once** отправляет ровно один пакет.
-5. По умолчанию разрешены запросы чтения и Stop. Для движения и изменения параметров явно включить advanced-команды. В этой низкоуровневой консоли нет программных пределов хода обычного рабочего интерфейса; адреса и значения выбирает оператор.
-6. **Save log** сохраняет журнал запросов и ответов. Нет макросов, автоматического повтора или автоподключения.
+1. Open the console, select COM3, and click **Open port**. Opening does not perform a handshake, polling, homing, or configuration reads.
+2. Select a command and read its parameter help. Supply one address for a single-axis command, a list for a mask, or exactly four distinct addresses in one box for a four-axis packet (ranges 1–18, 19–36, 37–54, 55–72). The documentation does not define zero-filled unused slots, so that assumption is not used.
+3. Separate values with spaces or semicolons; use a decimal point. For example: axes `1 2 3 4`, positions `10 -20 30 40`.
+4. **Preview packet** displays bytes without sending. **Send once** sends exactly one packet.
+5. Read requests and Stop are enabled by default. Explicitly enable advanced commands for movement or parameter changes. This low-level console does not apply the normal workspace's software travel limits; the operator chooses addresses and values.
+6. **Save log** exports requests and responses. There are no macros, automatic retries, or automatic connections.
 
-Непрерывное движение 0012–0015/A012–A015 блокирует остальные команды, кроме Stop. После обычного Stop выдерживается минимум 160 мс для стандартной рампы. Это не подтверждение остановки при другой настройке рампы: перед сменой направления необходим фактический покой.
+Continuous motion 0012–0015/A012–A015 blocks every other command except Stop.
+After normal Stop, a minimum 160 ms pause is observed for the standard ramp.
+This does not confirm stopping with a different ramp setting: the axis must
+actually be stationary before reversing direction.
 
-## Ответы и ошибки
+## Responses and errors
 
-- Одиночные команды: ACK, нулевая длина данных; ACK означает приём, а не завершение движения.
-- Одиночные запросы: ACK с ожидаемой длиной данных и проверкой CRC.
-- Групповые действия: без ответа. В журнале отмечается только факт передачи.
-- Групповые запросы: по документации SYN, 20 байт ответа, проверка CRC и возвращённых адресов.
-- При ошибке/таймауте соединение блокируется. Очередь не продолжает отправку. Переподключение только вручную.
-- Если консоль в этой сессии отправляла движение, при ошибке выполняется одна попытка группового Stop для затронутых осей. При закрытии/Disconnect — также, если попытки ещё не было. Повторной автоматической отправки Stop нет.
-- Кнопка **STOP + abort pending** прерывает ожидание ответа (проверка отмены между чтениями, таймаут чтения 50 мс), блокирует новые обычные команды и отправляет A0FF без ожидания ACK. Ожидание записи ограничено таймаутом порта. При неработающем канале физическую остановку гарантировать нельзя.
+- Single-axis commands: ACK with zero data length. ACK confirms acceptance, not completion of motion.
+- Single-axis queries: ACK with the expected data length and CRC validation.
+- Group actions: no response. The log records transmission only.
+- Group queries: documented SYN, a 20-byte response, CRC validation, and returned-address checks.
+- Errors/timeouts lock the connection. The queue stops sending. Reconnection is manual.
+- If the console sent motion during the session, an error triggers one group Stop attempt for the affected axes. Closing/Disconnect also does so if it has not already been attempted. Stop is not automatically retried.
+- **STOP + abort pending** interrupts response waiting (cancellation is checked between reads; the read timeout is 50 ms), blocks new normal commands, and sends A0FF without waiting for ACK. The port timeout bounds the write wait. A failed communication channel prevents guaranteeing a physical stop.
 
-## Противоречия документации
+## Documentation inconsistencies
 
-- 01E8 Trackball: и английский, и немецкий тексты указывают длину 02 и однобайтовый Steps в синтаксисе, но двухбайтовый signed Steps в описании. Команда зарегистрирована как недоступная; нужен уточнённый формат для прошивки.
-- A048–A04B: раздел четырёх осей определяет 21 байт данных (15 hex), хотя вводный раздел ограничивает пакет 20 байтами. Для этих четырёх команд разрешены 21 байт.
-- 0190: английский текст указывает длину 02 для byte; немецкий оригинал задаёт 01 — использован один байт.
-- 0120: структура восьми байт взята из немецкого оригинала, включая два reserved-байта перед разрешением шага.
-- Упомянутый в тексте version inquiry не имеет определённого ID/пакета в указателе; выдуманной команды версии нет. Чтение карты физических/виртуальных адресов через LNconfig также не заменено недокументированными пакетами.
+- 01E8 Trackball: both English and German versions specify length 02 and a one-byte Steps field in the syntax, but a two-byte signed Steps value in the description. The command is registered as unavailable pending a clarified firmware-specific format.
+- A048–A04B: the four-axis section defines 21 data bytes (15 hex), although the introduction limits packets to 20 bytes. These four commands allow 21 bytes.
+- 0190: the English text specifies length 02 for a byte; the German original specifies 01. One byte is used.
+- 0120: the eight-byte structure follows the German original, including two reserved bytes before step resolution.
+- The version inquiry mentioned in the text has no defined ID/packet in the index; no version command was invented. LNconfig's physical/virtual address-map reads were likewise not replaced with undocumented packets.
 
-## Проверка
+## Verification
 
-Автотесты используют имитатор байтового порта: покрытие 82 ID, порядок маски и чисел, CRC, одиночные и групповые ответы, команды без ответа, таймаут, блокировка дальнейших запросов, прерывание ожидания Stop и отмена движения в очереди. Команды на реальную установку при реализации не отправлялись. Совместимость всех команд с конкретной прошивкой и механическое поведение не подтверждены.
+Automated tests use a simulated byte port: coverage of all 82 IDs, mask and
+number order, CRC, single/group responses, no-response commands, timeouts,
+blocking subsequent requests, Stop interrupting a response wait, and cancelling
+queued motion. No commands were sent to real equipment during implementation.
+Compatibility of every command with the specific firmware and its mechanical
+behavior remains unconfirmed.
 
-## Память позиций во вкладке Motion
+## Position memory in the Motion tab
 
-Для каждого устройства доступны слоты 1–5: **Save** отправляет `A10A` для всех его настроенных осей, **Go** — `A110` с выбранной скоростью 1–15. Маска не включает оси другого устройства; связи движения при Go не применяются. Повторный Save перезаписывает слот. Команды групповые, без ACK: журнал подтверждает отправку, а не сохранение или достижение цели. Задержка перед записью в COM остаётся не меньше 2 мс.
+Each device has slots 1–5. **Save** sends `A10A` for all its configured axes;
+**Go** sends `A110` with the selected speed 1–15. The mask excludes other devices'
+axes; motion links do not apply to Go. Saving again overwrites the slot. These
+are group commands without ACK: the log confirms transmission, not successful
+storage or arrival. The pre-transmission COM delay remains at least 2 ms.
 
-Источник: SM10 Interface description V1.0, разделы SavePosition / GotoPosition (стр. 10) и BC_SavePosition / BC_GotoPosition (стр. 25). В описательном тексте BC_SavePosition встречается «6», но диапазон параметра прямо указан 1–5; интерфейс использует этот диапазон.
+Source: SM10 Interface description V1.0, SavePosition / GotoPosition (page 10)
+and BC_SavePosition / BC_GotoPosition (page 25). BC_SavePosition's prose mentions
+“6”, but the parameter range explicitly states 1–5; the interface uses that range.
 
-Протокол не предоставляет чтение координат слота. Поэтому для аппаратного Go нет предварительной проверки конечной точки по программным границам. При возврате приложение опрашивает все оси, проверяет оба концевика и программные границы; нарушение или потеря обратной связи останавливает все активные движения. Программная проверка происходит с задержкой опроса и не заменяет аппаратные концевики. Общий Stop отменяет возврат. Окончание движения определяется по статусам осей, а не по сравнению с неизвестной конечной точкой. Используйте известные слоты, сохранённые для текущей конфигурации осей.
+The protocol cannot read a slot's coordinates. Hardware Go therefore cannot
+pre-check its endpoint against software bounds. During return, the application
+polls all axes and checks both limit switches and software bounds. Violations
+or feedback loss stop all active motion. Software checks have polling latency
+and do not replace hardware switches. Shared Stop cancels return. Completion
+is determined from axis status rather than comparison with an unknown endpoint.
+Use known slots saved for the current axis configuration.
 
-Сохранение блокируется при активном движении приложения или обнаруженном движении устройства. Управление с аппаратного пульта независимо от приложения; не перемещайте оси с пульта во время сохранения. Поддерживаются Python SM-10 и симуляция; в симуляции слоты живут до переподключения, а вызов несохранённого слота выдаёт ошибку.
+Saving is blocked during application motion or detected device motion. The
+physical keypad operates independently; do not move axes with it while saving.
+Python SM-10 and simulation are supported. Simulated slots last until
+reconnection; calling an unsaved slot raises an error.
 
+## Python console: October 5, 2026 update
 
-## Python-консоль (обновление 2026-10-05)
+The catalogue of all 82 IDs, payload construction, user-value validation, and
+response decoding now run in `GUI/PythonBackend/commands.py`. The GUI receives
+the catalogue from Python, supports categories and search, and can insert
+configured stage/manipulator addresses. Preview uses Python without COM requests.
+Each Send once authorizes exactly one corresponding bus request. Transport,
+the 2 ms delay, CRC/ACK validation, and independent emergency Stop remain in C#.
 
-Каталог всех 82 ID, построение payload, проверка пользовательских значений и расшифровка ответов теперь исполняются в `GUI/PythonBackend/commands.py`. GUI получает каталог из Python, поддерживает категории, поиск и подстановку настроенных адресов stage/манипулятора. Preview использует Python и не выполняет COM-запросов. Каждое Send once разрешает ровно один соответствующий запрос к шине. Транспорт, задержка 2 мс, проверка CRC/ACK и независимый аварийный Stop остаются C#.
-
-Все 81 исполнимые команды проверены через оба языка на имитаторе: совпадение ID, атрибутов, payload и CRC с независимым C# guard; проверены ответы, запрет записи без включения advanced, заблокированная 01E8. Аппаратные команды при разработке не отправлялись.
+All 81 executable commands were tested through both languages using a simulator:
+IDs, attributes, payloads, and CRC matched the independent C# guard. Tests also
+covered responses, rejection of writes without advanced mode, and blocked 01E8.
+No hardware commands were sent during development.

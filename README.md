@@ -1,110 +1,97 @@
 # LNscope GUI
 
-WPF / .NET 10: управление манипулятором и столиком, клавиатурное перемещение,
-связки осей, просмотр камеры и запись через FFmpeg.
+WPF / .NET 10 application for manipulator and stage control, keyboard jogging,
+axis links, camera preview, and recording with bundled FFmpeg.
 
-## Запуск
+## Running the application
 
-Готовая автономная сборка: `artifacts/LNscope/GUI.exe` (Windows x64). Переносите
-всю папку `LNscope`: она содержит runtime .NET, Python и встроенный компонент записи.
-Отдельно устанавливать .NET, Python или FFmpeg на целевом компьютере не требуется.
-Для повторного создания этой папки выполните `./publish.ps1`.
+The self-contained Windows x64 build is `artifacts/LNscope/GUI.exe`. Copy the
+entire `LNscope` folder: it includes the .NET and Python runtimes and recording
+component. The target computer does not need separate .NET, Python, or FFmpeg
+installations. Run `./publish.ps1` to recreate this folder.
 
-Основной контроллер движения, опрос, лимиты, связки, L/M/H и операции позиционеров
-работают в Python. Коллеги могут менять `.py` рядом с EXE без пересборки C# —
-[инструкция](GUI/PythonBackend/README.md). Интерфейс и независимый аварийный Stop
-остаются C#. Перед каждой командой в COM выдерживается минимум 2 мс. Состав переноса, проверка и
-резервная копия для отката описаны в [PYTHON_BACKEND.md](docs/PYTHON_BACKEND.md).
+The main motion controller, polling, limits, axis links, L/M/H modes, and
+positioner operations run in Python. Colleagues can edit the `.py` files next
+to the EXE without rebuilding C#; see the [editing guide](GUI/PythonBackend/README.md).
+The interface and independent emergency Stop remain in C#. Every COM command
+has a minimum 2 ms delay before transmission. Migration scope, verification, and
+the rollback backup are documented in [PYTHON_BACKEND.md](docs/PYTHON_BACKEND.md).
 
-Из PowerShell в корне репозитория:
+From PowerShell in the repository root:
 
 ```powershell
 ./run.ps1
 ```
 
-Нужен .NET 10 SDK. Скрипт сначала ищет SDK в `%USERPROFILE%/.dotnet`, затем в PATH.
-Это учитывает текущую установку SDK на этом компьютере. Обычный запуск `GUI.exe`
-может не находить пользовательский runtime. Закройте приложение перед пересборкой.
+Building requires the .NET 10 SDK. The script searches `%USERPROFILE%/.dotnet`
+first, then PATH, supporting the SDK installation on this computer. Launching a
+non-self-contained `GUI.exe` directly may not find a per-user runtime. Close the
+application before rebuilding.
 
 ```powershell
 ./run.ps1 -Check
 ```
 
-Проверки используют только симуляторы, независимо от transport/driver в конфигурации.
-Они проверяют ввод чисел, подключение, относительное движение, сохранение связки,
-получение кадра, запрет выполнения отключённой команды и завершение работы.
-Тестовая конфигурация сохраняется в `GUI.SmokeTests/bin/.../smoke-config.json`.
+Checks use simulators regardless of the configured transport or driver. They
+cover numeric input, connection, relative motion, link persistence, frame
+capture, rejection of disabled commands, and shutdown. The test configuration
+is saved to `GUI.SmokeTests/bin/.../smoke-config.json`.
 
-## Работа в симуляции
+## Using simulation
 
-1. Нажмите Connect у нужного манипулятора/столика.
-2. В строке оси задайте относительный шаг и используйте −/+, либо введите абсолютную цель и нажмите Go.
-3. Для камеры: Connect → Start live → Open live view.
-4. Раскладка клавиш находится на вкладке Keyboard. Apply применяет изменения, Save configuration сохраняет их.
-5. Для записи укажите папку в Recording settings и нажмите Record. Если поток
-   остановлен, он запустится автоматически. Stop recording завершает MP4.
-   При пустой папке используется каталог «Видео/LNscope» текущего пользователя.
+1. Click Connect for the desired manipulator or stage.
+2. Enter a relative step in the axis row and use −/+, or enter an absolute target and click Go.
+3. For the camera, use Connect → Start live → Open live view.
+4. Keyboard mappings are on the Keyboard tab. Apply activates changes; Save configuration persists them.
+5. Select a folder in Recording settings and click Record. Capture starts automatically if stopped. Stop recording finalizes the MP4. An empty folder setting uses the current user's Videos/LNscope directory.
 
-FFmpeg поставляется в `GUI/ThirdParty/ffmpeg` и автоматически копируется при
-сборке и публикации. Нет поля выбора EXE, поиска по PATH или скачивания при запуске.
-Старый ключ `ffmpegPath` в конфигурациях игнорируется. Версия, контрольные суммы,
-лицензия и сведения об исходниках находятся в `GUI/ThirdParty/ffmpeg/NOTICE.md`.
+FFmpeg is bundled in `GUI/ThirdParty/ffmpeg` and copied automatically during
+build and publish. There is no EXE selector, PATH lookup, or startup download.
+The legacy `ffmpegPath` configuration key is ignored. Version, checksums,
+license, and source information are in `GUI/ThirdParty/ffmpeg/NOTICE.md`.
 
-Поставляемый `GUI/devices.json` использует только симуляторы. Приложение читает и
-сохраняет `devices.json` рядом с запущенной сборкой. Изменения через GUI не записываются
-обратно в исходный `GUI/devices.json`; обновление исходного файла может заменить
-конфигурацию в папке сборки. До выпуска нужен отдельный пользовательский профиль.
+The supplied `GUI/devices.json` uses simulators only. The application reads and
+saves `devices.json` beside the running build. GUI changes are not written back
+to the source `GUI/devices.json`; updating that source file may replace the
+configuration in the build folder. A separate user profile is needed before release.
 
-## Состояние готовности, 28 сентября 2026
+## Readiness snapshot: September 28, 2026
 
-Рабочий прототип для симуляции; готовность к эксперименту на реальном оборудовании
-ещё не подтверждена. Проверены сборка без предупреждений, подключение симулированного
-манипулятора, шаг X на 10 мкм, живое изображение камеры и закрытие окна при активном
-потоке. Автоматические проверки проходят. Запись встроенным FFmpeg проверена с
-пустым PATH: создание MP4 и полное декодирование, повторный Record, Stop live,
-закрытие во время записи, строки с padding и одновременные вызовы Stop.
-Проверено, что ошибка кодировщика отображается как ошибка, а не успешное сохранение.
+This section records the state on that date. Later hardware checks and changes
+are documented in [HARDWARE_SETUP.md](docs/HARDWARE_SETUP.md),
+[CONNECTION_CHECK_2026-09-29.md](docs/CONNECTION_CHECK_2026-09-29.md),
+[LIMITS_AND_JOG.md](docs/LIMITS_AND_JOG.md), and
+[PYTHON_BACKEND.md](docs/PYTHON_BACKEND.md).
 
-### До работы на установке
+At this stage, the application was a working simulation prototype; readiness
+for experiments on real equipment had not been confirmed. Verification covered
+a warning-free build, a simulated manipulator connection, a 10 µm X step, live
+camera preview, and closing the window during capture. Automated checks passed.
+Bundled FFmpeg recording was tested with an empty PATH: MP4 creation and complete
+decoding, repeated Record, Stop live, closing during recording, padded image
+rows, and concurrent Stop calls. Encoder failures were reported as errors
+rather than successful saves.
 
-- **Камера:** добавлены выбор Windows/USB DirectShow и адаптация к KERN ODC 825; подробности в [инструкции подключения](docs/HARDWARE_SETUP.md). Для полного управления нужны
-  SDK/драйвер, реализация ICamera и проверка режимов, формата/stride буфера, FPS,
-  экспозиции, усиления и восстановления после отключения.
-- **L&N:** подтвердить модель контроллера и протокол, COM-порты, номера осей,
-  направления, единицы и пределы на установке. Проверить таймауты и повторное
-  подключение. Обычный сценарий Disconnect → Connect в симуляции исправлен и
-  проверяется автоматически; для переданного извне ILnTransport возможность
-  повторного открытия по-прежнему зависит от реализации транспорта.
-- **Останов и связки:** новый SM-10 binary использует аппаратную команду 00FF. В старом ASCII-драйвере Stop реализован как движение в прочитанную
-  Reference-позицию, а отпускание клавиши прекращает отправку новых шагов.
-  Это не подтверждённый аппаратный останов. Проверить фактическую координату,
-  останов, потерю связи и поведение при закрытии окна во время движения.
-  MotionService зеркалит запрошенное смещение до учёта ограничения ведущей оси;
-  для коэффициентов, отличных от ±1, нужно определить обратное преобразование.
-- **Запись:** дополнительно проверить длительность и число кадров при нестабильном
-  FPS/переполнении очереди, смену режимов реальной камеры, отсутствие места и
-  длительные записи. MP4 пока использует постоянный FPS, а не временные метки кадров.
-  Запуск и остановка сериализованы; каждая запись имеет собственные очередь,
-  процесс и задачу записи, завершение MP4 ожидается до освобождения процесса.
+### Checks before operating the installation
 
-### До передачи другим пользователям
+- **Camera:** Windows/USB DirectShow selection and KERN ODC 825 support were added; see the [connection guide](docs/HARDWARE_SETUP.md). Full control requires the SDK/driver, an ICamera implementation, and checks of modes, buffer format/stride, FPS, exposure, gain, and recovery after disconnection.
+- **L&N:** confirm controller model and protocol, COM ports, axis addresses, directions, units, and limits on the installation. Check timeouts and reconnection. Disconnect → Connect in simulation was fixed and is tested automatically; reopening an externally supplied ILnTransport still depends on that implementation.
+- **Stop and links:** SM-10 binary uses hardware command 00FF. In the legacy ASCII driver, Stop moves to the last read Reference position, and releasing a key stops new step requests. This is not a verified hardware stop. Check actual coordinates, stopping, communication loss, and closing during motion. In this historical implementation, MotionService mirrored the requested displacement before applying the leader's limit; coefficients other than ±1 required an inverse transformation.
+- **Recording:** check duration and frame count with unstable FPS or queue overflow, real camera mode changes, full disks, and long recordings. MP4 uses a constant frame rate rather than frame timestamps. Start and Stop are serialized; each recording owns its queue, process, and writer task. MP4 finalization is awaited before releasing the process.
 
-- Проверка конфигурации до создания устройств: дубликаты ID/клавиш, неизвестные
-  оси/драйверы, null, неправильные диапазоны, пустые списки и удобные сообщения.
-- Пользовательские профили вне каталога сборки, атомарное сохранение и сохранение
-  выбранных параметров изображения. Экспорт журнала эксперимента: сейчас это
-  последние 500 записей в памяти.
-- Общий программный Stop с определённой семантикой и блокировкой новых движений;
-  восстановление соединения после ошибок, проверка связанного движения на пределах.
-- Проверка автономного дистрибутива на чистом Windows и на целевых мониторах/DPI.
+### Checks before distributing to other users
 
-### Изменения интерфейса и исправления
+- Validate configuration before creating devices: duplicate IDs/keys, unknown axes/drivers, null values, invalid ranges, empty lists, and useful error messages.
+- Store user profiles outside the build directory, save atomically, and persist image settings. Export the experiment log; at this stage it held the last 500 entries in memory.
+- Define a shared software Stop and block further motion after faults; verify reconnection and linked motion at limits.
+- Test the self-contained distribution on a clean Windows installation and the target monitors/DPI settings.
 
-Общие стили в Theme.xaml, карточки устройств, подписи полей осей, просторная
-компоновка, сворачиваемые настройки записи, отметка SIMULATION, строка последнего
-события и сохранение конфигурации в шапке. Окно камеры имеет стартовый экран.
-Журнал переносит фоновые события в UI-поток; связи сохраняют своё состояние;
-шаг/цель проверяют конечность и диапазон. Закрытие завершает камеру/рекордер и
-освобождает устройства. Ожидание очереди FFmpeg ограничено таймаутом, счётчик
-отброшенных кадров теперь использует отказ TryWrite, а имена включают миллисекунды.
+### Interface changes and fixes
 
+Shared styles in Theme.xaml, device cards, axis field labels, a roomier layout,
+collapsible recording settings, a SIMULATION indicator, the latest event, and
+configuration saving in the header were added. The camera window has a startup
+screen. The log marshals background events to the UI thread; links retain their
+state; step/target values are checked for finiteness and range. Closing stops
+the camera/recorder and releases devices. FFmpeg queue waits have a timeout,
+dropped-frame counting uses failed TryWrite calls, and filenames include milliseconds.
