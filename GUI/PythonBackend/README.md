@@ -113,8 +113,10 @@ blocked pending clarification of its format by the manufacturer.
 ## Video processing
 
 `tracking.py` implements manual initialization, two-landmark tracking, and loss
-thresholds; `vision.py` handles video and logging. Open Camera → Offline tracking ·
-video. See `docs/OFFLINE_TRACKING.md` in the source project. This mode has no
+thresholds; `vision.py` handles video and logging. Open the camera live-view window; Segment and Track run the bundled models.
+Open test video provides temporary file playback for model verification. See `docs/OFFLINE_TRACKING.md` in the source project. This mode has no
 hardware access. When first upgrading to this version, copy the entire
 application folder: bundled OpenCV and NumPy were added alongside the new `.py`
 files. Updating only Python source files does not install these dependencies.
+
+`segmentation.py` runs bundled ONNX models and image-space identities without motor access. See `docs/VIDEO_ANALYSIS_AND_LOGGING.md` for the unified window and coordinate CSV format.

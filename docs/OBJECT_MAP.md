@@ -1,5 +1,7 @@
 # Object observations and return navigation
 
+Historical standalone window: its main-window button has been removed. Use the unified camera/video window described in [VIDEO_ANALYSIS_AND_LOGGING.md](VIDEO_ANALYSIS_AND_LOGGING.md).
+
 The Object map button opens a Python-backed observation bookmark editor. Connect
 positioners, stop motion, name the object, choose its type, and save the current
 view. Each axis is explicitly read and stored with C1 reference coordinates,

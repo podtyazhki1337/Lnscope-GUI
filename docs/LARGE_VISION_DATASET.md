@@ -86,8 +86,9 @@ use a new directory for a new experiment.
 ## GUI integration boundary
 
 Training runs in the isolated ML environment; the published GUI's embedded
-Python remains independent of PyTorch and Ultralytics. These new weights are not
-yet wired into Offline tracking or camera capture.
+Python remains independent of PyTorch and Ultralytics. These weights are now connected experimentally to the unified camera/video
+window; see [VIDEO_ANALYSIS_AND_LOGGING.md](VIDEO_ANALYSIS_AND_LOGGING.md).
+Native-frame annotation restoration is in [FULL_FRAME_ANNOTATIONS.md](FULL_FRAME_ANNOTATIONS.md).
 
 Before integration, evaluate both models on held-out videos and actual KERN
 frames, including empty scenes and pipette motion. Cell metrics on selected

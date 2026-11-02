@@ -1,28 +1,43 @@
 <Window x:Class="GUI.CameraWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Camera" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize" MinWidth="480" MinHeight="360"
+        Title="Camera" Width="1180" Height="820" MinWidth="780" MinHeight="500"
         Background="#111" FontFamily="Segoe UI" FontSize="13"
         KeyDown="OnKeyDown" KeyUp="OnKeyUp" Deactivated="OnDeactivated" Focusable="True">
-    <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <StackPanel.Style>
-                <Style TargetType="StackPanel">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                    <Style.Triggers><DataTrigger Binding="{Binding Image}" Value="{x:Null}"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
-                </Style>
-            </StackPanel.Style>
-            <TextBlock Text="Live view" Foreground="White" FontSize="24" HorizontalAlignment="Center" />
-            <TextBlock Text="Connect the camera, then start the live stream." Foreground="#A4B5C7" Margin="0,10,0,20" />
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Connect" Command="{Binding ConnectCommand}" Margin="0,0,8,0" />
-                <Button Content="Start live" Command="{Binding StartCommand}" Style="{StaticResource PrimaryButton}" />
-            </StackPanel>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Background="#F1F5F9" Margin="0" >
+            <WrapPanel Margin="10">
+                <Button Content="Connect" Command="{Binding ConnectCommand}" Margin="0,0,6,0" />
+                <Button Content="Start live" Command="{Binding StartCommand}" Margin="0,0,6,0" />
+                <Button Content="Stop live" Command="{Binding StopCommand}" Margin="0,0,12,0" />
+                <Button x:Name="RecordButton" Content="Record" Command="{Binding RecordCommand}" Margin="0,0,6,0" />
+                <Button Content="Stop recording" Command="{Binding StopRecordingCommand}" Margin="0,0,18,0" />
+                <ToggleButton x:Name="Segment" Content="Segment" Checked="OnAnalysisChanged" Unchecked="OnAnalysisChanged" Padding="12,7" Margin="0,0,6,0" />
+                <ToggleButton x:Name="Track" Content="Track" Checked="OnAnalysisChanged" Unchecked="OnAnalysisChanged" Padding="12,7" Margin="0,0,12,0" />
+                <TextBlock Text="Confidence" VerticalAlignment="Center" />
+                <Slider x:Name="Confidence" Minimum="0.1" Maximum="0.95" Value="0.55" Width="90" Margin="8,0" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding Value, ElementName=Confidence, StringFormat=F2}" VerticalAlignment="Center" />
+            </WrapPanel>
+            <WrapPanel Margin="10,0,10,8">
+                <Button Content="Open test video" Click="OnOpenVideo" Margin="0,0,6,0" />
+                <Button Content="Live camera" Click="OnLive" Margin="0,0,12,0" />
+                <Button x:Name="Play" Content="Play / pause" Click="OnPlay" IsEnabled="False" Margin="0,0,6,0" />
+                <Button x:Name="Next" Content="Next frame" Click="OnNext" IsEnabled="False" Margin="0,0,12,0" />
+                <TextBox x:Name="SeekSeconds" Text="0" Width="70" Margin="0,0,6,0" />
+                <Button x:Name="Seek" Content="Seek (s)" Click="OnSeek" IsEnabled="False" Margin="0,0,12,0" />
+                <TextBlock x:Name="SourceLabel" Text="Live camera" VerticalAlignment="Center" />
+            </WrapPanel>
         </StackPanel>
-        <Image Source="{Binding Image}"
-               Width="{Binding DisplayWidth}"
-               Height="{Binding DisplayHeight}"
-               Stretch="Fill"
-               RenderOptions.BitmapScalingMode="LowQuality" />
-    </Grid>
+        <StackPanel DockPanel.Dock="Bottom" Margin="10">
+            <TextBlock x:Name="AnalysisStatus" Foreground="White" Text="Start the camera, or open a test video. Segment and Track are visual tools only." TextWrapping="Wrap" />
+            <TextBlock x:Name="SelectionStatus" Foreground="#FFCC66" Text="Click an outline to select a track. Cell detection is experimental." TextWrapping="Wrap" />
+            <TextBlock Text="{Binding RecordingStatus}" Foreground="#A4B5C7" />
+        </StackPanel>
+        <Viewbox Stretch="Uniform" Margin="8">
+            <Grid x:Name="ImageSurface" Width="640" Height="480" Background="#202020">
+                <Image x:Name="Preview" Stretch="Fill" RenderOptions.BitmapScalingMode="LowQuality" />
+                <Canvas x:Name="Overlay" Background="Transparent" MouseLeftButtonDown="OnSelect" />
+            </Grid>
+        </Viewbox>
+    </DockPanel>
 </Window>

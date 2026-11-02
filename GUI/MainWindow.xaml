@@ -1,4 +1,4 @@
-﻿<Window x:Class="GUI.MainWindow"
+<Window x:Class="GUI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:devices="clr-namespace:LnScope.Core.Devices;assembly=LnScope.Core"
@@ -276,8 +276,6 @@
             <TabItem Header="Camera">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="8">
                     <StackPanel>
-                        <Button Content="Offline tracking · video" Margin="0,0,0,8" Click="OnOfflineTracking" />
-                        <Button Content="Object map · saved observations" Margin="0,0,0,8" Click="OnObjectMap" />
                         <Button Content="Open live view" Style="{StaticResource PrimaryButton}" Margin="0,0,0,12" Click="OnOpenCameraWindow" />
                         <ItemsControl ItemsSource="{Binding Cameras}" ItemTemplate="{StaticResource CameraControlsTemplate}" />
                     </StackPanel>

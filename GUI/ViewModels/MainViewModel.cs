@@ -20,6 +20,7 @@ public sealed class MainViewModel : ViewModelBase
     private readonly AppConfig _config;
     private readonly string _configPath;
     private readonly Dispatcher _dispatcher;
+    private readonly GUI.Recording.PositionTelemetry _telemetry;
 
     private double _jogStep;
 
@@ -41,9 +42,10 @@ public sealed class MainViewModel : ViewModelBase
         Positioners = new ObservableCollection<PositionerViewModel>(
             positioners.Select(positioner => new PositionerViewModel(positioner, Motion, dispatcher, Log)));
 
+        _telemetry = new GUI.Recording.PositionTelemetry(positioners);
         Cameras = new ObservableCollection<CameraViewModel>(
             config.Cameras.Select(options => new CameraViewModel(
-                factory.CreateCamera(options), options, config.Recording, dispatcher, Log)));
+                factory.CreateCamera(options), options, config.Recording, dispatcher, Log, _telemetry.Snapshot)));
 
         DeviceIds = positioners.Select(p => p.Id).ToArray();
 
@@ -98,6 +100,7 @@ public sealed class MainViewModel : ViewModelBase
             catch (Exception exception) { Log($"{positioner.Id}: shutdown error — {exception.Message}"); }
         }
         await Motion.DisposeAsync();
+        _telemetry.Dispose();
     }
 
     public JogController Jog { get; }

@@ -1,5 +1,7 @@
 # Offline tracking prototype
 
+Historical standalone window: its main-window button has been removed. Use the unified camera/video window described in [VIDEO_ANALYSIS_AND_LOGGING.md](VIDEO_ANALYSIS_AND_LOGGING.md).
+
 Closing this window releases its Python worker and returns to the main window.
 Final closure is dispatched after the current WPF Closing event returns, including
 when cleanup completes synchronously. Regression checks cover closing before and

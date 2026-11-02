@@ -1,0 +1,22 @@
+{
+  "spheroid": {
+    "source_sha256": "2db211c325c5ed74775bb683bed565311dbf8008e80ab02bd2a1a38e96c1968c",
+    "sha256": "eef2a04377c60860f902c7a229dfca03599cbd2d3a6699e7d335fcc3281542db",
+    "input_size": 512
+  },
+  "cell": {
+    "source_sha256": "c3921004200c8a65748e53c9d3728d90957c0236645b44a6ee4f3e790257cdeb",
+    "sha256": "b1d46557afca03a4a3641a9af8e3a3e479238bd5e9ee5b604ae5ce74710cf83f",
+    "input_size": 512
+  },
+  "status": "Experimental crop-trained cell model; full-frame retraining pending",
+  "classes": {
+    "cell": [
+      "cell",
+      "cell_group"
+    ],
+    "spheroid": [
+      "spheroid"
+    ]
+  }
+}

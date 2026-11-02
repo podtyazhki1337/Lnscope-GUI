@@ -18,6 +18,7 @@ def emit(message):
 def serve():
     positioner = None
     vision = None
+    segmentation = None
     from object_map import ObjectMap
     object_map = ObjectMap()
     for line in sys.stdin:
@@ -38,7 +39,12 @@ def serve():
             return base64.b64decode(reply["data"], validate=True)
 
         try:
-            if request["method"].startswith("map_"):
+            if request["method"].startswith("segment_"):
+                if segmentation is None:
+                    from segmentation import SegmentSession
+                    segmentation = SegmentSession()
+                result = segmentation.call(request["method"], request["args"])
+            elif request["method"].startswith("map_"):
                 result = object_map.call(request["method"], request["args"])
             elif request["method"].startswith("vision_"):
                 if vision is None:

@@ -33,7 +33,7 @@ public sealed class CameraViewModel : ViewModelBase
     private readonly object _recordingGate = new();
 
     public CameraViewModel(ICamera camera, CameraOptions options, RecordingOptions recording,
-        Dispatcher dispatcher, Action<string> log)
+        Dispatcher dispatcher, Action<string> log, Func<IReadOnlyList<AxisTelemetry>>? telemetry = null)
     {
         _camera = camera;
         _options = options;
@@ -45,7 +45,7 @@ public sealed class CameraViewModel : ViewModelBase
         _flipHorizontal = options.FlipHorizontal;
         _flipVertical = options.FlipVertical;
 
-        _recorder = new VideoRecorder(recording, log);
+        _recorder = new VideoRecorder(recording, log, telemetry);
 
         ConnectCommand = new AsyncRelayCommand(ConnectAsync, () => State is DeviceState.Disconnected or DeviceState.Faulted)
             { ErrorHandler = HandleError };
