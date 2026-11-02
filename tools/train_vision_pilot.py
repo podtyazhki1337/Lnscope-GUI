@@ -54,15 +54,20 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--epochs", type=int, default=120)
+    parser.add_argument("--imgsz", type=int, help="Override training and evaluation image size (multiple of 32).")
     parser.add_argument("--task", choices=list(BATCHES))
     parser.add_argument("--preset", choices=("initial", "small-data"), default="small-data")
     parser.add_argument("--eval-split", choices=("val", "test"), default="val")
     parser.add_argument("--dataset", type=Path)
     parser.add_argument("--runs", type=Path)
     args = parser.parse_args()
+    if args.imgsz is not None and (args.imgsz < 32 or args.imgsz % 32):
+        parser.error("--imgsz must be a positive multiple of 32.")
     root = Path(__file__).resolve().parents[1]
     dataset = args.dataset.resolve() if args.dataset else root / "datasets/yolo_pilot_v1"
     if not dataset.exists():
+        if args.dataset:
+            parser.error("The explicit dataset must already exist; prepare and validate it first.")
         prepare(root, dataset)
     if args.prepare_only:
         return
@@ -83,6 +88,8 @@ def main():
             settings.update(imgsz=384, batch=4, nbs=4, freeze=0, patience=30,
                             warmup_epochs=0, optimizer="AdamW", lr0=.001, lrf=.1,
                             degrees=5, translate=.05, scale=.1, amp=False)
+        if args.imgsz is not None:
+            settings["imgsz"] = args.imgsz
         model.train(data=str(dataset / task / "data.yaml"), epochs=args.epochs,
                     device=0, workers=0, seed=42,
                     project=str(runs), name=task, exist_ok=False,

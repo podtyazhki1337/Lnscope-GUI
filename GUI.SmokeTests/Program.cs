@@ -32,6 +32,7 @@ internal static class Program
 
     private static async Task RunAsync(Dispatcher dispatcher)
     {
+        await WindowLifetimeChecks.RunAsync();
         await HardwareChecks.RunAsync();
         await Sm10CommandChecks.RunAsync();
         await MotionSafetyChecks.RunAsync();

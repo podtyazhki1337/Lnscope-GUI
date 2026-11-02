@@ -38,7 +38,8 @@ public partial class TrackingWindow : Window
             Pause();
             await _worker.DisposeAsync();
             _closed = true;
-            Close();
+            // Cleanup can complete synchronously; let the current Closing event return first.
+            await Dispatcher.InvokeAsync(Close);
         };
     }
     private void Pause() { _playing = false; _timer.Stop(); }
@@ -84,7 +85,7 @@ public partial class TrackingWindow : Window
         if (offset.ValueKind == JsonValueKind.Null) OffsetInfo.Text = "Offset unavailable: select / restore both points.";
         else
         {
-            OffsetInfo.Text = $"Target − tip\nΔX {offset.GetProperty("dx").GetDouble():0.0} px\nΔY {offset.GetProperty("dy").GetDouble():0.0} px\nDistance {offset.GetProperty("distance").GetDouble():0.0} px";
+            OffsetInfo.Text = $"Target в€’ tip\nО”X {offset.GetProperty("dx").GetDouble():0.0} px\nО”Y {offset.GetProperty("dy").GetDouble():0.0} px\nDistance {offset.GetProperty("distance").GetDouble():0.0} px";
             var tip = tracks.GetProperty("tip"); var target = tracks.GetProperty("target");
             Overlay.Children.Insert(0, new Line { X1 = tip.GetProperty("x").GetDouble(), Y1 = tip.GetProperty("y").GetDouble(),
                 X2 = target.GetProperty("x").GetDouble(), Y2 = target.GetProperty("y").GetDouble(), Stroke = Brushes.White, StrokeThickness = 1 });
@@ -92,8 +93,8 @@ public partial class TrackingWindow : Window
         bool eof = frame.GetProperty("eof").GetBoolean();
         if (lost || eof) Pause();
         _timer.Interval = TimeSpan.FromMilliseconds(Math.Clamp(1000/frame.GetProperty("fps").GetDouble(), 15, 2000));
-        Status.Text = $"Frame {frame.GetProperty("frame").GetInt32()+1}/{frame.GetProperty("count").GetInt32()} · video {frame.GetProperty("time_ms").GetDouble()/1000:0.000} s · tracking {frame.GetProperty("elapsed_ms").GetDouble():0.0} ms · image scale {frame.GetProperty("scale").GetDouble():0.###} · CSV: last {frame.GetProperty("log_rows").GetInt32()} rows" +
-            (lost ? " · PAUSED: tracking lost; reselect." : eof ? " · End of video." : " · Pixel coordinates; no motor commands.");
+        Status.Text = $"Frame {frame.GetProperty("frame").GetInt32()+1}/{frame.GetProperty("count").GetInt32()} В· video {frame.GetProperty("time_ms").GetDouble()/1000:0.000} s В· tracking {frame.GetProperty("elapsed_ms").GetDouble():0.0} ms В· image scale {frame.GetProperty("scale").GetDouble():0.###} В· CSV: last {frame.GetProperty("log_rows").GetInt32()} rows" +
+            (lost ? " В· PAUSED: tracking lost; reselect." : eof ? " В· End of video." : " В· Pixel coordinates; no motor commands.");
     }
     private async void OnOpen(object sender, RoutedEventArgs e)
     {

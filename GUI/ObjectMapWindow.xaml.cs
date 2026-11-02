@@ -33,7 +33,8 @@ public partial class ObjectMapWindow : Window
             if (_busy) return;
             _closed = true;
             await _worker.DisposeAsync();
-            Close();
+            // Cleanup can complete synchronously; let the current Closing event return first.
+            await Dispatcher.InvokeAsync(Close);
         };
     }
 

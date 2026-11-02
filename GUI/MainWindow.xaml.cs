@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
@@ -95,7 +95,8 @@ public partial class MainWindow : Window
         foreach (var window in _cameraWindows.Values.ToArray()) window.Close();
         await _model.ShutdownAsync();
         _shutdownComplete = true;
-        Close();
+        // Cleanup can complete synchronously; let the current Closing event return first.
+        await Dispatcher.InvokeAsync(Close);
     }
 
     private static AppConfig LoadConfig(string path)

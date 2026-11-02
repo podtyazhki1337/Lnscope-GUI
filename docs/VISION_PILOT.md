@@ -1,5 +1,9 @@
 # Offline YOLO pilot
 
+For the larger reviewed dataset and current training command, see
+[LARGE_VISION_DATASET.md](LARGE_VISION_DATASET.md). The small datasets and run
+results below are retained as historical pilot records.
+
 This is an offline training experiment, not a live motion controller. The GUI and
 embedded application Python do not depend on this training environment.
 

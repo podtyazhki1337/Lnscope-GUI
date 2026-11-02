@@ -1,0 +1,341 @@
+{
+  "status": "Explicit AI visual review: no visible cells or spheroid; includes pipette and background",
+  "samples": [
+    {
+      "index": 2,
+      "case": "spheroid_04_C1_260803084508-H-M-01_f000232",
+      "local_frame": 0,
+      "source_frame": 232,
+      "source_sha256": "b8c8c03239e985270fff70df87d2771551bd00cf8e66c323ec65a37bca55b020",
+      "split": "test",
+      "crop": [
+        448,
+        0,
+        640,
+        192
+      ]
+    },
+    {
+      "index": 3,
+      "case": "spheroid_04_C1_260803084508-H-M-01_f000232",
+      "local_frame": 0,
+      "source_frame": 232,
+      "source_sha256": "b8c8c03239e985270fff70df87d2771551bd00cf8e66c323ec65a37bca55b020",
+      "split": "test",
+      "crop": [
+        448,
+        288,
+        640,
+        480
+      ]
+    },
+    {
+      "index": 4,
+      "case": "spheroid_04_C1_260803084508-H-M-01_f000232",
+      "local_frame": 0,
+      "source_frame": 232,
+      "source_sha256": "b8c8c03239e985270fff70df87d2771551bd00cf8e66c323ec65a37bca55b020",
+      "split": "test",
+      "crop": [
+        224,
+        144,
+        416,
+        336
+      ]
+    },
+    {
+      "index": 5,
+      "case": "spheroid_06_C2_260731115750-H-S-12_f000124",
+      "local_frame": 0,
+      "source_frame": 124,
+      "source_sha256": "9bb4597d270c49f93e53f8c6a96b9fe9b7ab1ce199b33f95cd24b7b1b323dc52",
+      "split": "val",
+      "crop": [
+        448,
+        0,
+        640,
+        192
+      ]
+    },
+    {
+      "index": 8,
+      "case": "spheroid_07_C3_260730142937-H-M-03_f000528",
+      "local_frame": 0,
+      "source_frame": 528,
+      "source_sha256": "494244be1d0fe7d1fbb9cc275a283b28df95380a474885c463e64d42d759a8c3",
+      "split": "train",
+      "crop": [
+        448,
+        288,
+        640,
+        480
+      ]
+    },
+    {
+      "index": 9,
+      "case": "spheroid_09_C3_260730155938-H-M-11_f000479",
+      "local_frame": 0,
+      "source_frame": 479,
+      "source_sha256": "f71434c971c47cd9bef985f85f5e3df7776ee4a0e8fc4b2cd8bc9db2cc9c748b",
+      "split": "train",
+      "crop": [
+        448,
+        0,
+        640,
+        192
+      ]
+    },
+    {
+      "index": 10,
+      "case": "spheroid_09_C3_260730155938-H-M-11_f000479",
+      "local_frame": 0,
+      "source_frame": 479,
+      "source_sha256": "f71434c971c47cd9bef985f85f5e3df7776ee4a0e8fc4b2cd8bc9db2cc9c748b",
+      "split": "train",
+      "crop": [
+        448,
+        288,
+        640,
+        480
+      ]
+    },
+    {
+      "index": 11,
+      "case": "spheroid_11_C4_20260730_H_01_f000322",
+      "local_frame": 0,
+      "source_frame": 322,
+      "source_sha256": "06ce98fe2b38726020da489d2bd7052d98a7c3f9e6f4ab2ea3c6f330b6be4d70",
+      "split": "train",
+      "crop": [
+        448,
+        0,
+        640,
+        192
+      ]
+    },
+    {
+      "index": 12,
+      "case": "spheroid_11_C4_20260730_H_01_f000322",
+      "local_frame": 0,
+      "source_frame": 322,
+      "source_sha256": "06ce98fe2b38726020da489d2bd7052d98a7c3f9e6f4ab2ea3c6f330b6be4d70",
+      "split": "train",
+      "crop": [
+        448,
+        288,
+        640,
+        480
+      ]
+    },
+    {
+      "index": 13,
+      "case": "spheroid_12_Eplus_20260803_H_M_02_02_f000501",
+      "local_frame": 0,
+      "source_frame": 501,
+      "source_sha256": "a6572ec634a38b965a529615a8e7f39e8e01b9426c0182368d7727448e1cc556",
+      "split": "test",
+      "crop": [
+        448,
+        0,
+        640,
+        192
+      ]
+    },
+    {
+      "index": 14,
+      "case": "spheroid_12_Eplus_20260803_H_M_02_02_f000501",
+      "local_frame": 0,
+      "source_frame": 501,
+      "source_sha256": "a6572ec634a38b965a529615a8e7f39e8e01b9426c0182368d7727448e1cc556",
+      "split": "test",
+      "crop": [
+        448,
+        288,
+        640,
+        480
+      ]
+    },
+    {
+      "index": 15,
+      "case": "spheroid_13_Eplus_20260812_H_M_01_01_f000368",
+      "local_frame": 0,
+      "source_frame": 368,
+      "source_sha256": "4605a8656d15a65831e04551d8305ba04c38f334947bc04ec0e821e4a186f44d",
+      "split": "train",
+      "crop": [
+        0,
+        0,
+        192,
+        192
+      ]
+    },
+    {
+      "index": 16,
+      "case": "spheroid_13_Eplus_20260812_H_M_01_01_f000368",
+      "local_frame": 0,
+      "source_frame": 368,
+      "source_sha256": "4605a8656d15a65831e04551d8305ba04c38f334947bc04ec0e821e4a186f44d",
+      "split": "train",
+      "crop": [
+        0,
+        288,
+        192,
+        480
+      ]
+    },
+    {
+      "index": 17,
+      "case": "spheroid_15_Eplus_20260901_T_D_01_01_f001157",
+      "local_frame": 0,
+      "source_frame": 1157,
+      "source_sha256": "30d54aec9c174f5d8998307d6d681519a04e69beebc0164b4fd720ea1177973c",
+      "split": "train",
+      "crop": [
+        448,
+        0,
+        640,
+        192
+      ]
+    },
+    {
+      "index": 18,
+      "case": "spheroid_15_Eplus_20260901_T_D_01_01_f001157",
+      "local_frame": 0,
+      "source_frame": 1157,
+      "source_sha256": "30d54aec9c174f5d8998307d6d681519a04e69beebc0164b4fd720ea1177973c",
+      "split": "train",
+      "crop": [
+        0,
+        288,
+        192,
+        480
+      ]
+    },
+    {
+      "index": 21,
+      "case": "spheroid_16_Eplus_20260904_T_D_01_02_f001068",
+      "local_frame": 0,
+      "source_frame": 1068,
+      "source_sha256": "3a6b2b511a3414e6cec71f00919235a997f7a182bc72271501bbfa649c6ac544",
+      "split": "val",
+      "crop": [
+        448,
+        288,
+        640,
+        480
+      ]
+    },
+    {
+      "index": 23,
+      "case": "spheroid_17_Eplus_20260925_H_M_01_01_f000017",
+      "local_frame": 0,
+      "source_frame": 17,
+      "source_sha256": "767bded60c9f4a27dc1ee347360461bf90fbcd6b1d8687fc3f66da2718f67eca",
+      "split": "train",
+      "crop": [
+        448,
+        288,
+        640,
+        480
+      ]
+    },
+    {
+      "index": 24,
+      "case": "spheroid_19_Eminus_20260917_T_S_01_02_f000236",
+      "local_frame": 0,
+      "source_frame": 236,
+      "source_sha256": "f5ec3a5e279a80361c0abce02ccfba5dd286a00b4fef3fff2351c4281bfe9c5a",
+      "split": "train",
+      "crop": [
+        448,
+        0,
+        640,
+        192
+      ]
+    },
+    {
+      "index": 25,
+      "case": "spheroid_19_Eminus_20260917_T_S_01_02_f000236",
+      "local_frame": 0,
+      "source_frame": 236,
+      "source_sha256": "f5ec3a5e279a80361c0abce02ccfba5dd286a00b4fef3fff2351c4281bfe9c5a",
+      "split": "train",
+      "crop": [
+        448,
+        288,
+        640,
+        480
+      ]
+    },
+    {
+      "index": 26,
+      "case": "spheroid_25_S_260731170441-H-M-16_f000154",
+      "local_frame": 0,
+      "source_frame": 154,
+      "source_sha256": "de904ff02c8af66edd2ea37fe9b5983aa609d53fe80783217cf26fc94352ac45",
+      "split": "val",
+      "crop": [
+        448,
+        0,
+        640,
+        192
+      ]
+    },
+    {
+      "index": 27,
+      "case": "spheroid_25_S_260731170441-H-M-16_f000154",
+      "local_frame": 0,
+      "source_frame": 154,
+      "source_sha256": "de904ff02c8af66edd2ea37fe9b5983aa609d53fe80783217cf26fc94352ac45",
+      "split": "val",
+      "crop": [
+        448,
+        288,
+        640,
+        480
+      ]
+    },
+    {
+      "index": 28,
+      "case": "spheroid_25_S_260731170441-H-M-16_f000154",
+      "local_frame": 0,
+      "source_frame": 154,
+      "source_sha256": "de904ff02c8af66edd2ea37fe9b5983aa609d53fe80783217cf26fc94352ac45",
+      "split": "val",
+      "crop": [
+        224,
+        144,
+        416,
+        336
+      ]
+    },
+    {
+      "index": 29,
+      "case": "spheroid_29_S_260904101151-T-M-01_f000200",
+      "local_frame": 0,
+      "source_frame": 200,
+      "source_sha256": "274ce1336f35993b902f9d04f33fbbc2a4659b25fa18c9f074e82300382237e9",
+      "split": "val",
+      "crop": [
+        448,
+        0,
+        640,
+        192
+      ]
+    },
+    {
+      "index": 30,
+      "case": "spheroid_29_S_260904101151-T-M-01_f000200",
+      "local_frame": 0,
+      "source_frame": 200,
+      "source_sha256": "274ce1336f35993b902f9d04f33fbbc2a4659b25fa18c9f074e82300382237e9",
+      "split": "val",
+      "crop": [
+        448,
+        288,
+        640,
+        480
+      ]
+    }
+  ]
+}

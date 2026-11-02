@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Windows;
@@ -53,7 +53,9 @@ public partial class Sm10CommandsWindow : Window
             _closing = true;
             await DisconnectAsync();
             await _catalogue.DisposeAsync();
-            _closed = true; Close();
+            _closed = true;
+            // Cleanup can complete synchronously; let the current Closing event return first.
+            await Dispatcher.InvokeAsync(Close);
         };
         Append("Python command backend. Read-only by default; no port opened, no probes or polling.");
     }
@@ -159,7 +161,7 @@ public partial class Sm10CommandsWindow : Window
         catch (BackendValidationException ex) { Append("Input error: " + ex.Message); }
         catch (Exception ex)
         {
-            bus.AbortPending(); Append("ERROR — connection latched, no retries: " + ex.Message);
+            bus.AbortPending(); Append("ERROR вЂ” connection latched, no retries: " + ex.Message);
             if (!_stopping && _targeted.Count > 0) await StopAsync(_targeted.ToArray());
         }
         finally { _busy = false; Send.IsEnabled = Command.SelectedItem is PythonConsoleCommand { Supported: true }; }
