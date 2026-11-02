@@ -29,10 +29,31 @@ internal static class VideoWindowChecks
             if (((Image)window.FindName("Preview")).Source is null)
                 throw new InvalidOperationException("Video preview missing after model inference.");
             window.UpdateLayout();
+            var surface = (FrameworkElement)window.FindName("ImageSurface");
+            var viewport = (ScrollViewer)window.FindName("VideoViewport");
+            var preview = (Image)window.FindName("Preview");
+            var source = (BitmapSource)preview.Source;
+            var dpi = VisualTreeHelper.GetDpi(window);
+            void Click(string name) => ((Button)window.FindName(name)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Click("NativeSizeButton"); window.UpdateLayout();
+            if (Math.Abs(((ScaleTransform)surface.LayoutTransform).ScaleX * dpi.DpiScaleX - 1) > .001)
+                throw new InvalidOperationException("Native zoom must map one image pixel to one physical pixel.");
+            Click("ZoomInButton"); window.UpdateLayout();
+            if (((ScaleTransform)surface.LayoutTransform).ScaleX * dpi.DpiScaleX <= 1)
+                throw new InvalidOperationException("Zoom in did not enlarge the native image.");
+            Click("FitSizeButton"); window.UpdateLayout();
+            if (surface.ActualWidth * ((ScaleTransform)surface.LayoutTransform).ScaleX > viewport.ActualWidth + 1)
+                throw new InvalidOperationException("Fit view exceeds the available viewport.");
+            if (!ReferenceEquals(source, preview.Source)) throw new InvalidOperationException("Display zoom replaced the source frame.");
             var bitmap = new RenderTargetBitmap((int)window.ActualWidth, (int)window.ActualHeight, 96, 96, PixelFormats.Pbgra32);
             bitmap.Render(window);
             var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
             using (var file = File.Create(Path.Combine(AppContext.BaseDirectory, "video-window-check.png"))) encoder.Save(file);
+            window.Width = window.MinWidth; window.Height = window.MinHeight; window.UpdateLayout();
+            bitmap = new RenderTargetBitmap((int)window.ActualWidth, (int)window.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(window);
+            encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
+            using (var file = File.Create(Path.Combine(AppContext.BaseDirectory, "video-window-small-check.png"))) encoder.Save(file);
             window.Close();
             await closed.Task.WaitAsync(TimeSpan.FromSeconds(10));
             if (!owner.IsVisible) throw new InvalidOperationException("Video window closed its owner.");

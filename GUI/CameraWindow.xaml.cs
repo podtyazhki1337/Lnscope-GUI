@@ -22,11 +22,12 @@ public partial class CameraWindow : Window
     private readonly CameraViewModel _camera;
     private readonly JogController _jog;
     private readonly PythonWorker _analysis = new(null, timeoutMs: 4500, maxResponseLength: 4 * 1024 * 1024);
-    private readonly PythonWorker _video = new(null, maxResponseLength: 4 * 1024 * 1024);
+    private readonly PythonWorker _video = new(null, maxResponseLength: 32 * 1024 * 1024);
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromMilliseconds(250) };
     private bool _busy, _closing, _closed, _fileMode, _playing, _reset = true;
     private bool _analyzePending;
     private bool _fitVideo;
+    private bool _updatingZoom;
     private int _generation;
     private int? _selected;
     private double _videoTime;
@@ -39,6 +40,8 @@ public partial class CameraWindow : Window
         _camera = camera; _jog = jog; DataContext = camera; Owner = owner;
         Title = $"Camera - {camera.Id}";
         camera.PropertyChanged += OnCameraPropertyChanged;
+        camera.Zoom = 1;
+        DpiChanged += (_, _) => UpdateVideoScale();
         BindLive();
         _timer.Tick += async (_, _) => await TickAsync();
         _timer.Start();
@@ -65,26 +68,67 @@ public partial class CameraWindow : Window
         ImageSurface.Width = image.PixelWidth; ImageSurface.Height = image.PixelHeight;
         UpdateVideoScale();
     }
-    private void OnNativeSize(object sender, RoutedEventArgs e) { _fitVideo = false; UpdateVideoScale(); }
+    private void OnNativeSize(object sender, RoutedEventArgs e) => SetZoom(1);
     private void OnFitSize(object sender, RoutedEventArgs e) { _fitVideo = true; UpdateVideoScale(); }
+    private void OnZoomOut(object sender, RoutedEventArgs e) => SetZoom(CurrentZoom() / 1.25);
+    private void OnZoomIn(object sender, RoutedEventArgs e) => SetZoom(CurrentZoom() * 1.25);
+    private double CurrentZoom() => ((ScaleTransform)ImageSurface.LayoutTransform).ScaleX * VisualTreeHelper.GetDpi(this).DpiScaleX;
+    private void SetZoom(double value)
+    {
+        _fitVideo = false;
+        _camera.Zoom = Math.Clamp(value, .1, 4);
+        UpdateVideoScale();
+    }
+    private void OnVideoWheel(object sender, MouseWheelEventArgs e)
+    {
+        if ((Keyboard.Modifiers & ModifierKeys.Control) == 0) return;
+        SetZoom(CurrentZoom() * (e.Delta > 0 ? 1.15 : 1 / 1.15));
+        e.Handled = true;
+    }
+    private void OnFrameRateKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter || sender is not TextBox box) return;
+        box.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+        e.Handled = true;
+    }
+    private void OnBrowseOutputFolder(object sender, RoutedEventArgs e)
+    {
+        var dialog = new OpenFolderDialog
+        {
+            Title = "Select recording output folder",
+            InitialDirectory = Directory.Exists(_camera.OutputDirectory) ? _camera.OutputDirectory
+                : Environment.GetFolderPath(Environment.SpecialFolder.MyVideos)
+        };
+        if (dialog.ShowDialog(this) == true) _camera.OutputDirectory = dialog.FolderName;
+    }
     private void OnViewportSizeChanged(object sender, SizeChangedEventArgs e) => UpdateVideoScale();
     private void UpdateVideoScale()
     {
         if (VideoScale is null || ImageSurface is null || VideoViewport is null) return;
         var dpi = VisualTreeHelper.GetDpi(this);
         // At 100%, each image pixel occupies one physical display pixel, including high-DPI screens.
-        var scaleX = 1 / dpi.DpiScaleX;
-        var scaleY = 1 / dpi.DpiScaleY;
+        var zoom = _camera?.Zoom ?? 1;
+        var scaleX = zoom / dpi.DpiScaleX;
+        var scaleY = zoom / dpi.DpiScaleY;
         if (_fitVideo)
         {
             var scale = Math.Min(Math.Max(1, VideoViewport.ActualWidth - 20) / ImageSurface.Width,
                 Math.Max(1, VideoViewport.ActualHeight - 20) / ImageSurface.Height);
             scaleX = scaleY = scale;
+            if (_camera is not null)
+            {
+                _updatingZoom = true;
+                try { _camera.Zoom = Math.Clamp(scale * dpi.DpiScaleX, .1, 4); }
+                finally { _updatingZoom = false; }
+            }
         }
         ImageSurface.LayoutTransform = new ScaleTransform(scaleX, scaleY);
+        if (ZoomLabel is not null) ZoomLabel.Text = (_fitVideo ? "Fit · " : "") + $"{scaleX * dpi.DpiScaleX:P0}";
+        if (ResolutionLabel is not null) ResolutionLabel.Text = $"{ImageSurface.Width:0} × {ImageSurface.Height:0} px";
     }
     private void OnCameraPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName == nameof(CameraViewModel.Zoom) && !_updatingZoom) { _fitVideo = false; UpdateVideoScale(); }
         if (!_fileMode && e.PropertyName is nameof(CameraViewModel.CurrentMode) or nameof(CameraViewModel.Image))
         {
             _generation++; _reset = true; Overlay.Children.Clear();
@@ -183,6 +227,7 @@ public partial class CameraWindow : Window
     }
     private void OnSelect(object sender, MouseButtonEventArgs e)
     {
+        Focus();
         if (_result.ValueKind != JsonValueKind.Object) return;
         var point = e.GetPosition(Overlay);
         foreach (var obj in _result.GetProperty("objects").EnumerateArray().Reverse())
@@ -206,10 +251,11 @@ public partial class CameraWindow : Window
         _busy = true; _jog.ReleaseAll();
         try
         {
-            var frame = await _video.CallAsync("vision_open", new { path });
+            var frame = await _video.CallAsync("vision_open", new { path, native_resolution = true });
             if (_closing) return;
             _fileMode = true; _playing = false; _generation++; _reset = true; _selected = null;
             RecordButton.IsEnabled = false; Play.IsEnabled = Next.IsEnabled = Seek.IsEnabled = true;
+            LiveSettings.IsEnabled = false;
             Overlay.Children.Clear(); ShowVideo(frame); await AnalyzeAsync();
         }
         catch (Exception error) { AnalysisStatus.Text = error.Message; }
@@ -221,6 +267,7 @@ public partial class CameraWindow : Window
         _fileMode = false; _playing = false; _generation++; _reset = true; _selected = null;
         _result = default; _timer.Interval = TimeSpan.FromMilliseconds(250);
         Play.IsEnabled = Next.IsEnabled = Seek.IsEnabled = false; RecordButton.IsEnabled = true;
+        LiveSettings.IsEnabled = true;
         Overlay.Children.Clear(); SourceLabel.Text = "Live camera"; BindLive();
     }
     private void OnPlay(object sender, RoutedEventArgs e) { if (_fileMode) _playing = !_playing; }
@@ -244,7 +291,7 @@ public partial class CameraWindow : Window
     }
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
-        if (_fileMode || Keyboard.FocusedElement is TextBox or Slider) return;
+        if (_fileMode || Sidebar.IsKeyboardFocusWithin || Keyboard.FocusedElement is TextBox or Slider or ComboBox) return;
         if (_jog.HandleKeyDown(e)) e.Handled = true;
     }
     private void OnKeyUp(object sender, KeyEventArgs e) { if (!_fileMode && _jog.HandleKeyUp(e)) e.Handled = true; }

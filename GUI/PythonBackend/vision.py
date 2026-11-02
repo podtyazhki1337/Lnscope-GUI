@@ -23,6 +23,7 @@ class VideoSession:
         self.path = ""
         self.count = 0
         self.scale = 1.0
+        self.native_resolution = False
 
     def read(self, track):
         ok, frame = self.capture.read()
@@ -32,7 +33,7 @@ class VideoSession:
         self.frame_index = max(0, int(self.capture.get(cv2.CAP_PROP_POS_FRAMES))-1)
         self.time_ms = max(0.0, self.capture.get(cv2.CAP_PROP_POS_MSEC))
         h, w = frame.shape[:2]
-        self.scale = min(1.0, 1280/w, 960/h)
+        self.scale = 1.0 if self.native_resolution else min(1.0, 1280/w, 960/h)
         if self.scale < 1:
             frame = cv2.resize(frame, (round(w*self.scale), round(h*self.scale)), interpolation=cv2.INTER_AREA)
         self.frame = frame
@@ -78,6 +79,7 @@ class VideoSession:
 
     def call(self, method, args):
         if method == "vision_open":
+            self.native_resolution = bool(args.get("native_resolution", False))
             path = Path(args["path"])
             if not path.is_file():
                 raise ValueError("Select an existing local video file.")

@@ -6,10 +6,10 @@ ID. Missing objects are marked lost rather than automatically reacquired. Seek,
 source changes, and tracking resets invalidate previous associations. Ambiguous
 splits/merges and changes between cell/group classes create new IDs.
 
-**Open test video**, Play / pause, Next frame, and Seek provide the temporary
+**Test video > Open video**, Play / pause, Next frame, and Seek provide the temporary
 recording-review mode requested for model verification. **Live camera** returns
 to capture. Motion hotkeys are ignored in test-video mode and while editing
-text or confidence. The standalone Offline tracking and Object map buttons have
+any control in the sidebar. The standalone Offline tracking and Object map buttons have
 been removed from the main window; their source files remain for historical
 reference. Analysis does not issue motor commands or estimate machine coordinates.
 
@@ -81,3 +81,22 @@ view maps one image pixel to one physical display pixel, including high-DPI
 displays; scrollbars expose portions beyond the available viewport. **Fit to
 window** scales the image to the available area. Mask coordinates remain in the
 native image coordinate system in both modes.
+
+The right sidebar groups View, Analysis, Acquisition, Recording and Test video.
+Sensor mode, target frame rate (including 0 for automatic), horizontal/vertical
+flips, device image properties, output folder, connection and recording controls
+have moved here from the main window. The main window keeps camera status and
+an entry point to the workspace. Acquisition controls are disabled while reviewing
+a file; switch back with Test video > Live camera.
+
+Display zoom ranges from 10% to 400% using the slider, plus/minus buttons or
+Ctrl + mouse wheel over the image. Native resets to 100%; Fit follows window
+resizes. Settings scroll independently of the video. Source pixels and overlay
+coordinates are preserved when zooming. The video workspace requests original
+file dimensions from the Python decoder, bypassing the legacy 1280 x 960 preview
+limit. Rendering a smaller view does not resize the source used for analysis.
+
+Validation covers native pixel scaling at the active display DPI, zoom in, Fit,
+unchanged source frames, normal/minimum-size window renders, model inference and
+independent window closure. A 1920 x 1080 decoder check confirms native dimensions
+while retaining the legacy scaled path for other callers.

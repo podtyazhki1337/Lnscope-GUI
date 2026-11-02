@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
@@ -152,13 +152,6 @@ public partial class MainWindow : Window
         }
     }
 
-    private void OnFrameRateKeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.Key != Key.Enter || sender is not TextBox box) return;
-        box.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
-        e.Handled = true;
-    }
-
     private void OnKeyUp(object sender, KeyEventArgs e)
     {
         if (_model.Jog.HandleKeyUp(e))
@@ -179,24 +172,4 @@ public partial class MainWindow : Window
         }
     }
 
-    private void OnBrowseOutputFolder(object sender, RoutedEventArgs e)
-    {
-        if (sender is not FrameworkElement { DataContext: CameraViewModel camera })
-        {
-            return;
-        }
-
-        var dialog = new OpenFolderDialog
-        {
-            Title = "Select recording output folder",
-            InitialDirectory = Directory.Exists(camera.OutputDirectory)
-                ? camera.OutputDirectory
-                : Environment.GetFolderPath(Environment.SpecialFolder.MyVideos)
-        };
-
-        if (dialog.ShowDialog(this) == true)
-        {
-            camera.OutputDirectory = dialog.FolderName;
-        }
-    }
 }

@@ -15,51 +15,6 @@
             <Setter Property="behaviors:WheelScroll.Enabled" Value="True" />
         </Style>
 
-        <DataTemplate DataType="{x:Type devices:NumericProperty}">
-            <Grid Margin="0,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="70" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center" />
-                <Slider Grid.Column="1" VerticalAlignment="Center" Margin="4,0"
-                        Minimum="{Binding Minimum}" Maximum="{Binding Maximum}"
-                        TickFrequency="{Binding Step}" IsSnapToTickEnabled="True"
-                        IsEnabled="{Binding IsReadOnly, Converter={StaticResource Not}}"
-                        Value="{Binding Value, Mode=TwoWay}" />
-                <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right"
-                           FontFamily="Consolas">
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0:0.##} {1}">
-                            <Binding Path="Value" />
-                            <Binding Path="Unit" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type devices:BooleanProperty}">
-            <CheckBox Margin="0,6" Content="{Binding Name}"
-                      IsChecked="{Binding Value, Mode=TwoWay}"
-                      IsEnabled="{Binding IsReadOnly, Converter={StaticResource Not}}" />
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type devices:ChoiceProperty}">
-            <Grid Margin="0,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center" />
-                <ComboBox Grid.Column="1" Margin="4,0"
-                          ItemsSource="{Binding Options}"
-                          SelectedItem="{Binding Value, Mode=TwoWay}"
-                          IsEnabled="{Binding IsReadOnly, Converter={StaticResource Not}}" />
-            </Grid>
-        </DataTemplate>
-
         <DataTemplate x:Key="AxisTemplate">
             <Border BorderBrush="#E8EDF3" BorderThickness="0,0,0,1" Padding="0,6">
                 <Border.Style>
@@ -166,79 +121,13 @@
         </DataTemplate>
 
         <DataTemplate x:Key="CameraControlsTemplate">
-            <StackPanel Margin="0,0,0,14">
-                <Grid Margin="0,0,0,6">
-                    <TextBlock Text="{Binding Id}" FontWeight="Bold" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding State}" Foreground="#666" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                </Grid>
-
-                <Border Background="#F0F5F8" CornerRadius="3" Padding="8,6" Margin="0,0,0,8">
-                    <StackPanel>
-                        <StackPanel.Resources>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontFamily" Value="Consolas" />
-                                <Setter Property="FontSize" Value="11" />
-                            </Style>
-                        </StackPanel.Resources>
-                        <TextBlock Text="{Binding CurrentMode, StringFormat=mode: {0}}" />
-                        <TextBlock Text="{Binding MeasuredFps, StringFormat=measured: {0:0.0} fps}" />
-                        <TextBlock Text="{Binding DroppedFrames, StringFormat=display dropped: {0}}" />
-                        <TextBlock Text="{Binding RecordingStatus, StringFormat=recording: {0}}" TextWrapping="Wrap" />
-                    </StackPanel>
-                </Border>
-
-                <UniformGrid Columns="2" Rows="2" Margin="0,0,0,8">
-                    <Button Content="Connect" Margin="0,0,4,0" Command="{Binding ConnectCommand}" />
-                    <Button Content="Disconnect" Margin="0,0,4,0" Command="{Binding DisconnectCommand}" />
-                    <Button Content="Start live" Margin="0,4,4,0" Style="{StaticResource PrimaryButton}" Command="{Binding StartCommand}" />
-                    <Button Content="Stop live" Margin="0,4,0,0" Command="{Binding StopCommand}" />
-                </UniformGrid>
-
+            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
                 <StackPanel>
-                    <TextBlock Text="Sensor mode" Foreground="#666" FontSize="11" Margin="0,4,0,2" />
-                    <ComboBox ItemsSource="{Binding Modes}" SelectedItem="{Binding SelectedMode}" />
-
-                    <Grid Margin="0,8,0,2">
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Window zoom" VerticalAlignment="Center" />
-                        <ComboBox Grid.Column="1" Margin="4,0" ItemsSource="{Binding ZoomLevels}" SelectedItem="{Binding Zoom}">
-                            <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding StringFormat={}{0:P0}}" /></DataTemplate></ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </Grid>
-
-                    <Grid Margin="0,6,0,2">
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Frame rate" VerticalAlignment="Center" />
-                        <TextBox Grid.Column="1" Margin="4,0" TextAlignment="Right" KeyDown="OnFrameRateKeyDown"
-                                 ToolTip="Enter 0 for automatic FPS, or a positive value. Enter or Tab saves. Windows camera changes apply on the next Start live." Text="{Binding TargetFps, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True}" />
-                    </Grid>
-                    <TextBlock Text="0 = automatic. Enter / Tab saves. Windows camera: Stop live → Start live to apply; actual FPS depends on the sensor mode." TextWrapping="Wrap" Foreground="#888" FontSize="11" Margin="104,0,0,6" />
-
-                    <Separator Margin="0,8" />
-                    <TextBlock Text="Image" FontWeight="Bold" Margin="0,0,0,4" />
-                    <CheckBox Content="Flip horizontal" IsChecked="{Binding FlipHorizontal}" Margin="0,3" />
-                    <CheckBox Content="Flip vertical" IsChecked="{Binding FlipVertical}" Margin="0,3" />
-                    <ItemsControl ItemsSource="{Binding Properties}" Margin="0,6,0,0" />
-
-                    <Separator Margin="0,8" />
-                    <Expander Header="Recording settings" IsExpanded="True" Margin="0,0,0,8"><StackPanel Margin="0,8,0,0">
-
-                    <TextBlock Text="Output folder" Foreground="#666" FontSize="11" />
-                    <Grid Margin="0,2,0,6">
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" Text="{Binding OutputDirectory, UpdateSourceTrigger=LostFocus}" />
-                        <Button Grid.Column="1" Content="…" Width="30" Margin="4,0,0,0" Click="OnBrowseOutputFolder" />
-                    </Grid>
-
-                    <TextBlock Text="{Binding RecordingStatus}" Foreground="#666" FontSize="11"
-                               TextWrapping="Wrap" Margin="0,0,0,6" />
-
-                    </StackPanel></Expander><UniformGrid Columns="2">
-                        <Button Content="● Record" Margin="0,0,4,0" Foreground="#B33447" Command="{Binding RecordCommand}" />
-                        <Button Content="Stop recording" Command="{Binding StopRecordingCommand}" />
-                    </UniformGrid>
+                    <TextBlock Text="{Binding Id}" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding State}" Foreground="#62758B" Margin="0,4" />
+                    <TextBlock Text="Camera settings, recording and image analysis are available in the video workspace." TextWrapping="Wrap" Foreground="#62758B" Margin="0,8,0,0" />
                 </StackPanel>
-            </StackPanel>
+            </Border>
         </DataTemplate>
     </Window.Resources>
 

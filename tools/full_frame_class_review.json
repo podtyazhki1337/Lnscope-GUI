@@ -662,6 +662,145 @@
       "rejected": {
         "1": "Nested interior mask or background; the outer cell boundary is retained."
       }
+    },
+    "28_260803092640-H-M-01_f001222": {
+      "annotation_complete": false,
+      "issues": [
+        "Review faint out-of-focus structures before deciding full-frame completeness."
+      ],
+      "objects": [
+        {
+          "key": "focused_group",
+          "source": "sam2",
+          "id": 2,
+          "class": "cell_group",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "0": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "1": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "3": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "4": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "5": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "6": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "7": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review."
+      }
+    },
+    "28_260803092640-H-M-01_f001230": {
+      "annotation_complete": false,
+      "issues": [
+        "Review faint out-of-focus structures before deciding full-frame completeness."
+      ],
+      "objects": [
+        {
+          "key": "focused_group",
+          "source": "sam2",
+          "id": 3,
+          "class": "cell_group",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "0": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "1": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "2": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "4": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "5": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "6": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "7": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "8": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review."
+      }
+    },
+    "28_260803092640-H-M-01_f001238": {
+      "annotation_complete": false,
+      "issues": [
+        "Review faint out-of-focus structures before deciding full-frame completeness."
+      ],
+      "objects": [
+        {
+          "key": "focused_group",
+          "source": "sam2",
+          "id": 4,
+          "class": "cell_group",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "0": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "1": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "2": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "3": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "5": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "6": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "7": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+        "8": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review."
+      }
+    },
+    "28_260803092640-H-M-01_f001254": {
+      "annotation_complete": false,
+      "issues": [
+        "Review faint out-of-focus structures before deciding full-frame completeness."
+      ],
+      "objects": [
+        {
+          "key": "lower_cell",
+          "source": "prompted",
+          "class": "cell",
+          "prompt": {
+            "points": [
+              [
+                351,
+                150
+              ],
+              [
+                400,
+                110
+              ]
+            ],
+            "labels": [
+              1,
+              0
+            ],
+            "box": [
+              309,
+              100,
+              395,
+              201
+            ]
+          }
+        },
+        {
+          "key": "upper_cell",
+          "source": "prompted",
+          "class": "cell",
+          "prompt": {
+            "points": [
+              [
+                399,
+                108
+              ],
+              [
+                350,
+                150
+              ]
+            ],
+            "labels": [
+              1,
+              0
+            ],
+            "box": [
+              367,
+              73,
+              430,
+              151
+            ]
+          }
+        }
+      ],
+      "rejected": {
+        "1": "Two resolved cells merged in the automatic proposal."
+      }
     }
   }
 }

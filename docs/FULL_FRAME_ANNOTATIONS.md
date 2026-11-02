@@ -63,8 +63,11 @@ object at the image border is labelled only over its visible extent.
 `tools/full_frame_class_review.json` records selected source masks, classes,
 rejections, repair prompts, and completeness decisions. The original restored
 dataset and automatic proposals remain unchanged. The classified output is
-`datasets/full_frame_classified_v1`; it currently contains 31 complete native
-frames and 39 objects (34 cells, 2 cell groups, 3 spheroids). This small reviewed
+`datasets/full_frame_classified_v1`; it currently contains 35 reviewed native
+frames and 44 objects (36 cells, 5 cell groups, 3 spheroids). 31 frames are
+complete; four additional test-video frames retain unresolved out-of-focus
+structures and remain ineligible for training. A resolved pair is now labelled
+as two cells; three blurred views retain a group label. This small reviewed
 subset is **not** the completed 798-frame training set. Most frames still need
 review, including additional validation/test videos and difficult extractions.
 
