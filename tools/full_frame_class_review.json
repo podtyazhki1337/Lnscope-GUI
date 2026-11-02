@@ -1,0 +1,667 @@
+{
+  "classes": {
+    "cell": 0,
+    "cell_group": 1,
+    "spheroid": 2
+  },
+  "policy": "Use cell for a resolved individual, cell_group for a small unresolved cluster, and spheroid for unresolved bulk tissue. Exclude pipette and background. Review the full native frame before enabling training.",
+  "frames": {
+    "01_260730151457-H-M-06_f000246": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "edge_cell",
+          "source": "base",
+          "id": 1,
+          "class": "cell"
+        },
+        {
+          "key": "upper_cell",
+          "source": "prompted",
+          "class": "cell",
+          "prompt": {
+            "points": [
+              [
+                132,
+                184
+              ],
+              [
+                172,
+                216
+              ],
+              [
+                87,
+                220
+              ]
+            ],
+            "labels": [
+              1,
+              0,
+              0
+            ],
+            "box": [
+              103,
+              155,
+              166,
+              211
+            ]
+          }
+        },
+        {
+          "key": "mass",
+          "source": "sam2",
+          "id": 0,
+          "class": "spheroid",
+          "subtract": [
+            "edge_cell",
+            "upper_cell"
+          ]
+        },
+        {
+          "key": "extracted_group",
+          "source": "prompted",
+          "class": "cell_group",
+          "prompt": {
+            "points": [
+              [
+                476,
+                136
+              ],
+              [
+                490,
+                170
+              ],
+              [
+                530,
+                152
+              ],
+              [
+                553,
+                179
+              ]
+            ],
+            "labels": [
+              1,
+              1,
+              0,
+              0
+            ],
+            "box": [
+              439,
+              97,
+              530,
+              192
+            ]
+          }
+        }
+      ],
+      "rejected": {
+        "1": "Background",
+        "2": "Partial component inside tissue",
+        "3": "Cluster merged with pipette",
+        "4": "Cluster boundary needs repair",
+        "5": "Unresolved tissue component",
+        "6": "Nested tissue component",
+        "7": "Pipette",
+        "8": "Merged edge cells and tissue",
+        "9": "Duplicate of retained reviewed cell",
+        "10": "Partial tissue component"
+      }
+    },
+    "01_260730151457-H-M-06_f000254": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "edge_cell",
+          "source": "base",
+          "id": 1,
+          "class": "cell"
+        },
+        {
+          "key": "upper_cell",
+          "source": "prompted",
+          "class": "cell",
+          "prompt": {
+            "points": [
+              [
+                132,
+                184
+              ],
+              [
+                172,
+                216
+              ],
+              [
+                87,
+                220
+              ]
+            ],
+            "labels": [
+              1,
+              0,
+              0
+            ],
+            "box": [
+              103,
+              155,
+              166,
+              211
+            ]
+          }
+        },
+        {
+          "key": "mass",
+          "source": "sam2",
+          "id": 0,
+          "class": "spheroid",
+          "subtract": [
+            "edge_cell",
+            "upper_cell"
+          ]
+        },
+        {
+          "key": "border_group",
+          "source": "sam2",
+          "id": 6,
+          "class": "cell_group"
+        }
+      ],
+      "rejected": {
+        "1": "Background",
+        "2": "Partial tissue component",
+        "3": "Unresolved tissue component",
+        "4": "Merged edge cells and tissue",
+        "5": "Two resolved cells merged",
+        "7": "Partial tissue component"
+      }
+    },
+    "01_260730151457-H-M-06_f000262": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "lower_cell",
+          "source": "base",
+          "id": 1,
+          "class": "cell"
+        },
+        {
+          "key": "upper_cell",
+          "source": "sam2",
+          "id": 5,
+          "class": "cell"
+        },
+        {
+          "key": "mass",
+          "source": "sam2",
+          "id": 0,
+          "class": "spheroid",
+          "subtract": [
+            "lower_cell",
+            "upper_cell"
+          ]
+        }
+      ],
+      "rejected": {
+        "1": "Background",
+        "2": "Partial tissue component",
+        "3": "Unresolved tissue component",
+        "4": "Merged resolved cells",
+        "6": "Duplicate of retained reviewed lower cell",
+        "7": "Partial tissue component"
+      }
+    },
+    "27_260801153817-H-M-03_f001734": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001742": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001750": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001758": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001766": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001774": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001782": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001790": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001798": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001806": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001814": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001822": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained.",
+        "2": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001830": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001838": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001846": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained.",
+        "2": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001854": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f001861": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained.",
+        "2": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f002009": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f002017": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f002025": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained.",
+        "2": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f002033": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f002041": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f002049": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f002057": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {}
+    },
+    "27_260801153817-H-M-03_f002073": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f002081": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f002089": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    },
+    "27_260801153817-H-M-03_f002093": {
+      "annotation_complete": true,
+      "issues": [],
+      "objects": [
+        {
+          "key": "isolated_cell",
+          "source": "sam2",
+          "id": 0,
+          "class": "cell",
+          "largest_component": true
+        }
+      ],
+      "rejected": {
+        "1": "Nested interior mask or background; the outer cell boundary is retained."
+      }
+    }
+  }
+}

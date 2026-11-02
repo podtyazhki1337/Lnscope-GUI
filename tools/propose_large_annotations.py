@@ -17,22 +17,29 @@ def main():
     parser.add_argument("--output", default="datasets/large_annotation_proposals")
     parser.add_argument("--iou", type=float, default=.45)
     parser.add_argument("--stability", type=float, default=.65)
+    parser.add_argument("--full-frames", action="store_true", help="Use restored native frames and suggest classes from reviewed mask overlap.")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    source = root / "datasets/extraction_seed_v1"
+    source = root / ("datasets/full_frame_annotations_v1" if args.full_frames else "datasets/extraction_seed_v1")
     output = root / args.output
     output.mkdir(exist_ok=True)
     manifest = json.loads((source / "manifest.json").read_text(encoding="utf-8-sig"))
     model = build_sam2("configs/sam2.1/sam2.1_hiera_t.yaml", str(root / ".cache/sam2.1_hiera_tiny.pt"), device="cuda", apply_postprocessing=False)
     generator = SAM2AutomaticMaskGenerator(model, points_per_side=24, points_per_batch=48,
         pred_iou_thresh=args.iou, stability_score_thresh=args.stability, box_nms_thresh=.65)
-    samples = [(v, s) for v in manifest["videos"] for s in v["samples"]][:args.limit]
+    if args.full_frames:
+        samples = [(dict(source=r['source_video'], source_sha256=r['source_video_sha256'], split=r['split']),
+                    dict(image=f"images/{r['split']}/{r['name']}.png", frame=r['frame'], reviewed_objects=r['objects']))
+                   for r in manifest['frames']][:args.limit]
+    else:
+        samples = [(v, s) for v in manifest["videos"] for s in v["samples"]][:args.limit]
     for index, (video, sample) in enumerate(samples):
         folder = output / Path(sample["image"]).stem
         if (folder / "proposals.json").exists():
             continue
         folder.mkdir(exist_ok=True)
         image = cv2.imread(str(source / sample["image"]))
+        reviewed = [(o, cv2.imread(str(source/o['mask']), 0) > 0) for o in sample.get('reviewed_objects', [])]
         start = time.monotonic()
         with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
             proposals = generator.generate(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
@@ -52,8 +59,12 @@ def main():
                 continue
             object_id = len(records)
             cv2.imwrite(str(folder / f"{object_id:03d}.png"), mask)
+            overlaps = [(float(np.count_nonzero((mask > 0) & m) / max(1, np.count_nonzero((mask > 0) | m))), o['class']) for o, m in reviewed]
+            overlap, kind = max(overlaps, default=(0, None))
             records.append(dict(id=object_id, bbox=[x,y,w,h], area=area,
-                predicted_iou=float(proposal["predicted_iou"]), stability=float(proposal["stability_score"])))
+                predicted_iou=float(proposal["predicted_iou"]), stability=float(proposal["stability_score"]),
+                suggested_class=kind if overlap >= .65 else None, reviewed_mask_iou=overlap,
+                class_status="suggestion_requires_full_frame_review"))
         (folder / "proposals.json").write_text(json.dumps(dict(image=sample["image"],
             source_video=video["source"], source_sha256=video["source_sha256"], split=video["split"],
             source_frame=sample["frame"], status="unreviewed", objects=records), indent=2))

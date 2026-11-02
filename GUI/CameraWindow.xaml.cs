@@ -26,6 +26,7 @@ public partial class CameraWindow : Window
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromMilliseconds(250) };
     private bool _busy, _closing, _closed, _fileMode, _playing, _reset = true;
     private bool _analyzePending;
+    private bool _fitVideo;
     private int _generation;
     private int? _selected;
     private double _videoTime;
@@ -62,6 +63,25 @@ public partial class CameraWindow : Window
     private void SizeImage(BitmapSource image)
     {
         ImageSurface.Width = image.PixelWidth; ImageSurface.Height = image.PixelHeight;
+        UpdateVideoScale();
+    }
+    private void OnNativeSize(object sender, RoutedEventArgs e) { _fitVideo = false; UpdateVideoScale(); }
+    private void OnFitSize(object sender, RoutedEventArgs e) { _fitVideo = true; UpdateVideoScale(); }
+    private void OnViewportSizeChanged(object sender, SizeChangedEventArgs e) => UpdateVideoScale();
+    private void UpdateVideoScale()
+    {
+        if (VideoScale is null || ImageSurface is null || VideoViewport is null) return;
+        var dpi = VisualTreeHelper.GetDpi(this);
+        // At 100%, each image pixel occupies one physical display pixel, including high-DPI screens.
+        var scaleX = 1 / dpi.DpiScaleX;
+        var scaleY = 1 / dpi.DpiScaleY;
+        if (_fitVideo)
+        {
+            var scale = Math.Min(Math.Max(1, VideoViewport.ActualWidth - 20) / ImageSurface.Width,
+                Math.Max(1, VideoViewport.ActualHeight - 20) / ImageSurface.Height);
+            scaleX = scaleY = scale;
+        }
+        ImageSurface.LayoutTransform = new ScaleTransform(scaleX, scaleY);
     }
     private void OnCameraPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {

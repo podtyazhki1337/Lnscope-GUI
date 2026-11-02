@@ -73,3 +73,11 @@ measurements or interpolate positions between samples.
 Normal stop, Stop live, mode changes, disconnect, and application shutdown
 finalize both files. Encoder/log errors are reported as failures, not successful
 saves. A failed or interrupted recording may contain only a partial video/log.
+
+## Video display controls
+
+Video controls are placed in a scrollable panel on the right. The default 100%
+view maps one image pixel to one physical display pixel, including high-DPI
+displays; scrollbars expose portions beyond the available viewport. **Fit to
+window** scales the image to the available area. Mask coordinates remain in the
+native image coordinate system in both modes.

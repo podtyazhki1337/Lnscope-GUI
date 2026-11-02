@@ -5,8 +5,11 @@
         Background="#111" FontFamily="Segoe UI" FontSize="13"
         KeyDown="OnKeyDown" KeyUp="OnKeyUp" Deactivated="OnDeactivated" Focusable="True">
     <DockPanel>
-        <StackPanel DockPanel.Dock="Top" Background="#F1F5F9" Margin="0" >
-            <WrapPanel Margin="10">
+        <ScrollViewer DockPanel.Dock="Right" Width="270" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Background="#F1F5F9">
+        <StackPanel Margin="12">
+            <TextBlock Text="Video controls" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12"/>
+            <WrapPanel Margin="0,0,0,12"><Button Content="100%" Click="OnNativeSize" Margin="0,0,8,0"/><Button Content="Fit to window" Click="OnFitSize"/></WrapPanel>
+            <WrapPanel Margin="0,0,0,10">
                 <Button Content="Connect" Command="{Binding ConnectCommand}" Margin="0,0,6,0" />
                 <Button Content="Start live" Command="{Binding StartCommand}" Margin="0,0,6,0" />
                 <Button Content="Stop live" Command="{Binding StopCommand}" Margin="0,0,12,0" />
@@ -18,7 +21,7 @@
                 <Slider x:Name="Confidence" Minimum="0.1" Maximum="0.95" Value="0.55" Width="90" Margin="8,0" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding Value, ElementName=Confidence, StringFormat=F2}" VerticalAlignment="Center" />
             </WrapPanel>
-            <WrapPanel Margin="10,0,10,8">
+            <WrapPanel Margin="0,0,0,10">
                 <Button Content="Open test video" Click="OnOpenVideo" Margin="0,0,6,0" />
                 <Button Content="Live camera" Click="OnLive" Margin="0,0,12,0" />
                 <Button x:Name="Play" Content="Play / pause" Click="OnPlay" IsEnabled="False" Margin="0,0,6,0" />
@@ -27,17 +30,20 @@
                 <Button x:Name="Seek" Content="Seek (s)" Click="OnSeek" IsEnabled="False" Margin="0,0,12,0" />
                 <TextBlock x:Name="SourceLabel" Text="Live camera" VerticalAlignment="Center" />
             </WrapPanel>
+        <StackPanel Margin="0,12,0,0">
+            <TextBlock x:Name="AnalysisStatus" Foreground="#334155" Text="Start the camera, or open a test video. Segment and Track are visual tools only." TextWrapping="Wrap" />
+            <TextBlock x:Name="SelectionStatus" Foreground="#854D0E" Text="Click an outline to select a track. Cell detection is experimental." TextWrapping="Wrap" />
+            <TextBlock Text="{Binding RecordingStatus}" Foreground="#475569" TextWrapping="Wrap" />
         </StackPanel>
-        <StackPanel DockPanel.Dock="Bottom" Margin="10">
-            <TextBlock x:Name="AnalysisStatus" Foreground="White" Text="Start the camera, or open a test video. Segment and Track are visual tools only." TextWrapping="Wrap" />
-            <TextBlock x:Name="SelectionStatus" Foreground="#FFCC66" Text="Click an outline to select a track. Cell detection is experimental." TextWrapping="Wrap" />
-            <TextBlock Text="{Binding RecordingStatus}" Foreground="#A4B5C7" />
         </StackPanel>
-        <Viewbox Stretch="Uniform" Margin="8">
+        </ScrollViewer>
+        <ScrollViewer x:Name="VideoViewport" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" SizeChanged="OnViewportSizeChanged">
+        <Viewbox x:Name="VideoScale" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top">
             <Grid x:Name="ImageSurface" Width="640" Height="480" Background="#202020">
                 <Image x:Name="Preview" Stretch="Fill" RenderOptions.BitmapScalingMode="LowQuality" />
                 <Canvas x:Name="Overlay" Background="Transparent" MouseLeftButtonDown="OnSelect" />
             </Grid>
         </Viewbox>
+        </ScrollViewer>
     </DockPanel>
 </Window>
