@@ -184,11 +184,31 @@ def prompt_masks(decisions_path):
                 print(f'{name}/{obj["key"]}: {int(mask.sum())} pixels', flush=True)
 
 
+def native_pages(output, prefix):
+    """Tile final overlays without resizing any source pixels."""
+    frames = [f for f in read_json(output/'manifest.json')['frames'] if f['name'].startswith(prefix)]
+    for start in range(0, len(frames), 4):
+        tiles = []
+        for frame in frames[start:start+4]:
+            overlay = cv2.imread(str(output/'review'/f'{frame["name"]}.png'))
+            tile = np.full((overlay.shape[0]+26, overlay.shape[1], 3), 24, np.uint8)
+            tile[26:] = overlay
+            cv2.putText(tile, frame['name'], (6, 18), 0, .45, (255, 255, 255), 1)
+            tiles.append(tile)
+        while len(tiles) < 4:
+            tiles.append(np.zeros_like(tiles[0]))
+        page = np.vstack([np.hstack(tiles[:2]), np.hstack(tiles[2:])])
+        path = output/'review'/f'native_{prefix}_{start//4+1:03d}.jpg'
+        cv2.imwrite(str(path), page, [cv2.IMWRITE_JPEG_QUALITY, 95])
+    print(f'Rendered {len(frames)} final overlays at native pixel scale.')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--render', help='Render candidate sheets for a frame-name prefix.')
     parser.add_argument('--apply', action='store_true')
     parser.add_argument('--prompt', action='store_true', help='Generate explicitly prompted repair masks for review.')
+    parser.add_argument('--pages', help='Tile final native-size overlays matching this frame-name prefix.')
     parser.add_argument('--decisions', type=Path, default=ROOT/'tools/full_frame_class_review.json')
     parser.add_argument('--output', type=Path, default=ROOT/'datasets/full_frame_classified_v1')
     args = parser.parse_args()
@@ -198,6 +218,8 @@ def main():
         prompt_masks(args.decisions)
     if args.apply:
         apply(args.decisions, args.output)
+    if args.pages is not None:
+        native_pages(args.output, args.pages)
 
 
 if __name__ == '__main__':

@@ -63,13 +63,15 @@ object at the image border is labelled only over its visible extent.
 `tools/full_frame_class_review.json` records selected source masks, classes,
 rejections, repair prompts, and completeness decisions. The original restored
 dataset and automatic proposals remain unchanged. The classified output is
-`datasets/full_frame_classified_v1`; it currently contains 35 reviewed native
-frames and 44 objects (36 cells, 5 cell groups, 3 spheroids). 31 frames are
-complete; four additional test-video frames retain unresolved out-of-focus
-structures and remain ineligible for training. A resolved pair is now labelled
-as two cells; three blurred views retain a group label. This small reviewed
+`datasets/full_frame_classified_v1`; it currently contains 56 reviewed native
+frames and 101 objects (74 cells, 9 cell groups, 18 spheroids). 43 frames are
+complete; 13 remain ineligible for training because of out-of-focus structures,
+pipette occlusion, or an ambiguous tissue attachment boundary. The latest review
+added 21 frames, including 12 complete validation frames. Resolved pairs are
+labelled as separate cells with non-overlapping masks; blurred pairs retain a
+group label. Tissue masks exclude separately resolved cells. This small reviewed
 subset is **not** the completed 798-frame training set. Most frames still need
-review, including additional validation/test videos and difficult extractions.
+review, including additional training/test videos and difficult extractions.
 
 Reproduce proposals, render review sheets, generate targeted repairs, and apply
 explicit decisions with the training Python environment:
@@ -78,6 +80,7 @@ explicit decisions with the training Python environment:
 & .cache/yolo-clean/Scripts/python.exe tools/propose_large_annotations.py --full-frames --limit 798 --output datasets/full_frame_sam2_proposals_v1
 & .cache/yolo-clean/Scripts/python.exe tools/review_full_frame_annotations.py --render 01_
 & .cache/yolo-clean/Scripts/python.exe tools/review_full_frame_annotations.py --prompt --apply
+& .cache/yolo-clean/Scripts/python.exe tools/review_full_frame_annotations.py --pages 29_
 ```
 
 Review sheets contain enlarged crops only to inspect proposal boundaries; saved
@@ -89,3 +92,12 @@ and the exact decision. Mark `annotation_complete` only after inspecting the
 complete image and final overlay. Applying decisions rejects incomplete candidate
 accounting or unresolved issues on a frame marked complete. No new full-frame
 YOLO training has been launched from these partial review results.
+
+Native review pages tile four final overlays without resizing their pixels. Each
+frame retains its source identifier above the image. The November 3 review fixed
+edge-cell masks across the validation sequence 29, excluded the pipette, and
+separated clear pairs in sequence 28. Frame 29/288 and the strongly occluded
+29/4148 and 29/4156 remain pending. The ten reviewed sequence-28 frames also remain
+pending because unclassified defocused structures must not become background
+labels accidentally. Completeness decisions apply to the entire frame, not just
+the central target.
