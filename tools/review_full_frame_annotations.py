@@ -27,6 +27,18 @@ def read_mask(path, shape):
     return mask > 0
 
 
+def fill_enclosed(mask):
+    """Fill holes not connected to the image border."""
+    count, labels, stats, _ = cv2.connectedComponentsWithStats((~mask).astype(np.uint8), 4)
+    h, w = mask.shape
+    filled = mask.copy()
+    for label in range(1, count):
+        x, y, bw, bh, _ = stats[label]
+        if x > 0 and y > 0 and x + bw < w and y + bh < h:
+            filled[labels == label] = True
+    return filled
+
+
 def draw(image, mask, label, color):
     contours, _ = cv2.findContours(mask.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cv2.drawContours(image, contours, -1, color, 1)
@@ -152,7 +164,7 @@ def apply(decisions_path, output):
     print(json.dumps(summary))
 
 
-def prompt_masks(decisions_path):
+def prompt_masks(decisions_path, only=''):
     import torch
     from sam2.build_sam import build_sam2
     from sam2.sam2_image_predictor import SAM2ImagePredictor
@@ -163,7 +175,10 @@ def prompt_masks(decisions_path):
     with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
         for name, decision in read_json(decisions_path)['frames'].items():
             objects = [o for o in decision['objects'] if o['source'] == 'prompted']
-            if not objects:
+            if not objects or not name.startswith(only):
+                continue
+            if all((PROMPTED/name/f'{o["key"]}.json').exists() and (PROMPTED/name/f'{o["key"]}.png').exists()
+                   and read_json(PROMPTED/name/f'{o["key"]}.json')['prompt'] == o['prompt'] for o in objects):
                 continue
             image = cv2.imread(str(BASE/'images'/frames[name]['split']/(name+'.png')))
             predictor.set_image(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
@@ -171,11 +186,15 @@ def prompt_masks(decisions_path):
             folder.mkdir(parents=True, exist_ok=True)
             for obj in objects:
                 prompt = obj['prompt']
+                record = folder/f'{obj["key"]}.json'
+                # Reuse a mask whose prompt is unchanged so confirmed masks are not regenerated.
+                if record.exists() and (folder/f'{obj["key"]}.png').exists() and read_json(record)['prompt'] == prompt:
+                    continue
                 masks, scores, _ = predictor.predict(
                     point_coords=np.array(prompt['points'], dtype=np.float32),
                     point_labels=np.array(prompt['labels'], dtype=np.int32),
                     box=np.array(prompt['box'], dtype=np.float32), multimask_output=False)
-                mask = masks[0] > 0
+                mask = fill_enclosed(masks[0] > 0)
                 if mask.shape != image.shape[:2] or not mask.any():
                     raise ValueError(f'Invalid prompted mask: {name}/{obj["key"]}')
                 cv2.imwrite(str(folder/f'{obj["key"]}.png'), mask.astype(np.uint8)*255)
@@ -208,6 +227,7 @@ def main():
     parser.add_argument('--render', help='Render candidate sheets for a frame-name prefix.')
     parser.add_argument('--apply', action='store_true')
     parser.add_argument('--prompt', action='store_true', help='Generate explicitly prompted repair masks for review.')
+    parser.add_argument('--only', default='', help='Limit --prompt to frame names with this prefix.')
     parser.add_argument('--pages', help='Tile final native-size overlays matching this frame-name prefix.')
     parser.add_argument('--decisions', type=Path, default=ROOT/'tools/full_frame_class_review.json')
     parser.add_argument('--output', type=Path, default=ROOT/'datasets/full_frame_classified_v1')
@@ -215,7 +235,7 @@ def main():
     if args.render is not None:
         render(args.render)
     if args.prompt:
-        prompt_masks(args.decisions)
+        prompt_masks(args.decisions, args.only)
     if args.apply:
         apply(args.decisions, args.output)
     if args.pages is not None:

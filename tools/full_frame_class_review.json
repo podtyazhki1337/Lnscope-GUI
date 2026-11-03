@@ -1,2209 +1,5081 @@
 {
-  "classes": {
-    "cell": 0,
-    "cell_group": 1,
-    "spheroid": 2
-  },
-  "policy": "Use cell for a resolved individual, cell_group for a small unresolved cluster, and spheroid for unresolved bulk tissue. Exclude pipette and background. Review the full native frame before enabling training.",
-  "frames": {
-    "01_260730151457-H-M-06_f000246": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "base",
-          "id": 1,
-          "class": "cell"
-        },
-        {
-          "key": "upper_cell",
-          "source": "prompted",
-          "class": "cell",
-          "prompt": {
-            "points": [
-              [
-                132,
-                184
-              ],
-              [
-                172,
-                216
-              ],
-              [
-                87,
-                220
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0
-            ],
-            "box": [
-              103,
-              155,
-              166,
-              211
-            ]
-          }
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "upper_cell"
-          ]
-        },
-        {
-          "key": "extracted_group",
-          "source": "prompted",
-          "class": "cell_group",
-          "prompt": {
-            "points": [
-              [
-                476,
-                136
-              ],
-              [
-                490,
-                170
-              ],
-              [
-                530,
-                152
-              ],
-              [
-                553,
-                179
-              ]
-            ],
-            "labels": [
-              1,
-              1,
-              0,
-              0
-            ],
-            "box": [
-              439,
-              97,
-              530,
-              192
-            ]
-          }
-        }
-      ],
-      "rejected": {
-        "1": "Background",
-        "2": "Partial component inside tissue",
-        "3": "Cluster merged with pipette",
-        "4": "Cluster boundary needs repair",
-        "5": "Unresolved tissue component",
-        "6": "Nested tissue component",
-        "7": "Pipette",
-        "8": "Merged edge cells and tissue",
-        "9": "Duplicate of retained reviewed cell",
-        "10": "Partial tissue component"
-      }
+ "classes": {
+  "cell": 0,
+  "cell_group": 1,
+  "spheroid": 2
+ },
+ "policy": "Use cell for a resolved individual, cell_group for a small unresolved cluster, and spheroid for unresolved bulk tissue. Exclude pipette and background. Review the full native frame before enabling training.",
+ "frames": {
+  "01_260730151457-H-M-06_f000246": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "base",
+     "id": 1,
+     "class": "cell"
     },
-    "01_260730151457-H-M-06_f000254": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "base",
-          "id": 1,
-          "class": "cell"
-        },
-        {
-          "key": "upper_cell",
-          "source": "prompted",
-          "class": "cell",
-          "prompt": {
-            "points": [
-              [
-                132,
-                184
-              ],
-              [
-                172,
-                216
-              ],
-              [
-                87,
-                220
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0
-            ],
-            "box": [
-              103,
-              155,
-              166,
-              211
-            ]
-          }
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "upper_cell"
-          ]
-        },
-        {
-          "key": "border_group",
-          "source": "sam2",
-          "id": 6,
-          "class": "cell_group"
-        }
+    {
+     "key": "upper_cell",
+     "source": "prompted",
+     "class": "cell",
+     "prompt": {
+      "points": [
+       [
+        132,
+        184
+       ],
+       [
+        172,
+        216
+       ],
+       [
+        87,
+        220
+       ]
       ],
-      "rejected": {
-        "1": "Background",
-        "2": "Partial tissue component",
-        "3": "Unresolved tissue component",
-        "4": "Merged edge cells and tissue",
-        "5": "Two resolved cells merged",
-        "7": "Partial tissue component"
-      }
+      "labels": [
+       1,
+       0,
+       0
+      ],
+      "box": [
+       103,
+       155,
+       166,
+       211
+      ]
+     }
     },
-    "01_260730151457-H-M-06_f000262": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "lower_cell",
-          "source": "base",
-          "id": 1,
-          "class": "cell"
-        },
-        {
-          "key": "upper_cell",
-          "source": "sam2",
-          "id": 5,
-          "class": "cell"
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "lower_cell",
-            "upper_cell"
-          ]
-        }
-      ],
-      "rejected": {
-        "1": "Background",
-        "2": "Partial tissue component",
-        "3": "Unresolved tissue component",
-        "4": "Merged resolved cells",
-        "6": "Duplicate of retained reviewed lower cell",
-        "7": "Partial tissue component"
-      }
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "upper_cell"
+     ]
     },
-    "27_260801153817-H-M-03_f001734": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001742": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001750": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001758": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001766": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001774": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001782": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001790": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001798": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001806": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001814": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001822": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained.",
-        "2": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001830": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001838": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001846": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained.",
-        "2": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001854": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f001861": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained.",
-        "2": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f002009": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f002017": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f002025": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained.",
-        "2": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f002033": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f002041": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f002049": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f002057": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {}
-    },
-    "27_260801153817-H-M-03_f002073": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f002081": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f002089": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "27_260801153817-H-M-03_f002093": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "isolated_cell",
-          "source": "sam2",
-          "id": 0,
-          "class": "cell",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Nested interior mask or background; the outer cell boundary is retained."
-      }
-    },
-    "28_260803092640-H-M-01_f001222": {
-      "annotation_complete": false,
-      "issues": [
-        "Review faint out-of-focus structures before deciding full-frame completeness."
-      ],
-      "objects": [
-        {
-          "key": "focused_group",
-          "source": "sam2",
-          "id": 2,
-          "class": "cell_group",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "0": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "1": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "3": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "4": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "5": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "6": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "7": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review."
-      }
-    },
-    "28_260803092640-H-M-01_f001230": {
-      "annotation_complete": false,
-      "issues": [
-        "Review faint out-of-focus structures before deciding full-frame completeness."
-      ],
-      "objects": [
-        {
-          "key": "focused_group",
-          "source": "sam2",
-          "id": 3,
-          "class": "cell_group",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "0": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "1": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "2": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "4": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "5": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "6": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "7": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "8": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review."
-      }
-    },
-    "28_260803092640-H-M-01_f001238": {
-      "annotation_complete": false,
-      "issues": [
-        "Review faint out-of-focus structures before deciding full-frame completeness."
-      ],
-      "objects": [
-        {
-          "key": "focused_group",
-          "source": "sam2",
-          "id": 4,
-          "class": "cell_group",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "0": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "1": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "2": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "3": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "5": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "6": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "7": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
-        "8": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review."
-      }
-    },
-    "28_260803092640-H-M-01_f001254": {
-      "annotation_complete": false,
-      "issues": [
-        "Review faint out-of-focus structures before deciding full-frame completeness."
-      ],
-      "objects": [
-        {
-          "key": "lower_cell",
-          "source": "prompted",
-          "class": "cell",
-          "prompt": {
-            "points": [
-              [
-                351,
-                150
-              ],
-              [
-                400,
-                110
-              ]
-            ],
-            "labels": [
-              1,
-              0
-            ],
-            "box": [
-              309,
-              100,
-              395,
-              201
-            ]
-          },
-          "subtract": [
-            "upper_cell"
-          ]
-        },
-        {
-          "key": "upper_cell",
-          "source": "prompted",
-          "class": "cell",
-          "prompt": {
-            "points": [
-              [
-                399,
-                108
-              ],
-              [
-                350,
-                150
-              ]
-            ],
-            "labels": [
-              1,
-              0
-            ],
-            "box": [
-              367,
-              73,
-              430,
-              151
-            ]
-          }
-        }
-      ],
-      "rejected": {
-        "1": "Two resolved cells merged in the automatic proposal."
-      }
-    },
-    "29_260904101151-T-M-01_f000200": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                142,
-                304
-              ],
-              [
-                77,
-                304
-              ],
-              [
-                207,
-                334
-              ],
-              [
-                142,
-                234
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0
-            ],
-            "box": [
-              84,
-              243,
-              199,
-              360
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "sam2",
-          "id": 2,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "3": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
-      }
-    },
-    "29_260904101151-T-M-01_f000208": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                145,
-                282
-              ],
-              [
-                80,
-                282
-              ],
-              [
-                210,
-                312
-              ],
-              [
-                145,
-                212
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0
-            ],
-            "box": [
-              87,
-              221,
-              202,
-              338
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "sam2",
-          "id": 3,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
-      }
-    },
-    "29_260904101151-T-M-01_f000216": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                148,
-                288
-              ],
-              [
-                83,
-                288
-              ],
-              [
-                213,
-                318
-              ],
-              [
-                148,
-                218
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0
-            ],
-            "box": [
-              90,
-              227,
-              205,
-              344
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "sam2",
-          "id": 3,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
-      }
-    },
-    "29_260904101151-T-M-01_f000224": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                141,
-                268
-              ],
-              [
-                76,
-                268
-              ],
-              [
-                206,
-                298
-              ],
-              [
-                141,
-                198
-              ],
-              [
-                117,
-                276
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0,
-              1
-            ],
-            "box": [
-              83,
-              207,
-              198,
-              324
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "sam2",
-          "id": 3,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
-      }
-    },
-    "29_260904101151-T-M-01_f000232": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                141,
-                266
-              ],
-              [
-                76,
-                266
-              ],
-              [
-                206,
-                296
-              ],
-              [
-                141,
-                196
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0
-            ],
-            "box": [
-              83,
-              205,
-              198,
-              322
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "sam2",
-          "id": 3,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
-      }
-    },
-    "29_260904101151-T-M-01_f000248": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                161,
-                266
-              ],
-              [
-                96,
-                266
-              ],
-              [
-                226,
-                296
-              ],
-              [
-                161,
-                196
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0
-            ],
-            "box": [
-              103,
-              205,
-              218,
-              322
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "sam2",
-          "id": 3,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "7": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
-      }
-    },
-    "29_260904101151-T-M-01_f000264": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                169,
-                268
-              ],
-              [
-                104,
-                268
-              ],
-              [
-                234,
-                298
-              ],
-              [
-                169,
-                198
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0
-            ],
-            "box": [
-              111,
-              207,
-              226,
-              324
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "sam2",
-          "id": 3,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "7": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "8": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
-      }
-    },
-    "29_260904101151-T-M-01_f000288": {
-      "annotation_complete": false,
-      "issues": [
-        "Repair the jagged tissue attachment boundary during pipette contact."
-      ],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                157,
-                294
-              ],
-              [
-                92,
-                294
-              ],
-              [
-                222,
-                324
-              ],
-              [
-                157,
-                224
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0
-            ],
-            "box": [
-              99,
-              233,
-              214,
-              350
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                22,
-                169
-              ],
-              [
-                60,
-                175
-              ]
-            ],
-            "labels": [
-              1,
-              0
-            ],
-            "box": [
-              0,
-              137,
-              52,
-              208
-            ]
-          }
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "7": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "8": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "3": "Partial interior mask; replace with the prompted whole round-cell boundary."
-      }
-    },
-    "29_260904101151-T-M-01_f000312": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                156,
-                296
-              ],
-              [
-                91,
-                296
-              ],
-              [
-                221,
-                326
-              ],
-              [
-                156,
-                226
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0
-            ],
-            "box": [
-              98,
-              235,
-              213,
-              352
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                20,
-                170
-              ],
-              [
-                65,
-                170
-              ]
-            ],
-            "labels": [
-              1,
-              0
-            ],
-            "box": [
-              0,
-              139,
-              54,
-              213
-            ]
-          }
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "3": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
-      }
-    },
-    "29_260904101151-T-M-01_f000328": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                160,
-                300
-              ],
-              [
-                95,
-                300
-              ],
-              [
-                225,
-                330
-              ],
-              [
-                160,
-                230
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0
-            ],
-            "box": [
-              102,
-              239,
-              217,
-              356
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "sam2",
-          "id": 2,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "3": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
-      }
-    },
-    "29_260904101151-T-M-01_f000336": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                165,
-                302
-              ],
-              [
-                100,
-                302
-              ],
-              [
-                230,
-                332
-              ],
-              [
-                165,
-                232
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0
-            ],
-            "box": [
-              107,
-              241,
-              222,
-              358
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "sam2",
-          "id": 2,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "3": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
-      }
-    },
-    "29_260904101151-T-M-01_f000352": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                170,
-                301
-              ],
-              [
-                105,
-                301
-              ],
-              [
-                235,
-                331
-              ],
-              [
-                170,
-                231
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0
-            ],
-            "box": [
-              112,
-              240,
-              227,
-              357
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "sam2",
-          "id": 2,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "3": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "7": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
-      }
-    },
-    "29_260904101151-T-M-01_f000359": {
-      "annotation_complete": true,
-      "issues": [],
-      "objects": [
-        {
-          "key": "edge_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                166,
-                303
-              ],
-              [
-                101,
-                303
-              ],
-              [
-                231,
-                333
-              ],
-              [
-                166,
-                233
-              ]
-            ],
-            "labels": [
-              1,
-              0,
-              0,
-              0
-            ],
-            "box": [
-              108,
-              242,
-              223,
-              359
-            ]
-          }
-        },
-        {
-          "key": "round_cell",
-          "source": "sam2",
-          "id": 3,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "edge_cell",
-            "round_cell"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
-        "7": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
-      }
-    },
-    "29_260904101151-T-M-01_f004148": {
-      "annotation_complete": false,
-      "issues": [
-        "Pipette occludes lower tissue: resolve the cell/group boundary and check the tissue outline before training."
-      ],
-      "objects": [
-        {
-          "key": "occluded_cell",
-          "source": "sam2",
-          "id": 5,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "free_cell",
-          "source": "sam2",
-          "id": 10,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "occluded_group",
-          "source": "sam2",
-          "id": 6,
-          "class": "cell_group",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "occluded_cell",
-            "free_cell",
-            "occluded_group"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or duplicate/partial mask.",
-        "2": "Background, pipette, or duplicate/partial mask.",
-        "3": "Background, pipette, or duplicate/partial mask.",
-        "4": "Background, pipette, or duplicate/partial mask.",
-        "7": "Background, pipette, or duplicate/partial mask.",
-        "8": "Background, pipette, or duplicate/partial mask.",
-        "9": "Background, pipette, or duplicate/partial mask.",
-        "11": "Background, pipette, or duplicate/partial mask."
-      }
-    },
-    "29_260904101151-T-M-01_f004156": {
-      "annotation_complete": false,
-      "issues": [
-        "Pipette occludes lower tissue: resolve the cell/group boundary and check the tissue outline before training."
-      ],
-      "objects": [
-        {
-          "key": "occluded_cell",
-          "source": "sam2",
-          "id": 4,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "free_cell",
-          "source": "sam2",
-          "id": 7,
-          "class": "cell",
-          "largest_component": true
-        },
-        {
-          "key": "occluded_group",
-          "source": "sam2",
-          "id": 6,
-          "class": "cell_group",
-          "largest_component": true
-        },
-        {
-          "key": "mass",
-          "source": "sam2",
-          "id": 0,
-          "class": "spheroid",
-          "subtract": [
-            "occluded_cell",
-            "free_cell",
-            "occluded_group"
-          ],
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "1": "Background, pipette, or duplicate/partial mask.",
-        "2": "Background, pipette, or duplicate/partial mask.",
-        "3": "Background, pipette, or duplicate/partial mask.",
-        "5": "Background, pipette, or duplicate/partial mask."
-      }
-    },
-    "28_260803092640-H-M-01_f001246": {
-      "annotation_complete": false,
-      "issues": [
-        "Review faint out-of-focus structures before deciding full-frame completeness."
-      ],
-      "objects": [
-        {
-          "key": "focused_group",
-          "source": "sam2",
-          "id": 1,
-          "class": "cell_group",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "0": "Duplicate, background or out-of-focus structure requiring separate review.",
-        "2": "Duplicate, background or out-of-focus structure requiring separate review.",
-        "3": "Duplicate, background or out-of-focus structure requiring separate review.",
-        "4": "Duplicate, background or out-of-focus structure requiring separate review.",
-        "5": "Duplicate, background or out-of-focus structure requiring separate review.",
-        "6": "Duplicate, background or out-of-focus structure requiring separate review."
-      }
-    },
-    "28_260803092640-H-M-01_f001318": {
-      "annotation_complete": false,
-      "issues": [
-        "Review faint out-of-focus structures before deciding full-frame completeness."
-      ],
-      "objects": [
-        {
-          "key": "focused_group",
-          "source": "sam2",
-          "id": 1,
-          "class": "cell_group",
-          "largest_component": true
-        }
-      ],
-      "rejected": {
-        "0": "Duplicate, background or out-of-focus structure requiring separate review.",
-        "2": "Duplicate, background or out-of-focus structure requiring separate review.",
-        "3": "Duplicate, background or out-of-focus structure requiring separate review.",
-        "4": "Duplicate, background or out-of-focus structure requiring separate review.",
-        "5": "Duplicate, background or out-of-focus structure requiring separate review."
-      }
-    },
-    "28_260803092640-H-M-01_f001262": {
-      "annotation_complete": false,
-      "issues": [
-        "Review faint out-of-focus structures before deciding full-frame completeness."
-      ],
-      "objects": [
-        {
-          "key": "lower_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                351,
-                150
-              ],
-              [
-                399,
-                108
-              ]
-            ],
-            "labels": [
-              1,
-              0
-            ],
-            "box": [
-              307,
-              99,
-              395,
-              201
-            ]
-          },
-          "subtract": [
-            "upper_cell"
-          ]
-        },
-        {
-          "key": "upper_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                399,
-                108
-              ],
-              [
-                351,
-                150
-              ]
-            ],
-            "labels": [
-              1,
-              0
-            ],
-            "box": [
-              365,
-              70,
-              433,
-              146
-            ]
-          }
-        }
-      ],
-      "rejected": {
-        "0": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "1": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "2": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "3": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "4": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "5": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "6": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "7": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "8": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "9": "Merged pair, background or out-of-focus structure; use separate prompted cell masks."
-      }
-    },
-    "28_260803092640-H-M-01_f001270": {
-      "annotation_complete": false,
-      "issues": [
-        "Review faint out-of-focus structures before deciding full-frame completeness."
-      ],
-      "objects": [
-        {
-          "key": "lower_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                429,
-                285
-              ],
-              [
-                478,
-                252
-              ]
-            ],
-            "labels": [
-              1,
-              0
-            ],
-            "box": [
-              385,
-              234,
-              473,
-              336
-            ]
-          },
-          "subtract": [
-            "upper_cell"
-          ]
-        },
-        {
-          "key": "upper_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                478,
-                252
-              ],
-              [
-                429,
-                285
-              ]
-            ],
-            "labels": [
-              1,
-              0
-            ],
-            "box": [
-              444,
-              214,
-              512,
-              290
-            ]
-          }
-        }
-      ],
-      "rejected": {
-        "0": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "1": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "2": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "3": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "4": "Merged pair, background or out-of-focus structure; use separate prompted cell masks."
-      }
-    },
-    "28_260803092640-H-M-01_f001326": {
-      "annotation_complete": false,
-      "issues": [
-        "Review faint out-of-focus structures before deciding full-frame completeness."
-      ],
-      "objects": [
-        {
-          "key": "lower_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                364,
-                179
-              ],
-              [
-                410,
-                137
-              ]
-            ],
-            "labels": [
-              1,
-              0
-            ],
-            "box": [
-              320,
-              128,
-              408,
-              230
-            ]
-          },
-          "subtract": [
-            "upper_cell"
-          ]
-        },
-        {
-          "key": "upper_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                410,
-                137
-              ],
-              [
-                364,
-                179
-              ]
-            ],
-            "labels": [
-              1,
-              0
-            ],
-            "box": [
-              376,
-              99,
-              444,
-              175
-            ]
-          }
-        }
-      ],
-      "rejected": {
-        "0": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "1": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "2": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "3": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "4": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "5": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "6": "Merged pair, background or out-of-focus structure; use separate prompted cell masks."
-      }
-    },
-    "28_260803092640-H-M-01_f001334": {
-      "annotation_complete": false,
-      "issues": [
-        "Review faint out-of-focus structures before deciding full-frame completeness."
-      ],
-      "objects": [
-        {
-          "key": "lower_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                364,
-                179
-              ],
-              [
-                410,
-                137
-              ]
-            ],
-            "labels": [
-              1,
-              0
-            ],
-            "box": [
-              320,
-              128,
-              408,
-              230
-            ]
-          },
-          "subtract": [
-            "upper_cell"
-          ]
-        },
-        {
-          "key": "upper_cell",
-          "source": "prompted",
-          "class": "cell",
-          "largest_component": true,
-          "prompt": {
-            "points": [
-              [
-                410,
-                137
-              ],
-              [
-                364,
-                179
-              ]
-            ],
-            "labels": [
-              1,
-              0
-            ],
-            "box": [
-              376,
-              99,
-              444,
-              175
-            ]
-          }
-        }
-      ],
-      "rejected": {
-        "0": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "1": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "2": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "3": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "4": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "5": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "6": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "7": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
-        "8": "Merged pair, background or out-of-focus structure; use separate prompted cell masks."
-      }
+    {
+     "key": "extracted_group",
+     "source": "prompted",
+     "class": "cell_group",
+     "prompt": {
+      "points": [
+       [
+        476,
+        136
+       ],
+       [
+        490,
+        170
+       ],
+       [
+        530,
+        152
+       ],
+       [
+        553,
+        179
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       0,
+       0
+      ],
+      "box": [
+       439,
+       97,
+       530,
+       192
+      ]
+     }
     }
+   ],
+   "rejected": {
+    "1": "Background",
+    "2": "Partial component inside tissue",
+    "3": "Cluster merged with pipette",
+    "4": "Cluster boundary needs repair",
+    "5": "Unresolved tissue component",
+    "6": "Nested tissue component",
+    "7": "Pipette",
+    "8": "Merged edge cells and tissue",
+    "9": "Duplicate of retained reviewed cell",
+    "10": "Partial tissue component"
+   }
+  },
+  "01_260730151457-H-M-06_f000254": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "base",
+     "id": 1,
+     "class": "cell"
+    },
+    {
+     "key": "upper_cell",
+     "source": "prompted",
+     "class": "cell",
+     "prompt": {
+      "points": [
+       [
+        132,
+        184
+       ],
+       [
+        172,
+        216
+       ],
+       [
+        87,
+        220
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0
+      ],
+      "box": [
+       103,
+       155,
+       166,
+       211
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "upper_cell"
+     ]
+    },
+    {
+     "key": "border_group",
+     "source": "sam2",
+     "id": 6,
+     "class": "cell_group"
+    }
+   ],
+   "rejected": {
+    "1": "Background",
+    "2": "Partial tissue component",
+    "3": "Unresolved tissue component",
+    "4": "Merged edge cells and tissue",
+    "5": "Two resolved cells merged",
+    "7": "Partial tissue component"
+   }
+  },
+  "01_260730151457-H-M-06_f000262": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "lower_cell",
+     "source": "base",
+     "id": 1,
+     "class": "cell"
+    },
+    {
+     "key": "upper_cell",
+     "source": "sam2",
+     "id": 5,
+     "class": "cell"
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "lower_cell",
+      "upper_cell"
+     ]
+    }
+   ],
+   "rejected": {
+    "1": "Background",
+    "2": "Partial tissue component",
+    "3": "Unresolved tissue component",
+    "4": "Merged resolved cells",
+    "6": "Duplicate of retained reviewed lower cell",
+    "7": "Partial tissue component"
+   }
+  },
+  "27_260801153817-H-M-03_f001734": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001742": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001750": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001758": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001766": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001774": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001782": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001790": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001798": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001806": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001814": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001822": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained.",
+    "2": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001830": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001838": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001846": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained.",
+    "2": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001854": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f001861": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained.",
+    "2": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f002009": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f002017": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f002025": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained.",
+    "2": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f002033": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f002041": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f002049": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f002057": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {}
+  },
+  "27_260801153817-H-M-03_f002073": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f002081": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f002089": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "27_260801153817-H-M-03_f002093": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "isolated_cell",
+     "source": "sam2",
+     "id": 0,
+     "class": "cell",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Nested interior mask or background; the outer cell boundary is retained."
+   }
+  },
+  "28_260803092640-H-M-01_f001222": {
+   "annotation_complete": false,
+   "issues": [
+    "Review faint out-of-focus structures before deciding full-frame completeness."
+   ],
+   "objects": [
+    {
+     "key": "focused_group",
+     "source": "sam2",
+     "id": 2,
+     "class": "cell_group",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "0": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "1": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "3": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "4": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "5": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "6": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "7": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review."
+   }
+  },
+  "28_260803092640-H-M-01_f001230": {
+   "annotation_complete": false,
+   "issues": [
+    "Review faint out-of-focus structures before deciding full-frame completeness."
+   ],
+   "objects": [
+    {
+     "key": "focused_group",
+     "source": "sam2",
+     "id": 3,
+     "class": "cell_group",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "0": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "1": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "2": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "4": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "5": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "6": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "7": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "8": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review."
+   }
+  },
+  "28_260803092640-H-M-01_f001238": {
+   "annotation_complete": false,
+   "issues": [
+    "Review faint out-of-focus structures before deciding full-frame completeness."
+   ],
+   "objects": [
+    {
+     "key": "focused_group",
+     "source": "sam2",
+     "id": 4,
+     "class": "cell_group",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "0": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "1": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "2": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "3": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "5": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "6": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "7": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review.",
+    "8": "Background, nested group mask, or ambiguous out-of-focus structure; unresolved structures require review."
+   }
+  },
+  "28_260803092640-H-M-01_f001254": {
+   "annotation_complete": false,
+   "issues": [
+    "Review faint out-of-focus structures before deciding full-frame completeness."
+   ],
+   "objects": [
+    {
+     "key": "lower_cell",
+     "source": "prompted",
+     "class": "cell",
+     "prompt": {
+      "points": [
+       [
+        351,
+        150
+       ],
+       [
+        400,
+        110
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       309,
+       100,
+       395,
+       201
+      ]
+     },
+     "subtract": [
+      "upper_cell"
+     ]
+    },
+    {
+     "key": "upper_cell",
+     "source": "prompted",
+     "class": "cell",
+     "prompt": {
+      "points": [
+       [
+        399,
+        108
+       ],
+       [
+        350,
+        150
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       367,
+       73,
+       430,
+       151
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "1": "Two resolved cells merged in the automatic proposal."
+   }
+  },
+  "29_260904101151-T-M-01_f000200": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        142,
+        304
+       ],
+       [
+        77,
+        304
+       ],
+       [
+        207,
+        334
+       ],
+       [
+        142,
+        234
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       84,
+       243,
+       199,
+       360
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "sam2",
+     "id": 2,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "3": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
+   }
+  },
+  "29_260904101151-T-M-01_f000208": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        145,
+        282
+       ],
+       [
+        80,
+        282
+       ],
+       [
+        210,
+        312
+       ],
+       [
+        145,
+        212
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       87,
+       221,
+       202,
+       338
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "sam2",
+     "id": 3,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
+   }
+  },
+  "29_260904101151-T-M-01_f000216": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        148,
+        288
+       ],
+       [
+        83,
+        288
+       ],
+       [
+        213,
+        318
+       ],
+       [
+        148,
+        218
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       90,
+       227,
+       205,
+       344
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "sam2",
+     "id": 3,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
+   }
+  },
+  "29_260904101151-T-M-01_f000224": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        141,
+        268
+       ],
+       [
+        76,
+        268
+       ],
+       [
+        206,
+        298
+       ],
+       [
+        141,
+        198
+       ],
+       [
+        117,
+        276
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0,
+       1
+      ],
+      "box": [
+       83,
+       207,
+       198,
+       324
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "sam2",
+     "id": 3,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
+   }
+  },
+  "29_260904101151-T-M-01_f000232": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        141,
+        266
+       ],
+       [
+        76,
+        266
+       ],
+       [
+        206,
+        296
+       ],
+       [
+        141,
+        196
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       83,
+       205,
+       198,
+       322
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "sam2",
+     "id": 3,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
+   }
+  },
+  "29_260904101151-T-M-01_f000248": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        161,
+        266
+       ],
+       [
+        96,
+        266
+       ],
+       [
+        226,
+        296
+       ],
+       [
+        161,
+        196
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       103,
+       205,
+       218,
+       322
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "sam2",
+     "id": 3,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "7": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
+   }
+  },
+  "29_260904101151-T-M-01_f000264": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        169,
+        268
+       ],
+       [
+        104,
+        268
+       ],
+       [
+        234,
+        298
+       ],
+       [
+        169,
+        198
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       111,
+       207,
+       226,
+       324
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "sam2",
+     "id": 3,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "7": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "8": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
+   }
+  },
+  "29_260904101151-T-M-01_f000288": {
+   "annotation_complete": false,
+   "issues": [
+    "Repair the jagged tissue attachment boundary during pipette contact."
+   ],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        157,
+        294
+       ],
+       [
+        92,
+        294
+       ],
+       [
+        222,
+        324
+       ],
+       [
+        157,
+        224
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       99,
+       233,
+       214,
+       350
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        22,
+        169
+       ],
+       [
+        60,
+        175
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       0,
+       137,
+       52,
+       208
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "7": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "8": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "3": "Partial interior mask; replace with the prompted whole round-cell boundary."
+   }
+  },
+  "29_260904101151-T-M-01_f000312": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        156,
+        296
+       ],
+       [
+        91,
+        296
+       ],
+       [
+        221,
+        326
+       ],
+       [
+        156,
+        226
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       98,
+       235,
+       213,
+       352
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        20,
+        170
+       ],
+       [
+        65,
+        170
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       0,
+       139,
+       54,
+       213
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "3": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
+   }
+  },
+  "29_260904101151-T-M-01_f000328": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        160,
+        300
+       ],
+       [
+        95,
+        300
+       ],
+       [
+        225,
+        330
+       ],
+       [
+        160,
+        230
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       102,
+       239,
+       217,
+       356
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "sam2",
+     "id": 2,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "3": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
+   }
+  },
+  "29_260904101151-T-M-01_f000336": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        165,
+        302
+       ],
+       [
+        100,
+        302
+       ],
+       [
+        230,
+        332
+       ],
+       [
+        165,
+        232
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       107,
+       241,
+       222,
+       358
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "sam2",
+     "id": 2,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "3": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
+   }
+  },
+  "29_260904101151-T-M-01_f000352": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        170,
+        301
+       ],
+       [
+        105,
+        301
+       ],
+       [
+        235,
+        331
+       ],
+       [
+        170,
+        231
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       112,
+       240,
+       227,
+       357
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "sam2",
+     "id": 2,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "3": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "7": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
+   }
+  },
+  "29_260904101151-T-M-01_f000359": {
+   "annotation_complete": true,
+   "issues": [],
+   "objects": [
+    {
+     "key": "edge_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        166,
+        303
+       ],
+       [
+        101,
+        303
+       ],
+       [
+        231,
+        333
+       ],
+       [
+        166,
+        233
+       ]
+      ],
+      "labels": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       108,
+       242,
+       223,
+       359
+      ]
+     }
+    },
+    {
+     "key": "round_cell",
+     "source": "sam2",
+     "id": 3,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell",
+      "round_cell"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "2": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "4": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "5": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "6": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks.",
+    "7": "Background, pipette, or partial/duplicate tissue and cell proposal; use explicitly repaired masks."
+   }
+  },
+  "29_260904101151-T-M-01_f004148": {
+   "annotation_complete": false,
+   "issues": [
+    "Pipette occludes lower tissue: resolve the cell/group boundary and check the tissue outline before training."
+   ],
+   "objects": [
+    {
+     "key": "occluded_cell",
+     "source": "sam2",
+     "id": 5,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "free_cell",
+     "source": "sam2",
+     "id": 10,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "occluded_group",
+     "source": "sam2",
+     "id": 6,
+     "class": "cell_group",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "occluded_cell",
+      "free_cell",
+      "occluded_group"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or duplicate/partial mask.",
+    "2": "Background, pipette, or duplicate/partial mask.",
+    "3": "Background, pipette, or duplicate/partial mask.",
+    "4": "Background, pipette, or duplicate/partial mask.",
+    "7": "Background, pipette, or duplicate/partial mask.",
+    "8": "Background, pipette, or duplicate/partial mask.",
+    "9": "Background, pipette, or duplicate/partial mask.",
+    "11": "Background, pipette, or duplicate/partial mask."
+   }
+  },
+  "29_260904101151-T-M-01_f004156": {
+   "annotation_complete": false,
+   "issues": [
+    "Pipette occludes lower tissue: resolve the cell/group boundary and check the tissue outline before training."
+   ],
+   "objects": [
+    {
+     "key": "occluded_cell",
+     "source": "sam2",
+     "id": 4,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "free_cell",
+     "source": "sam2",
+     "id": 7,
+     "class": "cell",
+     "largest_component": true
+    },
+    {
+     "key": "occluded_group",
+     "source": "sam2",
+     "id": 6,
+     "class": "cell_group",
+     "largest_component": true
+    },
+    {
+     "key": "mass",
+     "source": "sam2",
+     "id": 0,
+     "class": "spheroid",
+     "subtract": [
+      "occluded_cell",
+      "free_cell",
+      "occluded_group"
+     ],
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "1": "Background, pipette, or duplicate/partial mask.",
+    "2": "Background, pipette, or duplicate/partial mask.",
+    "3": "Background, pipette, or duplicate/partial mask.",
+    "5": "Background, pipette, or duplicate/partial mask."
+   }
+  },
+  "28_260803092640-H-M-01_f001246": {
+   "annotation_complete": false,
+   "issues": [
+    "Review faint out-of-focus structures before deciding full-frame completeness."
+   ],
+   "objects": [
+    {
+     "key": "focused_group",
+     "source": "sam2",
+     "id": 1,
+     "class": "cell_group",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "0": "Duplicate, background or out-of-focus structure requiring separate review.",
+    "2": "Duplicate, background or out-of-focus structure requiring separate review.",
+    "3": "Duplicate, background or out-of-focus structure requiring separate review.",
+    "4": "Duplicate, background or out-of-focus structure requiring separate review.",
+    "5": "Duplicate, background or out-of-focus structure requiring separate review.",
+    "6": "Duplicate, background or out-of-focus structure requiring separate review."
+   }
+  },
+  "28_260803092640-H-M-01_f001318": {
+   "annotation_complete": false,
+   "issues": [
+    "Review faint out-of-focus structures before deciding full-frame completeness."
+   ],
+   "objects": [
+    {
+     "key": "focused_group",
+     "source": "sam2",
+     "id": 1,
+     "class": "cell_group",
+     "largest_component": true
+    }
+   ],
+   "rejected": {
+    "0": "Duplicate, background or out-of-focus structure requiring separate review.",
+    "2": "Duplicate, background or out-of-focus structure requiring separate review.",
+    "3": "Duplicate, background or out-of-focus structure requiring separate review.",
+    "4": "Duplicate, background or out-of-focus structure requiring separate review.",
+    "5": "Duplicate, background or out-of-focus structure requiring separate review."
+   }
+  },
+  "28_260803092640-H-M-01_f001262": {
+   "annotation_complete": false,
+   "issues": [
+    "Review faint out-of-focus structures before deciding full-frame completeness."
+   ],
+   "objects": [
+    {
+     "key": "lower_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        351,
+        150
+       ],
+       [
+        399,
+        108
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       307,
+       99,
+       395,
+       201
+      ]
+     },
+     "subtract": [
+      "upper_cell"
+     ]
+    },
+    {
+     "key": "upper_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        399,
+        108
+       ],
+       [
+        351,
+        150
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       365,
+       70,
+       433,
+       146
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "0": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "1": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "2": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "3": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "4": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "5": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "6": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "7": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "8": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "9": "Merged pair, background or out-of-focus structure; use separate prompted cell masks."
+   }
+  },
+  "28_260803092640-H-M-01_f001270": {
+   "annotation_complete": false,
+   "issues": [
+    "Review faint out-of-focus structures before deciding full-frame completeness."
+   ],
+   "objects": [
+    {
+     "key": "lower_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        429,
+        285
+       ],
+       [
+        478,
+        252
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       385,
+       234,
+       473,
+       336
+      ]
+     },
+     "subtract": [
+      "upper_cell"
+     ]
+    },
+    {
+     "key": "upper_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        478,
+        252
+       ],
+       [
+        429,
+        285
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       444,
+       214,
+       512,
+       290
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "0": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "1": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "2": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "3": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "4": "Merged pair, background or out-of-focus structure; use separate prompted cell masks."
+   }
+  },
+  "28_260803092640-H-M-01_f001326": {
+   "annotation_complete": false,
+   "issues": [
+    "Review faint out-of-focus structures before deciding full-frame completeness."
+   ],
+   "objects": [
+    {
+     "key": "lower_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        364,
+        179
+       ],
+       [
+        410,
+        137
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       320,
+       128,
+       408,
+       230
+      ]
+     },
+     "subtract": [
+      "upper_cell"
+     ]
+    },
+    {
+     "key": "upper_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        410,
+        137
+       ],
+       [
+        364,
+        179
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       376,
+       99,
+       444,
+       175
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "0": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "1": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "2": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "3": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "4": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "5": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "6": "Merged pair, background or out-of-focus structure; use separate prompted cell masks."
+   }
+  },
+  "28_260803092640-H-M-01_f001334": {
+   "annotation_complete": false,
+   "issues": [
+    "Review faint out-of-focus structures before deciding full-frame completeness."
+   ],
+   "objects": [
+    {
+     "key": "lower_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        364,
+        179
+       ],
+       [
+        410,
+        137
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       320,
+       128,
+       408,
+       230
+      ]
+     },
+     "subtract": [
+      "upper_cell"
+     ]
+    },
+    {
+     "key": "upper_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        410,
+        137
+       ],
+       [
+        364,
+        179
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       376,
+       99,
+       444,
+       175
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "0": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "1": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "2": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "3": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "4": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "5": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "6": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "7": "Merged pair, background or out-of-focus structure; use separate prompted cell masks.",
+    "8": "Merged pair, background or out-of-focus structure; use separate prompted cell masks."
+   }
+  },
+  "01_260730151457-H-M-06_f000470": {
+   "annotation_complete": true,
+   "objects": [
+    {
+     "key": "top_cell",
+     "source": "prompted",
+     "class": "cell",
+     "prompt": {
+      "points": [
+       [
+        172,
+        40
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       140,
+       0,
+       205,
+       72
+      ]
+     }
+    },
+    {
+     "key": "bright_cell",
+     "source": "prompted",
+     "class": "cell",
+     "prompt": {
+      "points": [
+       [
+        180,
+        100
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       148,
+       68,
+       215,
+       135
+      ]
+     }
+    },
+    {
+     "key": "right_cell",
+     "source": "prompted",
+     "class": "cell",
+     "prompt": {
+      "points": [
+       [
+        252,
+        95
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       212,
+       45,
+       285,
+       140
+      ]
+     }
+    },
+    {
+     "key": "faint_group",
+     "source": "prompted",
+     "class": "cell_group",
+     "prompt": {
+      "points": [
+       [
+        295,
+        172
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       238,
+       128,
+       348,
+       212
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_low",
+     "source": "prompted",
+     "class": "cell",
+     "prompt": {
+      "points": [
+       [
+        128,
+        352
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       95,
+       318,
+       158,
+       388
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "source": "prompted",
+     "class": "spheroid",
+     "prompt": {
+      "points": [
+       [
+        40,
+        80
+       ],
+       [
+        70,
+        240
+       ],
+       [
+        40,
+        420
+       ],
+       [
+        128,
+        352
+       ],
+       [
+        155,
+        170
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       170,
+       479
+      ]
+     },
+     "subtract": [
+      "top_cell",
+      "bright_cell",
+      "edge_cell_low"
+     ]
+    }
+   ],
+   "rejected": {
+    "0": "Not a separate trainable object; covered or background (visual review)",
+    "1": "Not a separate trainable object; covered or background (visual review)",
+    "2": "Not a separate trainable object; covered or background (visual review)",
+    "3": "Not a separate trainable object; covered or background (visual review)",
+    "4": "Not a separate trainable object; covered or background (visual review)",
+    "5": "Not a separate trainable object; covered or background (visual review)",
+    "6": "Not a separate trainable object; covered or background (visual review)",
+    "7": "Not a separate trainable object; covered or background (visual review)",
+    "8": "Not a separate trainable object; covered or background (visual review)",
+    "9": "Not a separate trainable object; covered or background (visual review)",
+    "10": "Not a separate trainable object; covered or background (visual review)",
+    "11": "Not a separate trainable object; covered or background (visual review)"
+   },
+   "issues": []
+  },
+  "01_260730151457-H-M-06_f000478": {
+   "annotation_complete": false,
+   "draft": true,
+   "objects": [
+    {
+     "key": "top_cell",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        171,
+        32
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       136,
+       0,
+       211,
+       72
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "bright_cell",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        180,
+        98
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       147,
+       58,
+       213,
+       133
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "right_cell",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        249,
+        86
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       203,
+       32,
+       290,
+       140
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "faint_group",
+     "class": "cell_group",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        294,
+        170
+       ],
+       [
+        247,
+        172
+       ],
+       [
+        331,
+        144
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1
+      ],
+      "box": [
+       220,
+       119,
+       354,
+       217
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "edge_cell_low",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        126,
+        350
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       92,
+       312,
+       159,
+       394
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "mass",
+     "class": "spheroid",
+     "subtract": [
+      "top_cell",
+      "bright_cell",
+      "edge_cell_low"
+     ],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        0,
+        205
+       ],
+       [
+        0,
+        159
+       ],
+       [
+        0,
+        112
+       ],
+       [
+        0,
+        251
+       ],
+       [
+        126,
+        350
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       161,
+       479
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "4": "Duplicate of candidate 11",
+    "8": "Duplicate of candidate 7",
+    "6": "Duplicate of candidate 5"
+   },
+   "issues": [
+    "Propagated from 01_260730151457-H-M-06_f000470; confirm overlay."
+   ]
+  },
+  "01_260730151457-H-M-06_f000486": {
+   "annotation_complete": false,
+   "draft": true,
+   "objects": [
+    {
+     "key": "top_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        171,
+        21
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       131,
+       0,
+       213,
+       72
+      ]
+     }
+    },
+    {
+     "key": "bright_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        168,
+        114
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       142,
+       49,
+       213,
+       135
+      ]
+     }
+    },
+    {
+     "key": "right_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        258,
+        72
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       207,
+       17,
+       299,
+       148
+      ]
+     }
+    },
+    {
+     "key": "faint_group",
+     "class": "cell_group",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        316,
+        193
+       ],
+       [
+        259,
+        175
+       ],
+       [
+        224,
+        128
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1
+      ],
+      "box": [
+       207,
+       109,
+       354,
+       221
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_low",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        127,
+        352
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       92,
+       312,
+       159,
+       403
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "class": "spheroid",
+     "subtract": [
+      "top_cell",
+      "bright_cell",
+      "edge_cell_low"
+     ],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        0,
+        210
+       ],
+       [
+        0,
+        99
+       ],
+       [
+        0,
+        164
+       ],
+       [
+        0,
+        256
+       ],
+       [
+        127,
+        349
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       144,
+       479
+      ]
+     }
+    }
+   ],
+   "rejected": {},
+   "issues": [
+    "Propagated from 01_260730151457-H-M-06_f000478; confirm overlay."
+   ]
+  },
+  "01_260730151457-H-M-06_f000502": {
+   "annotation_complete": false,
+   "draft": true,
+   "objects": [
+    {
+     "key": "top_cell_a",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        211,
+        63
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       172,
+       30,
+       262,
+       102
+      ]
+     }
+    },
+    {
+     "key": "top_cell_b",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        285,
+        40
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       237,
+       0,
+       324,
+       83
+      ]
+     }
+    },
+    {
+     "key": "pipette_group",
+     "class": "cell_group",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        301,
+        129
+       ],
+       [
+        265,
+        157
+       ],
+       [
+        291,
+        85
+       ],
+       [
+        320,
+        170
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1
+      ],
+      "box": [
+       212,
+       67,
+       375,
+       191
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_low",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        134,
+        359
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       93,
+       322,
+       169,
+       402
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_bottom",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        115,
+        461
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       79,
+       391,
+       144,
+       479
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell_low",
+      "top_cell_a",
+      "edge_cell_bottom"
+     ],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        0,
+        161
+       ],
+       [
+        0,
+        115
+       ],
+       [
+        0,
+        65
+       ],
+       [
+        33,
+        192
+       ],
+       [
+        133,
+        357
+       ],
+       [
+        113,
+        465
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       164,
+       479
+      ]
+     }
+    }
+   ],
+   "rejected": {},
+   "issues": [
+    "Propagated from 01_260730151457-H-M-06_f000510; confirm overlay.",
+    "Unstable top_cell_a: area x0.47, IoU 0.41"
+   ]
+  },
+  "01_260730151457-H-M-06_f000510": {
+   "annotation_complete": false,
+   "draft": true,
+   "objects": [
+    {
+     "key": "top_cell_a",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        210,
+        59
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       172,
+       11,
+       250,
+       100
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "top_cell_b",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        289,
+        40
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       245,
+       0,
+       327,
+       79
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "pipette_group",
+     "class": "cell_group",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        305,
+        120
+       ],
+       [
+        341,
+        148
+       ],
+       [
+        262,
+        105
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1
+      ],
+      "box": [
+       223,
+       71,
+       383,
+       183
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "edge_cell_low",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        129,
+        357
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       94,
+       320,
+       159,
+       396
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "edge_cell_bottom",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        119,
+        444
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       83,
+       397,
+       137,
+       479
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "mass",
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell_low",
+      "top_cell_a",
+      "edge_cell_bottom"
+     ],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        0,
+        223
+       ],
+       [
+        0,
+        173
+       ],
+       [
+        0,
+        127
+       ],
+       [
+        0,
+        269
+       ],
+       [
+        128,
+        356
+       ],
+       [
+        118,
+        449
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       173,
+       479
+      ]
+     }
+    }
+   ],
+   "rejected": {},
+   "issues": [
+    "Propagated from 01_260730151457-H-M-06_f000526; confirm overlay.",
+    "Unstable edge_cell_bottom: area x2.08, IoU 0.48"
+   ]
+  },
+  "01_260730151457-H-M-06_f000526": {
+   "annotation_complete": true,
+   "objects": [
+    {
+     "key": "top_cell_a",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        210,
+        55
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       178,
+       15,
+       245,
+       95
+      ]
+     }
+    },
+    {
+     "key": "top_cell_b",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        287,
+        40
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       252,
+       0,
+       325,
+       80
+      ]
+     }
+    },
+    {
+     "key": "pipette_group",
+     "source": "prompted",
+     "class": "cell_group",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        300,
+        125
+       ],
+       [
+        420,
+        170
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       238,
+       72,
+       372,
+       178
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_low",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        122,
+        355
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       95,
+       322,
+       157,
+       392
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_bottom",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        113,
+        432
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       90,
+       392,
+       136,
+       476
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "source": "prompted",
+     "class": "spheroid",
+     "prompt": {
+      "points": [
+       [
+        40,
+        60
+       ],
+       [
+        60,
+        200
+       ],
+       [
+        40,
+        330
+       ],
+       [
+        40,
+        440
+       ],
+       [
+        110,
+        120
+       ],
+       [
+        122,
+        355
+       ],
+       [
+        210,
+        55
+       ],
+       [
+        113,
+        432
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       170,
+       479
+      ]
+     },
+     "subtract": [
+      "edge_cell_low",
+      "top_cell_a",
+      "edge_cell_bottom"
+     ]
+    }
+   ],
+   "rejected": {
+    "0": "Not a separate trainable object; covered or background (visual review)",
+    "1": "Not a separate trainable object; covered or background (visual review)",
+    "2": "Not a separate trainable object; covered or background (visual review)",
+    "3": "Not a separate trainable object; covered or background (visual review)",
+    "4": "Not a separate trainable object; covered or background (visual review)"
+   },
+   "issues": []
+  },
+  "01_260730151457-H-M-06_f000534": {
+   "annotation_complete": false,
+   "draft": true,
+   "objects": [
+    {
+     "key": "top_cell_a",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        210,
+        59
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       172,
+       11,
+       250,
+       100
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "top_cell_b",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        289,
+        40
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       245,
+       0,
+       327,
+       79
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "pipette_group",
+     "class": "cell_group",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        305,
+        120
+       ],
+       [
+        341,
+        148
+       ],
+       [
+        262,
+        105
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1
+      ],
+      "box": [
+       223,
+       71,
+       383,
+       183
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "edge_cell_low",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        129,
+        357
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       94,
+       320,
+       159,
+       396
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "edge_cell_bottom",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        119,
+        444
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       83,
+       397,
+       137,
+       479
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "mass",
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell_low",
+      "top_cell_a",
+      "edge_cell_bottom"
+     ],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        0,
+        223
+       ],
+       [
+        0,
+        173
+       ],
+       [
+        0,
+        127
+       ],
+       [
+        0,
+        269
+       ],
+       [
+        128,
+        356
+       ],
+       [
+        118,
+        449
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       173,
+       479
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "1": "Background-scale mask"
+   },
+   "issues": [
+    "Propagated from 01_260730151457-H-M-06_f000526; confirm overlay."
+   ]
+  },
+  "01_260730151457-H-M-06_f000542": {
+   "annotation_complete": true,
+   "objects": [
+    {
+     "key": "top_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        187,
+        70
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       158,
+       22,
+       218,
+       112
+      ]
+     }
+    },
+    {
+     "key": "group",
+     "source": "prompted",
+     "class": "cell_group",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        265,
+        100
+       ],
+       [
+        305,
+        160
+       ]
+      ],
+      "labels": [
+       1,
+       1
+      ],
+      "box": [
+       212,
+       32,
+       358,
+       192
+      ]
+     }
+    },
+    {
+     "key": "pipette_cell",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        588,
+        205
+       ],
+       [
+        632,
+        232
+       ]
+      ],
+      "labels": [
+       1,
+       0
+      ],
+      "box": [
+       552,
+       160,
+       628,
+       250
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_low",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        122,
+        356
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       95,
+       322,
+       157,
+       392
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_bottom",
+     "source": "prompted",
+     "class": "cell",
+     "largest_component": true,
+     "prompt": {
+      "points": [
+       [
+        112,
+        432
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       90,
+       392,
+       136,
+       476
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "source": "prompted",
+     "class": "spheroid",
+     "prompt": {
+      "points": [
+       [
+        40,
+        60
+       ],
+       [
+        60,
+        200
+       ],
+       [
+        40,
+        330
+       ],
+       [
+        40,
+        440
+       ],
+       [
+        110,
+        130
+       ],
+       [
+        122,
+        356
+       ],
+       [
+        187,
+        70
+       ],
+       [
+        112,
+        432
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       1,
+       0,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       165,
+       479
+      ]
+     },
+     "subtract": [
+      "edge_cell_low",
+      "top_cell",
+      "edge_cell_bottom"
+     ]
+    }
+   ],
+   "rejected": {
+    "2": "Background-scale mask",
+    "0": "Not a separate trainable object; covered or background (visual review)",
+    "1": "Not a separate trainable object; covered or background (visual review)",
+    "3": "Not a separate trainable object; covered or background (visual review)",
+    "4": "Not a separate trainable object; covered or background (visual review)",
+    "5": "Not a separate trainable object; covered or background (visual review)",
+    "6": "Not a separate trainable object; covered or background (visual review)",
+    "7": "Not a separate trainable object; covered or background (visual review)",
+    "8": "Not a separate trainable object; covered or background (visual review)"
+   },
+   "issues": []
+  },
+  "01_260730151457-H-M-06_f000544": {
+   "annotation_complete": false,
+   "draft": true,
+   "objects": [
+    {
+     "key": "top_cell",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        189,
+        86
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       158,
+       15,
+       222,
+       118
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "group",
+     "class": "cell_group",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        278,
+        119
+       ],
+       [
+        309,
+        152
+       ],
+       [
+        258,
+        78
+       ],
+       [
+        252,
+        156
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1
+      ],
+      "box": [
+       203,
+       22,
+       364,
+       202
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "pipette_cell",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        584,
+        202
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       551,
+       153,
+       619,
+       254
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "edge_cell_low",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        126,
+        353
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       92,
+       318,
+       157,
+       396
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "edge_cell_bottom",
+     "class": "cell",
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        117,
+        445
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       82,
+       396,
+       137,
+       479
+      ]
+     },
+     "subtract": []
+    },
+    {
+     "key": "mass",
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell_low",
+      "top_cell",
+      "edge_cell_bottom"
+     ],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        0,
+        221
+       ],
+       [
+        0,
+        175
+       ],
+       [
+        0,
+        267
+       ],
+       [
+        0,
+        129
+       ],
+       [
+        125,
+        351
+       ],
+       [
+        118,
+        444
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       163,
+       479
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "2": "Background-scale mask"
+   },
+   "issues": [
+    "Propagated from 01_260730151457-H-M-06_f000542; confirm overlay."
+   ]
+  },
+  "01_260730151457-H-M-06_f000550": {
+   "annotation_complete": false,
+   "draft": true,
+   "objects": [
+    {
+     "key": "top_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        188,
+        87
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       151,
+       12,
+       224,
+       125
+      ]
+     }
+    },
+    {
+     "key": "group",
+     "class": "cell_group",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        276,
+        125
+       ],
+       [
+        257,
+        84
+       ],
+       [
+        309,
+        157
+       ],
+       [
+        233,
+        139
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1
+      ],
+      "box": [
+       202,
+       26,
+       363,
+       206
+      ]
+     }
+    },
+    {
+     "key": "pipette_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        582,
+        197
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       548,
+       150,
+       621,
+       254
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_low",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        125,
+        356
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       92,
+       317,
+       157,
+       404
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_bottom",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        117,
+        444
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       80,
+       395,
+       136,
+       479
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell_low",
+      "top_cell",
+      "edge_cell_bottom"
+     ],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        0,
+        222
+       ],
+       [
+        0,
+        176
+       ],
+       [
+        0,
+        130
+       ],
+       [
+        0,
+        77
+       ],
+       [
+        124,
+        355
+       ],
+       [
+        117,
+        444
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       161,
+       479
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "2": "Background-scale mask"
+   },
+   "issues": [
+    "Propagated from 01_260730151457-H-M-06_f000544; confirm overlay."
+   ]
+  },
+  "01_260730151457-H-M-06_f000552": {
+   "annotation_complete": false,
+   "draft": true,
+   "objects": [
+    {
+     "key": "top_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        183,
+        53
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       142,
+       3,
+       222,
+       127
+      ]
+     }
+    },
+    {
+     "key": "group",
+     "class": "cell_group",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        266,
+        137
+       ],
+       [
+        246,
+        94
+       ],
+       [
+        297,
+        170
+       ],
+       [
+        310,
+        126
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1
+      ],
+      "box": [
+       193,
+       32,
+       351,
+       221
+      ]
+     }
+    },
+    {
+     "key": "pipette_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        588,
+        200
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       547,
+       150,
+       622,
+       254
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_low",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        124,
+        352
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       91,
+       317,
+       155,
+       409
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_bottom",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        117,
+        441
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       79,
+       395,
+       135,
+       479
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell_low",
+      "top_cell",
+      "edge_cell_bottom"
+     ],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        0,
+        230
+       ],
+       [
+        0,
+        166
+       ],
+       [
+        0,
+        276
+       ],
+       [
+        0,
+        120
+       ],
+       [
+        124,
+        351
+       ],
+       [
+        116,
+        445
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       161,
+       479
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "3": "Background-scale mask"
+   },
+   "issues": [
+    "Propagated from 01_260730151457-H-M-06_f000550; confirm overlay."
+   ]
+  },
+  "01_260730151457-H-M-06_f000558": {
+   "annotation_complete": false,
+   "draft": true,
+   "objects": [
+    {
+     "key": "top_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        182,
+        48
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       137,
+       2,
+       224,
+       128
+      ]
+     }
+    },
+    {
+     "key": "group",
+     "class": "cell_group",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        260,
+        140
+       ],
+       [
+        244,
+        97
+       ],
+       [
+        294,
+        170
+       ],
+       [
+        300,
+        119
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1
+      ],
+      "box": [
+       189,
+       36,
+       347,
+       226
+      ]
+     }
+    },
+    {
+     "key": "pipette_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        591,
+        201
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       556,
+       161,
+       627,
+       254
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_low",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        124,
+        353
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       90,
+       317,
+       155,
+       410
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_bottom",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        112,
+        454
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       77,
+       396,
+       134,
+       479
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell_low",
+      "top_cell",
+      "edge_cell_bottom"
+     ],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        0,
+        230
+       ],
+       [
+        0,
+        184
+       ],
+       [
+        0,
+        276
+       ],
+       [
+        0,
+        37
+       ],
+       [
+        124,
+        352
+       ],
+       [
+        113,
+        452
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       151,
+       479
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "2": "Background-scale mask"
+   },
+   "issues": [
+    "Propagated from 01_260730151457-H-M-06_f000552; confirm overlay."
+   ]
+  },
+  "01_260730151457-H-M-06_f000560": {
+   "annotation_complete": false,
+   "draft": true,
+   "objects": [
+    {
+     "key": "top_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        176,
+        36
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       132,
+       3,
+       223,
+       128
+      ]
+     }
+    },
+    {
+     "key": "group",
+     "class": "cell_group",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        254,
+        143
+       ],
+       [
+        287,
+        175
+       ],
+       [
+        240,
+        100
+       ],
+       [
+        294,
+        122
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1
+      ],
+      "box": [
+       185,
+       40,
+       341,
+       231
+      ]
+     }
+    },
+    {
+     "key": "pipette_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        596,
+        201
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       563,
+       157,
+       633,
+       254
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_low",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        122,
+        358
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       86,
+       317,
+       154,
+       410
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_bottom",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        108,
+        457
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       79,
+       396,
+       134,
+       479
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell_low",
+      "top_cell",
+      "edge_cell_bottom"
+     ],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        0,
+        233
+       ],
+       [
+        0,
+        187
+       ],
+       [
+        0,
+        279
+       ],
+       [
+        0,
+        137
+       ],
+       [
+        123,
+        351
+       ],
+       [
+        108,
+        457
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       151,
+       479
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "2": "Background-scale mask"
+   },
+   "issues": [
+    "Propagated from 01_260730151457-H-M-06_f000558; confirm overlay."
+   ]
+  },
+  "01_260730151457-H-M-06_f000566": {
+   "annotation_complete": false,
+   "draft": true,
+   "objects": [
+    {
+     "key": "top_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        176,
+        41
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       131,
+       3,
+       222,
+       129
+      ]
+     }
+    },
+    {
+     "key": "group",
+     "class": "cell_group",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        265,
+        147
+       ],
+       [
+        238,
+        110
+       ],
+       [
+        293,
+        184
+       ],
+       [
+        220,
+        152
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1
+      ],
+      "box": [
+       183,
+       41,
+       339,
+       232
+      ]
+     }
+    },
+    {
+     "key": "pipette_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        611,
+        204
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       575,
+       153,
+       639,
+       255
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_low",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        122,
+        357
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       85,
+       316,
+       154,
+       410
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_bottom",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        116,
+        442
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       80,
+       395,
+       134,
+       479
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell_low",
+      "top_cell",
+      "edge_cell_bottom"
+     ],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        0,
+        229
+       ],
+       [
+        0,
+        183
+       ],
+       [
+        0,
+        275
+       ],
+       [
+        0,
+        137
+       ],
+       [
+        122,
+        358
+       ],
+       [
+        108,
+        457
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       161,
+       479
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "4": "Background-scale mask"
+   },
+   "issues": [
+    "Propagated from 01_260730151457-H-M-06_f000560; confirm overlay."
+   ]
+  },
+  "01_260730151457-H-M-06_f000567": {
+   "annotation_complete": false,
+   "draft": true,
+   "objects": [
+    {
+     "key": "top_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        177,
+        38
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       130,
+       4,
+       221,
+       129
+      ]
+     }
+    },
+    {
+     "key": "group",
+     "class": "cell_group",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        266,
+        160
+       ],
+       [
+        227,
+        137
+       ],
+       [
+        236,
+        92
+       ],
+       [
+        289,
+        121
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1
+      ],
+      "box": [
+       179,
+       45,
+       332,
+       237
+      ]
+     }
+    },
+    {
+     "key": "pipette_cell",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        639,
+        202
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       587,
+       150,
+       639,
+       263
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_low",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        123,
+        355
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       85,
+       316,
+       154,
+       410
+      ]
+     }
+    },
+    {
+     "key": "edge_cell_bottom",
+     "class": "cell",
+     "subtract": [],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        116,
+        442
+       ]
+      ],
+      "labels": [
+       1
+      ],
+      "box": [
+       80,
+       395,
+       135,
+       479
+      ]
+     }
+    },
+    {
+     "key": "mass",
+     "class": "spheroid",
+     "subtract": [
+      "edge_cell_low",
+      "top_cell",
+      "edge_cell_bottom"
+     ],
+     "source": "prompted",
+     "prompt": {
+      "points": [
+       [
+        0,
+        227
+       ],
+       [
+        0,
+        273
+       ],
+       [
+        0,
+        181
+       ],
+       [
+        0,
+        319
+       ],
+       [
+        122,
+        357
+       ],
+       [
+        114,
+        448
+       ]
+      ],
+      "labels": [
+       1,
+       1,
+       1,
+       1,
+       0,
+       0
+      ],
+      "box": [
+       0,
+       0,
+       151,
+       479
+      ]
+     }
+    }
+   ],
+   "rejected": {
+    "4": "Background-scale mask"
+   },
+   "issues": [
+    "Propagated from 01_260730151457-H-M-06_f000566; confirm overlay."
+   ]
   }
+ }
 }
