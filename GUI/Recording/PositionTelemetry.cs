@@ -12,6 +12,7 @@ public sealed class PositionTelemetry : IDisposable
     private readonly object _gate = new();
     private readonly IReadOnlyList<IPositioner> _devices;
     private readonly Dictionary<(string, string), (AxisPosition Position, long Received)> _positions = new();
+    public event Action<AxisTelemetry>? Changed;
     public PositionTelemetry(IReadOnlyList<IPositioner> devices)
     {
         _devices = devices;
@@ -23,14 +24,19 @@ public sealed class PositionTelemetry : IDisposable
     }
     private void OnPosition(object? sender, AxisPosition position)
     {
-        if (sender is IPositioner device)
-            lock (_gate) _positions[(device.Id, position.AxisId)] = (position, Stopwatch.GetTimestamp());
+        if (sender is not IPositioner device) return;
+        lock (_gate) _positions[(device.Id, position.AxisId)] = (position, Stopwatch.GetTimestamp());
+        var axis = device.Axes.FirstOrDefault(a => a.Id == position.AxisId);
+        if (axis is not null) Changed?.Invoke(new(device.Id, axis.Id, axis.Unit, device.State.ToString(),
+            position.Reference, position.User, position.IsMoving, position.Limit.ToString(), position.Timestamp, 0));
     }
     private void OnState(object? sender, DeviceState state)
     {
         if (sender is not IPositioner device || state == DeviceState.Ready) return;
         lock (_gate)
             foreach (var key in _positions.Keys.Where(k => k.Item1 == device.Id).ToArray()) _positions.Remove(key);
+        foreach (var axis in device.Axes)
+            Changed?.Invoke(new(device.Id, axis.Id, axis.Unit, state.ToString(), null, null, null, "unknown", null, null));
     }
     public IReadOnlyList<AxisTelemetry> Snapshot()
     {

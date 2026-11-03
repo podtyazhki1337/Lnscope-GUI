@@ -38,6 +38,7 @@ internal static class Program
         await MotionSafetyChecks.RunAsync();
         await PythonBackendChecks.RunAsync();
         await PythonCommandChecks.RunAsync();
+        await SparseRecordingChecks.RunAsync();
         var config = JsonSerializer.Deserialize<AppConfig>(File.ReadAllText(
             Path.Combine(AppContext.BaseDirectory, "devices.json")),
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
@@ -93,13 +94,13 @@ internal static class Program
             await Task.Delay(1000);
             await ExecuteAsync(camera.StopRecordingCommand);
             Check(camera.RecordingStatus.StartsWith("saved "), "Record starts capture and saves MP4 without PATH");
-            await VerifyVideoAsync(Directory.GetFiles(output, "*.mp4").Single());
+            await VerifyVideoAsync(Directory.GetFiles(output, "*.mp4", SearchOption.AllDirectories).Single());
 
             await ExecuteAsync(camera.RecordCommand);
             await UntilAsync(() => camera.RecordingStatus.StartsWith("recording "));
             await Task.Delay(600);
             await ExecuteAsync(camera.StopCommand);
-            Check(Directory.GetFiles(output, "*.mp4").Length == 2 && !camera.IsRecording,
+            Check(Directory.GetFiles(output, "*.mp4", SearchOption.AllDirectories).Length == 2 && !camera.IsRecording,
                 "repeated recording and Stop live finalize video");
 
             await CheckRecorderAsync(output);
@@ -119,17 +120,17 @@ internal static class Program
             finally { Environment.SetEnvironmentVariable("PATH", originalPath); }
         }
         Check(!model.Jog.IsEnabled && model.Cameras.All(c => !c.IsStreaming), "shutdown stops capture and keyboard");
-        foreach (var video in Directory.GetFiles(output, "camera_*.mp4"))
+        foreach (var video in Directory.GetFiles(output, "camera_*.mp4", SearchOption.AllDirectories))
         {
             await VerifyVideoAsync(video);
             var rows = File.ReadAllLines(Path.ChangeExtension(video, ".csv"));
             Check(rows.Length > 1 && rows[0].Contains("c1,c2"), "camera recording creates a matching coordinate sidecar");
             Check(rows.Skip(1).Any(row => row.Contains("Ready")), "coordinate sidecar includes connected positioner feedback");
-            Check(rows.Skip(1).Any(row => row.EndsWith("\"True\"")), "fresh feedback is marked valid");
+            Check(rows.Skip(1).Any(row => row.Contains("\"True\",\"position\"")), "fresh feedback is marked valid");
         }
         await using (var vision = new GUI.Devices.PythonWorker(null, maxResponseLength: 4 * 1024 * 1024))
         {
-            var frame = await vision.CallAsync("vision_open", new { path = Directory.GetFiles(output, "camera_*.mp4")[0] });
+            var frame = await vision.CallAsync("vision_open", new { path = Directory.GetFiles(output, "camera_*.mp4", SearchOption.AllDirectories)[0] });
             Check(frame.GetProperty("image").GetBytesFromBase64().Length > 100 && frame.GetProperty("tracks").EnumerateObject().Count() == 0,
                 "offline video IPC opens bundled OpenCV and returns a frame without hardware");
             frame = await vision.CallAsync("vision_next", new { });
@@ -137,7 +138,7 @@ internal static class Program
                 "offline video advances and does not invent coordinates before manual selection");
         }
         Console.WriteLine($"Recorded videos: {output}");
-        await VideoWindowChecks.RunAsync(model, Directory.GetFiles(output, "camera_*.mp4")[0]);
+        await VideoWindowChecks.RunAsync(model, Directory.GetFiles(output, "camera_*.mp4", SearchOption.AllDirectories)[0]);
         Console.WriteLine("All smoke checks passed.");
     }
 
@@ -155,8 +156,8 @@ internal static class Program
         Check(recorder.WrittenFrames > 0 && recorder.Status.StartsWith("saved "), "padded rows and simultaneous stops");
         await VerifyVideoAsync(recorder.CurrentFile!);
         var rows = File.ReadAllLines(Path.ChangeExtension(recorder.CurrentFile!, ".csv"));
-        Check(rows.Length == recorder.WrittenFrames + 1, "one coordinate row per written frame without configured axes");
-        Check(rows[0].Contains("position_age_ms") && rows[1].Contains("no_positioners"), "missing coordinates are explicit, not fabricated zeros");
+        Check(rows.Count(row => row.Contains("\"position\"")) == 1, "unchanged missing-coordinate state is logged once");
+        Check(rows[0].Contains("position_age_ms") && rows.Any(row => row.Contains("no_positioners")), "missing coordinates are explicit, not fabricated zeros");
 
         options.CodecArguments = "-c:v deliberately_missing_encoder";
         Check(recorder.Start("failure", 64, 48, 10, CameraPixelFormat.Mono8), "encoder failure scenario starts");

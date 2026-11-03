@@ -21,6 +21,7 @@ public sealed class MainViewModel : ViewModelBase
     private readonly string _configPath;
     private readonly Dispatcher _dispatcher;
     private readonly GUI.Recording.PositionTelemetry _telemetry;
+    private readonly GUI.Recording.RecordingJournal _recordingJournal = new();
 
     private double _jogStep;
 
@@ -30,7 +31,7 @@ public sealed class MainViewModel : ViewModelBase
         _configPath = configPath;
         _dispatcher = dispatcher;
 
-        var factory = new DeviceFactory(config.MotionBackend);
+        var factory = new DeviceFactory(config.MotionBackend, _recordingJournal.Command);
         var positioners = config.Positioners
             .Select(factory.CreatePositioner)
             .ToList();
@@ -43,9 +44,10 @@ public sealed class MainViewModel : ViewModelBase
             positioners.Select(positioner => new PositionerViewModel(positioner, Motion, dispatcher, Log)));
 
         _telemetry = new GUI.Recording.PositionTelemetry(positioners);
+        _telemetry.Changed += _recordingJournal.Position;
         Cameras = new ObservableCollection<CameraViewModel>(
             config.Cameras.Select(options => new CameraViewModel(
-                factory.CreateCamera(options), options, config.Recording, dispatcher, Log, _telemetry.Snapshot)));
+                factory.CreateCamera(options), options, config.Recording, dispatcher, Log, _telemetry.Snapshot, _recordingJournal)));
 
         DeviceIds = positioners.Select(p => p.Id).ToArray();
 

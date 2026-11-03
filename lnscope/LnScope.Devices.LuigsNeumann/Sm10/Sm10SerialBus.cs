@@ -12,8 +12,11 @@ public interface ISm10Bus
     Task<byte[]> RequestAsync(ushort command, byte[] data, CancellationToken ct = default);
 }
 
+public sealed record Sm10CommandTrace(DateTimeOffset Utc, string RequestId, string Controller,
+    string Command, string Name, string Axes, string PayloadHex, string ReplyHex, string Outcome, string Detail);
+
 /// <summary>One serialized request/reply stream per physical controller, shared by logical positioners.</summary>
-public sealed class Sm10SerialBus(string portName, int baudRate, int timeoutMs, Func<ISm10Connection>? connectionFactory = null, bool allowLegacyChecksum = false) : ISm10Bus
+public sealed class Sm10SerialBus(string portName, int baudRate, int timeoutMs, Func<ISm10Connection>? connectionFactory = null, bool allowLegacyChecksum = false, Action<Sm10CommandTrace>? trace = null) : ISm10Bus
 {
     private readonly SemaphoreSlim _gate = new(1, 1);
     private ISm10Connection? _port;
@@ -22,6 +25,22 @@ public sealed class Sm10SerialBus(string portName, int baudRate, int timeoutMs, 
     private CancellationTokenSource _abort = new();
     private readonly HashSet<int> _continuousAxes = [];
     private DateTime _settleUntil;
+
+    private void Trace(Sm10Command spec, byte[] data, string requestId, string outcome, string detail = "", byte[]? reply = null)
+    {
+        // Routine feedback reads are omitted; failures and every modifying command are retained.
+        if (trace is null || spec.ReadOnly && outcome is "sent" or "acknowledged" or "reply_received") return;
+        var axes = spec.Payload switch
+        {
+            Sm10Payload.FourAxes or Sm10Payload.FourPositions => data.Skip(1).Take(4).Select(a => (int)a),
+            Sm10Payload.Mask or Sm10Payload.MaskByte or Sm10Payload.MaskTwoBytes or Sm10Payload.MaskStep =>
+                Enumerable.Range(1, 72).Where(a => data.Length >= 10 && (data[9-(a-1)/8] & (1<<((a-1)%8))) != 0),
+            _ => data.Take(1).Select(a => (int)a)
+        };
+        try { trace(new(DateTimeOffset.UtcNow, requestId, portName, $"0x{spec.Id:X4}", spec.Name,
+            string.Join(";", axes), Convert.ToHexString(data), reply is null ? "" : Convert.ToHexString(reply), outcome, detail)); }
+        catch (Exception error) { System.Diagnostics.Trace.WriteLine($"Command journal observer failed: {error.Message}"); }
+    }
 
     public async Task ConnectAsync(CancellationToken ct = default)
     {
@@ -52,6 +71,9 @@ public sealed class Sm10SerialBus(string portName, int baudRate, int timeoutMs, 
         if (spec.Payload == Sm10Payload.Ambiguous) throw new NotSupportedException(spec.Help);
         spec.ValidatePayload(data);
         await _gate.WaitAsync(ct);
+        var requestId = Guid.NewGuid().ToString("N");
+        var attempted = false;
+        var sent = false;
         try
         {
             if (_faulted || _port is null) throw new IOException("SM-10 is disconnected or faulted. Reconnect the controller.");
@@ -70,7 +92,11 @@ public sealed class Sm10SerialBus(string portName, int baudRate, int timeoutMs, 
                 token.ThrowIfCancellationRequested();
                 var request = Sm10Protocol.Encode(command, data);
                 // No retries: repeating a movement after a lost ACK can move an axis twice.
+                attempted = true;
                 port.Write(request, 0, request.Length);
+                sent = true;
+                Trace(spec, data, requestId, spec.Reply == Sm10Reply.None ? "sent_unconfirmed" : "sent",
+                    spec.Reply == Sm10Reply.None ? "No acknowledgment is defined; execution is not confirmed." : "");
                 var axes = command >= 0xA000
                     ? Enumerable.Range(1,72).Where(a => data.Length >= 10 && (data[9-(a-1)/8] & (1<<((a-1)%8))) != 0).ToArray()
                     : new[] { (int)data[0] };
@@ -102,11 +128,13 @@ public sealed class Sm10SerialBus(string portName, int baudRate, int timeoutMs, 
                 spec.DescribeReply(payload);
                 if (spec.Reply is Sm10Reply.GroupPositions or Sm10Reply.GroupStatus && !payload.AsSpan(0,4).SequenceEqual(data.AsSpan(1,4)))
                     throw new IOException("Group reply axis addresses do not match the request.");
+                Trace(spec, data, requestId, spec.Reply == Sm10Reply.Ack ? "acknowledged" : "reply_received", reply: payload);
                 return payload;
             }, token);
         }
-        catch
+        catch (Exception error)
         {
+            Trace(spec, data, requestId, sent ? "failed_after_send" : attempted ? "send_failed" : "rejected", error.Message);
             // A timeout destroys request/reply alignment. Do not consume a late reply for a new request.
             _faulted = true;
             throw;
@@ -126,6 +154,7 @@ public sealed class Sm10SerialBus(string portName, int baudRate, int timeoutMs, 
     public async Task EmergencyStopAsync(IEnumerable<int> axes)
     {
         var data = Sm10Command.BuildMask(axes);
+        var requestId = Guid.NewGuid().ToString("N");
         AbortPending();
         await _gate.WaitAsync();
         try
@@ -134,6 +163,12 @@ public sealed class Sm10SerialBus(string portName, int baudRate, int timeoutMs, 
             var frame = Sm10Protocol.Encode(0xA0FF, data);
             await CommandPacing.BeforeWriteAsync();
             await Task.Run(() => _port.Write(frame, 0, frame.Length));
+            Trace(Sm10Commands.Get(0xA0FF), data, requestId, "sent_unconfirmed", "Emergency stop sent; no acknowledgment is defined.");
+        }
+        catch (Exception error)
+        {
+            Trace(Sm10Commands.Get(0xA0FF), data, requestId, "send_failed", error.Message);
+            throw;
         }
         finally { _gate.Release(); }
     }

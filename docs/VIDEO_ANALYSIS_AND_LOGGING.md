@@ -40,39 +40,45 @@ The native-frame annotation restoration is documented in
 must precede retraining; these restored frames are not silently substituted
 into the existing model.
 
-## Coordinate sidecar
+## Recording folder and event log
 
-Every Record operation creates `name.mp4` and `name.csv` in the same folder.
-Existing video or CSV files cause a new unique filename; neither is overwritten.
-CSV is UTF-8, comma-delimited, quoted, with invariant decimal points and UTC
-timestamps. Rows are written continuously and flushed during recording.
+Every Record operation creates a new folder named by local start date and time,
+for example `2026-11-03_08-58-25-243_0ccddbc5`, inside the configured output
+folder. The 8-character suffix keeps simultaneous camera recordings apart. The
+folder contains exactly two files: `name.mp4` and `name.csv`. Nothing is
+overwritten.
 
-Each frame successfully passed to the encoder gets one row per configured axis:
+The CSV is a sparse event log, not one row per frame. UTF-8, comma-delimited,
+quoted, invariant decimal points, UTC timestamps. Rows are queued without
+blocking device I/O and flushed continuously.
 
-| Column | Meaning |
+| `event` | Written when |
 |---|---|
-| `video_frame` | Zero-based index in the constant-rate encoded stream |
-| `camera_frame` | Camera-provided frame number; gaps can reveal dropped frames |
-| `capture_utc`, `capture_elapsed_ms` | Camera frame timestamp and elapsed capture time from the first written frame |
-| `video_time_ms` | Encoded-frame index divided by the recording FPS |
-| `device`, `axis`, `unit`, `state` | Configured device/axis and connection state |
-| `c1`, `c2` | Reference and user coordinates from existing controller feedback |
-| `moving`, `limit` | Last reported motion and limit state |
-| `position_sample_utc` | Timestamp supplied with the position sample |
-| `position_age_ms` | Monotonic age of that feedback at frame queueing |
-| `valid` | Finite coordinates received within 3 seconds from a Ready device |
+| `recording_start` | Once, at the start |
+| `position` | Initial state of every axis, then only when C1, C2, moving, limit, connection state or validity changes |
+| `command` | A motion or write command was sent to the controller, or any command failed. Successful read-only polling is not logged |
+| `recording_stop` | Once, with written and dropped frame counts in `detail` |
 
-Disconnected or never-read axes have empty coordinate fields and `valid=False`;
-they are not written as zero. Stale samples retain their values and age with
-`valid=False`. With no positioners configured, a `no_positioners` row still
-preserves frame timing. Logging reads a thread-safe feedback cache, adds no COM
-commands, and does not wait for a fresh serial response on each camera frame.
-Axis samples are asynchronous; the log does not claim simultaneous hardware
-measurements or interpolate positions between samples.
+Every row carries the current video context (`video_frame`, `camera_frame`,
+`capture_utc`, `capture_elapsed_ms`, `video_time_ms`) so it can be matched to
+the MP4, plus its own `event_utc` and `event_elapsed_ms`.
 
-Normal stop, Stop live, mode changes, disconnect, and application shutdown
-finalize both files. Encoder/log errors are reported as failures, not successful
-saves. A failed or interrupted recording may contain only a partial video/log.
+Position columns: `device`, `axis`, `unit`, `state`, `c1`, `c2`, `moving`,
+`limit`, `position_sample_utc`, `position_age_ms`, `valid`. `valid` requires a
+Ready device, finite coordinates and feedback younger than 3 seconds. A
+disconnected axis gets empty coordinates and `valid=False`, never zeros.
+
+Command columns: `command_id`, `controller`, `command` (hex ID), `command_name`,
+`axis` (addresses), `payload_hex`, `reply_hex`, `outcome`, `detail`. Outcomes:
+`acknowledged`, `reply_received`, `sent_unconfirmed` (no reply is defined for
+this command — sent, not confirmed as executed), `send_failed`,
+`failed_after_send`, `rejected`. Emergency Stop A0FF is always logged as
+`sent_unconfirmed`.
+
+Positions are read from the existing feedback cache; logging adds no COM
+traffic. Axis samples are asynchronous and not interpolated. Normal stop, Stop
+live, mode changes, disconnect and shutdown finalize both files. Encoder or log
+errors are reported as failures; an interrupted recording may be partial.
 
 ## Video display controls
 

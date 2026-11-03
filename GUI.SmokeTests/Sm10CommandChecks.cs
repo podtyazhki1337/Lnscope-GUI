@@ -31,7 +31,8 @@ internal static class Sm10CommandChecks
         await Fails(()=>Task.FromResult(Sm10Commands.Get(0x134).Build([1],[16])));
         await Fails(()=>Task.FromResult(Sm10Commands.Get(0x48).Build([1],[double.NaN])));
         var wire = new Wire();
-        var bus = new Sm10SerialBus("FAKE",115200,150,()=>wire);
+        var traces = new ConcurrentQueue<Sm10CommandTrace>();
+        var bus = new Sm10SerialBus("FAKE",115200,150,()=>wire, trace: traces.Enqueue);
         await bus.ConnectAsync(); await bus.ConnectAsync();
         Check(wire.Opens==1 && wire.Writes.Count==0, "shared port opens once and sends no handshake");
         await bus.DisconnectAsync();
@@ -39,10 +40,13 @@ internal static class Sm10CommandChecks
         wire.Respond = request => Sm10Protocol.Encode(0x101,[0,0,0x48,0x41],6);
         var position = await bus.RequestAsync(0x101,[1]);
         Check(Sm10Protocol.ReadPosition(position)==12.5, "single query validates and decodes real wire frame");
+        Check(traces.IsEmpty, "routine feedback reads do not flood the recording journal");
         wire.Respond = _ => null;
         var reads = wire.Reads;
         await bus.RequestAsync(0xA034,Sm10Commands.Get(0xA034).Build([1,4],[]));
         Check(wire.Reads==reads, "no-ACK command never reads or waits for a response");
+        Check(traces.Single().Outcome == "sent_unconfirmed" && traces.Single().Command == "0xA034" &&
+            traces.Single().Axes == "1;4", "no-ACK command journal records actual send and hardware axes without claiming execution");
         var response = new byte[20]; new byte[]{1,2,3,4}.CopyTo(response,0);
         for(var i=0;i<4;i++) BinaryPrimitives.WriteSingleLittleEndian(response.AsSpan(4+i*4),i+0.5f);
         wire.Respond = _ => Sm10Protocol.Encode(0xA101,response,0x16);
@@ -56,8 +60,10 @@ internal static class Sm10CommandChecks
         before=wire.Writes.Count;
         await Fails(()=>bus.RequestAsync(0x101,[2]));
         Check(wire.Writes.Count==before, "timeout latches shared connection and never retries");
+        Check(traces.Any(t => t.Outcome == "failed_after_send" && t.Command == "0x0101"), "feedback failure is journaled despite normal polling suppression");
         await bus.EmergencyStopAsync([1,4]);
         Check(BinaryPrimitives.ReadUInt16BigEndian(wire.Writes.Last().AsSpan(1))==0xA0FF, "stop can be sent on faulted connection without ACK");
+        Check(traces.Last().Command == "0xA0FF" && traces.Last().Outcome == "sent_unconfirmed", "emergency stop is included in the command journal");
         await bus.DisconnectAsync();
 
         var delayed = new Wire();

@@ -9,15 +9,15 @@ namespace GUI.Recording;
 /// <summary>Records with the private encoder shipped with LNscope. No PATH or system installation is used.</summary>
 public sealed class VideoRecorder : IAsyncDisposable
 {
-    private sealed record RecordedFrame(byte[] Data, long Number, DateTimeOffset Timestamp, IReadOnlyList<AxisTelemetry> Axes);
+    private sealed record RecordedFrame(byte[] Data, long Number, DateTimeOffset Timestamp);
     private sealed class Session(Process process, Channel<RecordedFrame> queue, int width, int height, CameraPixelFormat format,
-        StreamWriter coordinates, double fps)
+        RecordingCsvLog coordinates, double fps)
     {
         public Process Process { get; } = process;
         public Channel<RecordedFrame> Queue { get; } = queue;
-        public StreamWriter Coordinates { get; } = coordinates;
+        public RecordingCsvLog Coordinates { get; } = coordinates;
         public double Fps { get; } = fps;
-        public DateTimeOffset? FirstFrame;
+        public long Accepted;
         public string? WriteError;
         public int Width { get; } = width;
         public int Height { get; } = height;
@@ -33,17 +33,19 @@ public sealed class VideoRecorder : IAsyncDisposable
     private readonly RecordingOptions _options;
     private readonly Action<string> _log;
     private readonly Func<IReadOnlyList<AxisTelemetry>> _telemetry;
+    private readonly RecordingJournal? _journal;
     private Session? _session;
     private Task _stopTask = Task.CompletedTask;
     private string _status = "idle";
     private long _written;
     private long _dropped;
 
-    public VideoRecorder(RecordingOptions options, Action<string> log, Func<IReadOnlyList<AxisTelemetry>>? telemetry = null)
+    public VideoRecorder(RecordingOptions options, Action<string> log, Func<IReadOnlyList<AxisTelemetry>>? telemetry = null, RecordingJournal? journal = null)
     {
         _options = options;
         _log = log;
         _telemetry = telemetry ?? (() => []);
+        _journal = journal;
     }
 
     public static string EncoderPath => Path.Combine(AppContext.BaseDirectory, "ThirdParty", "ffmpeg", "ffmpeg.exe");
@@ -61,6 +63,7 @@ public sealed class VideoRecorder : IAsyncDisposable
                 if (_session is { } s && _stopTask.IsCompleted && s.Process.HasExited)
                     return "Recording failed. Stop recording to finish cleanup. " +
                         (s.Errors.IsCompletedSuccessfully ? s.Errors.Result.Trim() : "Encoder exited unexpectedly.");
+                if (_session?.Coordinates.Error is { } csvError) return $"Recording log failed — {csvError}";
                 return _status;
             }
         }
@@ -89,6 +92,10 @@ public sealed class VideoRecorder : IAsyncDisposable
                     .Replace("{fps}", effectiveFps.ToString("0", CultureInfo.InvariantCulture));
                 if (string.IsNullOrWhiteSpace(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
                     throw new ArgumentException("Invalid recording file name.");
+                // Every session owns a new timestamped folder, including simultaneous camera recordings.
+                directory = Path.Combine(Path.GetFullPath(directory), DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-fff") + "_" + Guid.NewGuid().ToString("N")[..8]);
+                Directory.CreateDirectory(directory);
+                name = Path.ChangeExtension(name, ".mp4");
                 var path = Path.Combine(directory, name);
                 // Never overwrite a previous recording, including custom constant file names.
                 if (File.Exists(path) || File.Exists(Path.ChangeExtension(path, ".csv")))
@@ -113,11 +120,12 @@ public sealed class VideoRecorder : IAsyncDisposable
                     CreateNoWindow = true
                 }) ?? throw new IOException("Could not start the recording component.");
                 StreamWriter? coordinates = null;
+                RecordingCsvLog? csvLog = null;
                 try
                 {
                     coordinates = new StreamWriter(new FileStream(Path.ChangeExtension(path, ".csv"), FileMode.CreateNew,
                         FileAccess.Write, FileShare.Read), new System.Text.UTF8Encoding(false)) { AutoFlush = true };
-                    coordinates.WriteLine("video_frame,camera_frame,capture_utc,capture_elapsed_ms,video_time_ms,device,axis,unit,state,c1,c2,moving,limit,position_sample_utc,position_age_ms,valid");
+                    csvLog = new RecordingCsvLog(coordinates, effectiveFps, _journal);
                 }
                 catch
                 {
@@ -132,7 +140,8 @@ public sealed class VideoRecorder : IAsyncDisposable
                     SingleReader = true,
                     SingleWriter = false
                 });
-                var session = new Session(process, queue, width, height, format, coordinates, effectiveFps);
+                var session = new Session(process, queue, width, height, format, csvLog!, effectiveFps);
+                session.Coordinates.Positions(_telemetry());
                 _session = session;
                 CurrentFile = path;
                 _written = _dropped = 0;
@@ -167,8 +176,11 @@ public sealed class VideoRecorder : IAsyncDisposable
             var packed = new byte[checked(rowBytes * frame.Height)];
             for (var y = 0; y < frame.Height; y++)
                 Buffer.BlockCopy(frame.Data, y * frame.Stride, packed, y * rowBytes, rowBytes);
-            if (!s.Queue.Writer.TryWrite(new RecordedFrame(packed, frame.Number, frame.Timestamp, _telemetry())))
+            if (!s.Queue.Writer.TryWrite(new RecordedFrame(packed, frame.Number, frame.Timestamp)))
                 Interlocked.Increment(ref s.Dropped);
+            else s.Coordinates.FrameAccepted(s.Accepted++, frame.Number, frame.Timestamp);
+            // Also detect stale-feedback transitions while video continues, without serial reads.
+            s.Coordinates.Positions(_telemetry());
         }
     }
 
@@ -179,19 +191,6 @@ public sealed class VideoRecorder : IAsyncDisposable
             await foreach (var frame in session.Queue.Reader.ReadAllAsync())
             {
                 await session.Input.WriteAsync(frame.Data);
-                session.FirstFrame ??= frame.Timestamp;
-                var prefix = new object?[] { session.Written, frame.Number, frame.Timestamp.ToUniversalTime().ToString("O"),
-                    (frame.Timestamp-session.FirstFrame.Value).TotalMilliseconds, session.Written*1000/session.Fps };
-                var axes = frame.Axes.Count > 0 ? frame.Axes :
-                    new[] { new AxisTelemetry("", "", "", "no_positioners", null, null, null, "unknown", null, null) };
-                foreach (var axis in axes)
-                {
-                    var row = prefix.Concat(new object?[] { axis.Device, axis.Axis, axis.Unit, axis.State,
-                        axis.C1, axis.C2, axis.Moving, axis.Limit, axis.SampleUtc?.ToUniversalTime().ToString("O"), axis.AgeMs,
-                        axis.C1 is { } c1 && double.IsFinite(c1) && axis.C2 is { } c2 && double.IsFinite(c2)
-                            && axis.AgeMs is >= 0 and <= 3000 }).Select(Csv);
-                    await session.Coordinates.WriteLineAsync(string.Join(",", row));
-                }
                 Interlocked.Increment(ref session.Written);
             }
             await session.Input.FlushAsync();
@@ -205,12 +204,6 @@ public sealed class VideoRecorder : IAsyncDisposable
         }
     }
 
-    private static string Csv(object? value)
-    {
-        var text = value is IFormattable formatted ? formatted.ToString(null, CultureInfo.InvariantCulture) : value?.ToString() ?? "";
-        return "\"" + text.Replace("\"", "\"\"") + "\"";
-    }
-
     public Task StopAsync()
     {
         lock (_gate)
@@ -218,6 +211,7 @@ public sealed class VideoRecorder : IAsyncDisposable
             if (_session is null) return _stopTask;
             if (!_stopTask.IsCompleted) return _stopTask;
             _status = "finishing recording…";
+            _session.Coordinates.StopAccepting();
             _session.Queue.Writer.TryComplete();
             return _stopTask = FinishAsync(_session);
         }
@@ -245,6 +239,8 @@ public sealed class VideoRecorder : IAsyncDisposable
                 await session.Writer;
             }
             var error = (await session.Errors).Trim();
+            await session.Coordinates.CompleteAsync(session.Written, session.Dropped);
+            session.WriteError ??= session.Coordinates.Error;
             lock (_gate)
             {
                 _written = Interlocked.Read(ref session.Written);
@@ -259,6 +255,7 @@ public sealed class VideoRecorder : IAsyncDisposable
         }
         finally
         {
+            await session.Coordinates.CompleteAsync(session.Written, session.Dropped);
             session.Coordinates.Dispose();
             session.Input.Dispose();
             lock (_gate)

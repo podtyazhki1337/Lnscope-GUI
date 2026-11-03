@@ -40,7 +40,8 @@ is saved to `GUI.SmokeTests/bin/.../smoke-config.json`.
 ## Video analysis and coordinate logs
 
 The camera live-view window includes Segment, Track, and temporary test-video
-playback. Recording creates a matching coordinate CSV beside each MP4. See
+playback. Each recording gets its own timestamped folder with the MP4 and a
+sparse event CSV (position changes and sent commands). See
 [VIDEO_ANALYSIS_AND_LOGGING.md](docs/VIDEO_ANALYSIS_AND_LOGGING.md) for usage and
 the current experimental model limitations. Restored native-frame annotations
 are described in [FULL_FRAME_ANNOTATIONS.md](docs/FULL_FRAME_ANNOTATIONS.md).

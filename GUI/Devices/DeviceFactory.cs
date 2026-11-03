@@ -7,7 +7,7 @@ using LnScope.Devices.Simulation;
 namespace GUI.Devices;
 
 /// <summary>Driver registration is separate from the UI and from USB/serial transport discovery.</summary>
-public sealed class DeviceFactory(string motionBackend = "csharp")
+public sealed class DeviceFactory(string motionBackend = "csharp", Action<Sm10CommandTrace>? commandTrace = null)
 {
     private readonly Dictionary<string, Func<CameraOptions, ICamera>> _cameras = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -29,7 +29,7 @@ public sealed class DeviceFactory(string motionBackend = "csharp")
         if (!options.Driver.Equals("sm10-binary", StringComparison.OrdinalIgnoreCase))
             throw new ArgumentException($"Unknown positioner driver '{options.Driver}'.");
         if (!_controllers.TryGetValue(options.PortName, out var bus))
-            _controllers.Add(options.PortName, bus = new Sm10SerialBus(options.PortName, options.BaudRate, options.ResponseTimeoutMs, allowLegacyChecksum: options.AllowLegacyReplyChecksum));
+            _controllers.Add(options.PortName, bus = new Sm10SerialBus(options.PortName, options.BaudRate, options.ResponseTimeoutMs, allowLegacyChecksum: options.AllowLegacyReplyChecksum, trace: commandTrace));
         return motionBackend == "python" ? new PythonPositioner(options, bus) : new Sm10Positioner(options, bus);
     }
 
