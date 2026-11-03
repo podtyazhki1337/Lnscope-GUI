@@ -159,14 +159,63 @@ def cmd_import():
     print(json.dumps(summary))
 
 
+LATER = REVIEW / '_later'
+
+
+def cmd_queue(every):
+    """Keep every Nth unchecked frame per video in the review folders; park the rest in _later."""
+    moved, kept = 0, Counter()
+    for folder in sorted(p for p in REVIEW.iterdir() if p.is_dir() and p.name != LATER.name):
+        pending = []
+        for path in sorted(folder.glob('*.json')):
+            data = read_json(path)
+            flags = data.get('flags', {})
+            if flags.get('checked') or flags.get('exclude'):
+                kept['reviewed'] += 1
+            else:
+                pending.append(path)
+        for index, path in enumerate(pending):
+            if index % every == 0:
+                kept['queued'] += 1
+                continue
+            target = LATER / folder.name
+            target.mkdir(parents=True, exist_ok=True)
+            for f in (path, path.with_suffix('.png')):
+                f.replace(target / f.name)
+            moved += 1
+    print(json.dumps(dict(parked=moved, **kept)))
+
+
+def cmd_unqueue():
+    """Return parked frames to their video folders."""
+    restored = 0
+    for path in sorted(LATER.glob('*/*')):
+        target = REVIEW / path.parent.name / path.name
+        if target.exists():
+            raise SystemExit(f'Refusing to overwrite {target}')
+        path.replace(target)
+        restored += path.suffix == '.json'
+    print(json.dumps(dict(restored=restored)))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
     e = sub.add_parser('export')
     e.add_argument('--overwrite', action='store_true')
     sub.add_parser('import')
+    q = sub.add_parser('queue', help='Keep every Nth unchecked frame for review, park the rest.')
+    q.add_argument('--every', type=int, default=3)
+    sub.add_parser('unqueue', help='Return parked frames.')
     args = parser.parse_args()
-    cmd_export(args.overwrite) if args.command == 'export' else cmd_import()
+    if args.command == 'export':
+        cmd_export(args.overwrite)
+    elif args.command == 'import':
+        cmd_import()
+    elif args.command == 'queue':
+        cmd_queue(args.every)
+    else:
+        cmd_unqueue()
 
 
 if __name__ == '__main__':
