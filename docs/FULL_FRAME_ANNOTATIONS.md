@@ -101,3 +101,26 @@ separated clear pairs in sequence 28. Frame 29/288 and the strongly occluded
 pending because unclassified defocused structures must not become background
 labels accidentally. Completeness decisions apply to the entire frame, not just
 the central target.
+
+## Human review in X-AnyLabeling (from November 3, 2026)
+
+Review moved from AI-written SAM2 prompts to human review in X-AnyLabeling.
+`tools/xanylabeling_roundtrip.py export` writes `datasets/xanylabeling_review/<video>/`
+with native PNG frames and polygons prefilled from the classified review or the
+restored masks; every frame starts unchecked. Open a video with
+`datasets/xanylabeling_review/review.cmd <video folder>`. SAM2.1 runs inside
+X-AnyLabeling for missing objects (Q positive point, E negative point, F finish).
+
+`tools/xanylabeling_roundtrip.py import` writes `datasets/full_frame_human_v1`.
+Only frames flagged `checked` and not `exclude` are training eligible. Circles and
+rectangles are rasterized; cell and cell_group masks are cut out of spheroid masks.
+
+Agreed rules:
+
+- `cell`: boundary of an individual cell is visible, even when it touches others.
+- `cell_group`: only when boundaries inside the cluster cannot be distinguished.
+- `spheroid`: unresolved bulk tissue without the separately labelled cells.
+- Out-of-focus or unidentifiable blobs are not labelled; they are background.
+- Pipette is not labelled. Objects cut by the frame edge are labelled over the visible part.
+- A frame with any unlabelled, clearly visible cell must not be marked `checked`.
+
