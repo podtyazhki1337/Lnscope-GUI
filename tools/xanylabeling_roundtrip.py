@@ -106,16 +106,29 @@ def cmd_import():
             if s.get('label') not in CLASSES:
                 problems.append(f'{name}: unknown label {s.get("label")!r}')
                 continue
-            if s.get('shape_type') not in ('polygon', 'rectangle') or len(s.get('points', [])) < 2:
+            if s.get('shape_type') not in ('polygon', 'rectangle', 'circle') or len(s.get('points', [])) < 2:
                 problems.append(f'{name}: unsupported shape {s.get("shape_type")}')
                 continue
             pts = np.array(s['points'], np.float32)
+            key = (s['label'], s.get('group_id')) if s.get('group_id') is not None else (s['label'], f'shape{i}')
+            mask = instances.setdefault(key, np.zeros(shape, np.uint8))
+            if s['shape_type'] == 'circle':
+                # X-AnyLabeling stores a circle as centre and one point on the rim.
+                radius = int(round(float(np.linalg.norm(pts[1] - pts[0]))))
+                cv2.circle(mask, tuple(int(v) for v in np.round(pts[0])), radius, 1, -1)
+                continue
             if s['shape_type'] == 'rectangle':
                 (x0, y0), (x1, y1) = pts.min(0), pts.max(0)
                 pts = np.array([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], np.float32)
-            key = (s['label'], s.get('group_id')) if s.get('group_id') is not None else (s['label'], f'shape{i}')
-            mask = instances.setdefault(key, np.zeros(shape, np.uint8))
             cv2.fillPoly(mask, [np.round(pts).astype(np.int32)], 1)
+        # Policy: spheroid is unresolved tissue, so separately labelled cells and groups are cut out of it.
+        resolved = np.zeros(shape, bool)
+        for (label, _), mask in instances.items():
+            if label != 'spheroid':
+                resolved |= mask > 0
+        for (label, _), mask in instances.items():
+            if label == 'spheroid':
+                mask[resolved] = 0
         trainable = checked and not exclude
         record = {k: v for k, v in frame.items() if k != 'objects'}
         record.update(objects=[], annotation_complete=checked, training_eligible=trainable,
