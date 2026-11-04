@@ -83,7 +83,7 @@ native image coordinate system in both modes.
 
 The right sidebar groups View, Analysis, Acquisition, Recording and Test video.
 Sensor mode, target frame rate (including 0 for automatic), horizontal/vertical
-flips, device image properties, output folder, connection and recording controls
+flips, output folder, connection and recording controls
 have moved here from the main window. The main window keeps camera status and
 an entry point to the workspace. Acquisition controls are disabled while reviewing
 a file; switch back with Test video > Live camera.
@@ -99,3 +99,12 @@ Validation covers native pixel scaling at the active display DPI, zoom in, Fit,
 unchanged source frames, normal/minimum-size window renders, model inference and
 independent window closure. A 1920 x 1080 decoder check confirms native dimensions
 while retaining the legacy scaled path for other callers.
+
+
+The Exposure and Color tabs in the right sidebar below Recording show settings reported by the
+connected camera. With KERN, the app reads exposure time and gain ranges from
+the SDK. Turn off Auto exposure to edit exposure time in milliseconds and
+analog gain in percent. Type an exact value and press Tab or use the slider.
+Available color controls include white balance temperature and tint, hue,
+saturation, brightness, contrast and gamma. Changes apply to the camera image,
+including subsequently recorded frames. The tabs are disabled in test-video mode.

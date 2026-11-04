@@ -38,22 +38,19 @@
                         Minimum="{Binding Minimum}" Maximum="{Binding Maximum}"
                         TickFrequency="{Binding Step}" IsSnapToTickEnabled="True"
                         IsEnabled="{Binding IsReadOnly, Converter={StaticResource Not}}"
-                        Value="{Binding Value, Mode=TwoWay}" />
-                <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right"
-                           FontFamily="Consolas">
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0:0.##} {1}">
-                            <Binding Path="Value" />
-                            <Binding Path="Unit" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
+                        Value="{Binding Value, Mode=TwoWay, ValidatesOnExceptions=True}" />
+                <DockPanel Grid.Column="2" VerticalAlignment="Center">
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding Unit}" Margin="3,0,0,0" VerticalAlignment="Center"/>
+                    <TextBox TextAlignment="Right" IsEnabled="{Binding IsReadOnly, Converter={StaticResource Not}}"
+                             ToolTip="Enter a value, then press Tab to apply"
+                             Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True}"/>
+                </DockPanel>
             </Grid>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type devices:BooleanProperty}">
             <CheckBox Margin="0,6" Content="{Binding Name}"
-                      IsChecked="{Binding Value, Mode=TwoWay}"
+                      IsChecked="{Binding Value, Mode=TwoWay, ValidatesOnExceptions=True}"
                       IsEnabled="{Binding IsReadOnly, Converter={StaticResource Not}}" />
         </DataTemplate>
 
@@ -162,7 +159,7 @@
                             <StackPanel Margin="0,8,0,0">
                                 <CheckBox Content="Flip horizontal" IsChecked="{Binding FlipHorizontal}" Margin="0,4"/>
                                 <CheckBox Content="Flip vertical" IsChecked="{Binding FlipVertical}" Margin="0,4"/>
-                                <ItemsControl ItemsSource="{Binding Properties}" Margin="0,8,0,0"/>
+
                             </StackPanel>
                         </Expander>
                     </StackPanel>
@@ -184,6 +181,47 @@
                         <TextBlock Text="Video and matching coordinate log are saved together." Style="{StaticResource Hint}" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
+                <TabControl x:Name="CameraTuning" TabStripPlacement="Top" Margin="0,0,0,12"
+                            Background="#F1F5F9" IsEnabled="{Binding IsEnabled, ElementName=LiveSettings}">
+                    <TabItem Header="Exposure">
+                        <Border Padding="8,6">
+                            <StackPanel IsEnabled="{Binding IsConnected}">
+                                <ItemsControl x:Name="ExposureControls" ItemsSource="{Binding ExposureProperties}"/>
+                                <TextBlock Text="Connect a camera that provides exposure controls." Foreground="#64748B">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasItems, ElementName=ExposureControls}" Value="False">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </TabItem>
+                    <TabItem Header="Color">
+                        <Border Padding="8,6">
+                            <StackPanel IsEnabled="{Binding IsConnected}">
+                                <ItemsControl x:Name="ColorControls" ItemsSource="{Binding ColorProperties}"/>
+                                <TextBlock Text="Connect a camera that provides color controls." Foreground="#64748B">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasItems, ElementName=ColorControls}" Value="False">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </TabItem>
+                </TabControl>
                 <Border Style="{StaticResource Section}">
                     <Expander Header="Test video" IsExpanded="False">
                         <StackPanel Margin="0,10,0,0">

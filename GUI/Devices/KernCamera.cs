@@ -7,7 +7,7 @@ using LnScope.Core.Devices;
 namespace GUI.Devices;
 
 /// <summary>Native KERN camera API installed with MicroscopeVIS2.0Pro. No driver replacement.</summary>
-public sealed class KernCamera(CameraOptions options) : ICamera
+public sealed partial class KernCamera(CameraOptions options) : ICamera
 {
     private nint _handle, _buffer;
     private int _capacity;
@@ -26,7 +26,7 @@ public sealed class KernCamera(CameraOptions options) : ICamera
     public string? LastError { get; private set; }
     public IReadOnlyList<VideoMode> SupportedModes { get; private set; } = [];
     public VideoMode? CurrentMode { get; private set; }
-    public IReadOnlyList<DeviceProperty> Properties { get; } = [];
+    public IReadOnlyList<DeviceProperty> Properties { get; private set; } = [];
     public bool IsStreaming => _streaming;
     public double MeasuredFps => Volatile.Read(ref _measured);
     public double TargetFps
@@ -101,6 +101,7 @@ public sealed class KernCamera(CameraOptions options) : ICamera
         await StopAsync(ct);
         KernNative.Check(KernNative.Size(_handle,(uint)modeIndex),"set resolution");
         CurrentMode=SupportedModes[modeIndex];
+        Properties = ReadImageProperties();
         if(resume) await StartAsync(ct);
     }
     public async Task StartAsync(CancellationToken ct=default)
@@ -168,12 +169,13 @@ public sealed class KernCamera(CameraOptions options) : ICamera
     {
         await StopAsync(ct);
         if(_handle!=0) { KernNative.Close(_handle); _handle=0; }
+        Properties = [];
         SetState(DeviceState.Disconnected);
     }
     public async ValueTask DisposeAsync() => await DisconnectAsync();
 }
 
-internal static class KernNative
+internal static partial class KernNative
 {
     private static string LibraryPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
         "KERN&SOHN","MicroscopeVIS2.0Pro",IntPtr.Size==8?"x64":"x86","kerncam.dll");

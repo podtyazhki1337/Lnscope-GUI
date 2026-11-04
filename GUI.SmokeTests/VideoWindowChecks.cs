@@ -22,6 +22,15 @@ internal static class VideoWindowChecks
         {
             window.Show();
             await window.OpenVideoAsync(video);
+            var tuning = (TabControl)window.FindName("CameraTuning");
+            var sidebar = (ScrollViewer)window.FindName("Sidebar");
+            var sections = (StackPanel)sidebar.Content;
+            var tuningIndex = sections.Children.IndexOf(tuning);
+            var recordButton = (Button)window.FindName("RecordButton");
+            if (tuningIndex < 1 || !recordButton.IsDescendantOf(sections.Children[tuningIndex - 1]))
+                throw new InvalidOperationException("Camera settings must follow Recording in the right sidebar.");
+            if (tuning.IsEnabled || tuning.TabStripPlacement != Dock.Top || tuning.Items.Count != 2)
+                throw new InvalidOperationException("Test video must disable the two camera adjustment tabs.");
             ((ToggleButton)window.FindName("Track")).IsChecked = true;
             var status = (TextBlock)window.FindName("AnalysisStatus");
             using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(45));

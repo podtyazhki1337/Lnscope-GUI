@@ -8,7 +8,7 @@ Download the ZIP from [GitHub Releases](https://github.com/podtyazhki1337/Lnscop
 
 ## Record an experiment
 
-Connect the positioners and camera, open the live view, and select **Record**. Each session creates a timestamped folder containing an MP4 and a matching CSV. The first CSV row gives the initial axis coordinates and configured ports. Each video frame has a capture timestamp and a full coordinate snapshot. Additional rows preserve observed movement between frames. [CSV format and video analysis](docs/VIDEO_ANALYSIS_AND_LOGGING.md)
+Connect the positioners and camera, open the live view, and select **Record**. Use the **Exposure** and **Color** tabs in the right sidebar below Recording to adjust supported camera settings. Each session creates a timestamped folder containing an MP4 and a matching CSV. The first CSV row gives the initial axis coordinates and configured ports. Each video frame has a capture timestamp and a full coordinate snapshot. Additional rows preserve observed movement between frames. [CSV format and video analysis](docs/VIDEO_ANALYSIS_AND_LOGGING.md)
 
 ## Develop
 

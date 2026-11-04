@@ -91,6 +91,19 @@ public sealed class CameraViewModel : ViewModelBase
 
     public ObservableCollection<DeviceProperty> Properties { get; } = [];
 
+    public IEnumerable<DeviceProperty> ExposureProperties => Properties.Where(p => IsExposure(p));
+    public IEnumerable<DeviceProperty> ColorProperties => Properties.Where(p => !IsExposure(p));
+    private static bool IsExposure(DeviceProperty p) => p.Id is "auto_exposure" or "exposure" or "gain";
+
+    private void RefreshProperties()
+    {
+        Properties.Clear();
+        if (_camera.State == DeviceState.Ready)
+            foreach (var property in _camera.Properties) Properties.Add(property);
+        OnPropertyChanged(nameof(ExposureProperties));
+        OnPropertyChanged(nameof(ColorProperties));
+    }
+
     public AsyncRelayCommand ConnectCommand { get; }
 
     public AsyncRelayCommand DisconnectCommand { get; }
@@ -272,12 +285,7 @@ public sealed class CameraViewModel : ViewModelBase
             Modes.Add(mode);
         }
 
-        Properties.Clear();
-
-        foreach (var property in _camera.Properties)
-        {
-            Properties.Add(property);
-        }
+        RefreshProperties();
 
         SetField(ref _selectedMode, _camera.CurrentMode, nameof(SelectedMode));
         OnPropertyChanged(nameof(TargetFps));
@@ -290,6 +298,7 @@ public sealed class CameraViewModel : ViewModelBase
     {
         await StopRecordingAsync();
         await _camera.DisconnectAsync();
+        RefreshProperties();
         Image = null;
         RefreshCommands();
         _log($"{Id}: disconnected");
@@ -361,6 +370,7 @@ public sealed class CameraViewModel : ViewModelBase
         {
             await StopRecordingAsync();
             await _camera.SetModeAsync(mode.Index);
+            RefreshProperties();
             _options.ModeIndex = mode.Index;
             RaiseDisplaySize();
             OnPropertyChanged(nameof(TargetFps));
@@ -487,6 +497,7 @@ public sealed class CameraViewModel : ViewModelBase
 
     private void RefreshCounters()
     {
+        if (_camera is GUI.Devices.KernCamera kern) kern.RefreshAutoExposure();
         MeasuredFps = _camera.MeasuredFps;
         DroppedFrames = Interlocked.Read(ref _droppedCounter);
         OnPropertyChanged(nameof(IsStreaming));

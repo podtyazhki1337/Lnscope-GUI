@@ -19,7 +19,13 @@ public abstract class DeviceProperty : INotifyPropertyChanged
 
     public string? Unit { get; init; }
 
-    public bool IsReadOnly { get; init; }
+    private bool _isReadOnly;
+    public bool IsReadOnly
+    {
+        get => _isReadOnly;
+        set { if (_isReadOnly != value) { _isReadOnly = value; OnPropertyChanged(); } }
+    }
+
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -58,8 +64,9 @@ public sealed class NumericProperty : DeviceProperty
                 return;
             }
 
-            _value = clamped;
+            if (!double.IsFinite(clamped) || IsReadOnly) return;
             _apply?.Invoke(clamped);
+            _value = clamped;
             OnPropertyChanged();
         }
     }
@@ -95,8 +102,8 @@ public sealed class BooleanProperty : DeviceProperty
                 return;
             }
 
-            _value = value;
             _apply?.Invoke(value);
+            _value = value;
             OnPropertyChanged();
         }
     }
@@ -129,8 +136,8 @@ public sealed class ChoiceProperty : DeviceProperty
                 return;
             }
 
-            _value = value;
             _apply?.Invoke(value);
+            _value = value;
             OnPropertyChanged();
         }
     }
