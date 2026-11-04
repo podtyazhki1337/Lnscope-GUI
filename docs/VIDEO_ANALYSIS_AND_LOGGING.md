@@ -35,10 +35,9 @@ split, or misclassify objects near tissue and the pipette. Tissue uses the
 separate full-frame model. Confidence values are model scores, not calibrated
 probabilities. Do not use these outputs as autonomous motion targets.
 
-The native-frame annotation restoration is documented in
-[FULL_FRAME_ANNOTATIONS.md](FULL_FRAME_ANNOTATIONS.md). Its completeness review
-must precede retraining; these restored frames are not silently substituted
-into the existing model.
+The native-frame workflow now includes human review, a three-class bootstrap
+training run and model-assisted prefill. The published GUI uses the two ONNX
+models described above. [Full-frame annotations](FULL_FRAME_ANNOTATIONS.md)
 
 ## Recording folder and event log
 
@@ -48,7 +47,7 @@ folder. The 8-character suffix keeps simultaneous camera recordings apart. The
 folder contains exactly two files: `name.mp4` and `name.csv`. Nothing is
 overwritten.
 
-The first data row (`initial`) contains the latest observed coordinates of all
+In release `v2026.11.04.1`, the first data row (`initial`) contains the latest observed coordinates of all
 configured axes when recording starts. Each device has its own port column.
 Devices on the same controller show the same COM port. Simulators show
 `simulated`. Disconnected devices retain their configured port.
@@ -64,7 +63,15 @@ Between frames, `position` rows preserve observed changes, including a move
 and return. The detail column identifies the changed axis. The final
 `recording_stop` row includes written and dropped frame counts. `NA` means
 a measurement or frame reference is unavailable. Zero is a measured value.
-Values use invariant decimals and CSV quoting only where needed.
+Values use invariant decimals and CSV quoting only where needed. Before the
+first accepted frame, frame references are `NA`. The leading coordinate columns
+always use C2 even when a device profile displays C1 in the motion workspace.
+
+Earlier CSVs use a different schema. In `v2026.11.04`, initial positions and
+changes are separate per-axis rows and frame rows omit coordinates. In
+`v2026.11.03`, command rows describe host traffic. Neither format records
+physical keypad input. Identify the format by the header before importing
+recordings from multiple releases.
 
 ## Video display controls
 

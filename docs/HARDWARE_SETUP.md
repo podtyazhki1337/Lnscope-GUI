@@ -1,6 +1,6 @@
 # Hardware setup
 
-Photos in the adjacent `Setup_docs` folder show a KERN ODC 825 camera (USB 2.0)
+Photos in the local installation archive (`Setup_docs`) show a KERN ODC 825 camera (USB 2.0)
 and an L&N SM-10 touch compact control panel. Photos alone cannot reliably
 establish the mapping between physical channels and X/Y/Z/D axes.
 
@@ -67,7 +67,9 @@ file's timeline.
 ## SM-10
 
 The `sm10-binary` driver uses 115200 baud, 8N1, position commands 0101/0131,
-status 0120, motion 0048/0049, and Stop 00FF. CRC-16/1021 with an initial value
+status 0120 and motion 0048/0049. The command catalog includes single-axis
+Stop 00FF with an acknowledgment. The emergency path sends group Stop A0FF
+without waiting for a reply. CRC-16/1021 with an initial value
 of zero is calculated over the data. Floats are little-endian; command IDs and
 CRC are big-endian. Motion commands are not automatically retried after a timeout.
 

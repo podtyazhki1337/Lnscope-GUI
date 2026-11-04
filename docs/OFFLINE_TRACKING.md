@@ -7,7 +7,7 @@ Final closure is dispatched after the current WPF Closing event returns, includi
 when cleanup completes synchronously. Regression checks cover closing before and
 after worker startup, repeated close requests, and keeping the modal owner available.
 
-Open **Camera → Offline tracking · video**. This mode receives only a local
+The former **Camera → Offline tracking · video** entry opened the prototype described below. It receives only a local
 video, has no COM transport, and sends no motion commands. Main-window motion
 hotkeys are disabled while the analysis window is open.
 

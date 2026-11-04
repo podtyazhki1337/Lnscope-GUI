@@ -2,7 +2,7 @@
 
 Historical standalone window: its main-window button has been removed. Use the unified camera/video window described in [VIDEO_ANALYSIS_AND_LOGGING.md](VIDEO_ANALYSIS_AND_LOGGING.md).
 
-The Object map button opens a Python-backed observation bookmark editor. Connect
+In the former interface, the Object map button opened a Python-backed observation bookmark editor. Connect
 positioners, stop motion, name the object, choose its type, and save the current
 view. Each axis is explicitly read and stored with C1 reference coordinates,
 display coordinates, units and host receipt time. These sequential reads are not
@@ -25,8 +25,9 @@ calibration numbers are guessed. Z remains an observed platform/focus coordinate
 
 Remaining integration work:
 
-1. Capture camera frames with timestamped position feedback and configuration
-   identity; calibrate pixel scale, rotation, signs and stage backlash.
+1. Use the [recorded frame and axis timestamps](VIDEO_ANALYSIS_AND_LOGGING.md)
+   and configured ports. Add calibration identity and measure pixel scale,
+   rotation, signs and stage backlash.
 2. Integrate reviewed YOLO segmentation with persistent object IDs and selected
    targets. Record mask, appearance, image location and last-seen time.
 3. Update visible objects after pipette contact; grow uncertainty while unseen.

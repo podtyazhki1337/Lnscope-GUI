@@ -1,6 +1,6 @@
 # Offline YOLO pilot
 
-For the larger reviewed dataset and current training command, see
+For the subsequent crop training run, see
 [LARGE_VISION_DATASET.md](LARGE_VISION_DATASET.md). The small datasets and run
 results below are retained as historical pilot records.
 

@@ -90,15 +90,9 @@ Python remains independent of PyTorch and Ultralytics. These weights are now con
 window; see [VIDEO_ANALYSIS_AND_LOGGING.md](VIDEO_ANALYSIS_AND_LOGGING.md).
 Native-frame annotation restoration is in [FULL_FRAME_ANNOTATIONS.md](FULL_FRAME_ANNOTATIONS.md).
 
-Before integration, evaluate both models on held-out videos and actual KERN
-frames, including empty scenes and pipette motion. Cell metrics on selected
-crops do not measure full-frame cell discovery. Tiling/ROI selection and pixel
-scale must be validated before using the cell model on live full frames. Group
-segmentation does not recover individual cell boundaries inside a group.
-
-The future Python inference adapter should return masks, class IDs, scores,
-frame timestamps, and image coordinates to the C# UI. Tracking must handle lost
-objects, deformation, splits, and merges; a segmentation model alone does not
-provide reliable persistent identities. Benchmark latency including capture,
-preprocessing, inference, IPC, and rendering. Neither model supplies Z, contact,
-suction success, or collision-safe motion decisions.
+The camera workspace runs the two exported ONNX models on CPU. It overlays
+contours and assigns temporary IDs in Track mode. Crop metrics do not measure
+full-frame cell discovery. Performance on actual KERN frames, deformation and
+pipette occlusion still requires evaluation. The separate three-class
+[full-frame training workflow](FULL_FRAME_ANNOTATIONS.md) produces review
+proposals. Its bootstrap checkpoint is separate from the bundled ONNX models.

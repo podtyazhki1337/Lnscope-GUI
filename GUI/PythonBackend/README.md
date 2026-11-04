@@ -112,11 +112,9 @@ blocked pending clarification of its format by the manufacturer.
 
 ## Video processing
 
-`tracking.py` implements manual initialization, two-landmark tracking, and loss
-thresholds; `vision.py` handles video and logging. Open the camera live-view window; Segment and Track run the bundled models.
-Open test video provides temporary file playback for model verification. See `docs/OFFLINE_TRACKING.md` in the source project. This mode has no
-hardware access. When first upgrading to this version, copy the entire
-application folder: bundled OpenCV and NumPy were added alongside the new `.py`
-files. Updating only Python source files does not install these dependencies.
-
-`segmentation.py` runs bundled ONNX models and image-space identities without motor access. See `docs/VIDEO_ANALYSIS_AND_LOGGING.md` for the unified window and coordinate CSV format.
+`vision.py` decodes test videos. `segmentation.py` runs the bundled ONNX models
+and assigns temporary image-space IDs in the live-view window. The legacy
+two-landmark prototype uses `tracking.py`. Video analysis has no motor access.
+The C# recorder in `GUI/Recording` writes the MP4 and coordinate CSV. Install
+the complete release folder when upgrading the runtime or models.
+[Video controls and CSV format](https://github.com/podtyazhki1337/Lnscope-GUI/blob/Automatisation-step/docs/VIDEO_ANALYSIS_AND_LOGGING.md)

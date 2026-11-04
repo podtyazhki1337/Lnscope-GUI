@@ -78,7 +78,7 @@ further motion, reconnection, operation with an empty PATH, the GUI, and MP4
 creation/decoding. They also cover main-controller failure, manual recovery,
 the minimum 2 ms delay, and behavior changes after editing Python without a C# build.
 
-Debug and Release built without warnings. The published `artifacts/LNscope/GUI.exe`
+During the October 2 migration check, Debug and Release built without warnings. The published `artifacts/LNscope/GUI.exe`
 was opened and checked through the interface: simulator Connect, X from 0 to
 10 µm, then Disconnect. Main XAML files matched the backup; saved Debug and
 published profiles also matched byte for byte. Real motion after migration and

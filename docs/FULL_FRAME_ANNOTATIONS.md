@@ -90,8 +90,8 @@ largest-component cleanup removes detached mask speckles; explicit subtraction
 separates edge cells from a tissue mask. Each output records its source-mask hash
 and the exact decision. Mark `annotation_complete` only after inspecting the
 complete image and final overlay. Applying decisions rejects incomplete candidate
-accounting or unresolved issues on a frame marked complete. No new full-frame
-YOLO training has been launched from these partial review results.
+accounting or unresolved issues on a frame marked complete. This review produced candidate annotations. The later human-reviewed export
+and bootstrap training run are described below.
 
 Native review pages tile four final overlays without resizing their pixels. Each
 frame retains its source identifier above the image. The November 3 review fixed
@@ -124,3 +124,18 @@ Agreed rules:
 - Pipette is not labelled. Objects cut by the frame edge are labelled over the visible part.
 - A frame with any unlabelled, clearly visible cell must not be marked `checked`.
 
+
+## Full-frame training and review prefill
+
+After importing checked frames, use `tools/full_frame_yolo.py export` with a new
+output directory. It exports native images and YOLO polygons for three classes
+in order: cell, cell_group and spheroid. The exporter uses external contours,
+so interior holes in raster masks are not represented in the polygon labels.
+The `train` subcommand accepts the exported `data.yaml` and a required run name.
+
+The local `v0_bootstrap` run used 25 training frames and six validation frames.
+Its export used `--bootstrap-val` to hold out frames because no checked validation
+video was available. These scores cannot establish generalization to unseen videos.
+The `prefill` subcommand can add proposals to untouched review files. It leaves
+checked and excluded frames alone and does not mark proposals as reviewed.
+The portable GUI still loads the two ONNX files listed in its model manifest.

@@ -11,5 +11,5 @@ license and third-party notices are retained with the package and distribution
 metadata. Training dependencies are not bundled with the application.
 
 These are experimental visual models. Cell training used selected crops;
-full-frame retraining is pending annotation-completeness review. They do not
+the separate full-frame bootstrap run is used for annotation work. They do not
 provide calibrated 3D coordinates, collision checks, or permission to move hardware.
