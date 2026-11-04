@@ -31,7 +31,7 @@ public sealed class MainViewModel : ViewModelBase
         _configPath = configPath;
         _dispatcher = dispatcher;
 
-        var factory = new DeviceFactory(config.MotionBackend, _recordingJournal.Command);
+        var factory = new DeviceFactory(config.MotionBackend);
         var positioners = config.Positioners
             .Select(factory.CreatePositioner)
             .ToList();

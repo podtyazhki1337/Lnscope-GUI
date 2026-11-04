@@ -26,7 +26,7 @@ internal sealed class RecordingCsvLog : IDisposable
     public RecordingCsvLog(StreamWriter writer, double fps, RecordingJournal? journal)
     {
         _writer = writer; _fps = fps; _journal = journal;
-        _writer.WriteLine("video_frame,camera_frame,capture_utc,capture_elapsed_ms,video_time_ms,device,axis,unit,state,c1,c2,moving,limit,position_sample_utc,position_age_ms,valid,event,event_utc,event_elapsed_ms,command_id,controller,command,command_name,payload_hex,reply_hex,outcome,detail");
+        _writer.WriteLine("video_frame,camera_frame,capture_utc,capture_elapsed_ms,video_time_ms,device,axis,unit,state,c1,c2,moving,limit,position_sample_utc,position_age_ms,valid,event,event_utc,event_elapsed_ms,detail");
         Writer = Task.Run(WriteAsync);
         lock (_gate) Enqueue(new(_started, "recording_start"));
         if (_journal is not null) _journal.Emitted += OnEvent;
@@ -34,7 +34,14 @@ internal sealed class RecordingCsvLog : IDisposable
 
     public void FrameAccepted(long videoFrame, long cameraFrame, DateTimeOffset timestamp)
     {
-        lock (_gate) { _videoFrame = videoFrame; _cameraFrame = cameraFrame; _capture = timestamp; }
+        lock (_gate)
+        {
+            if (!_accepting) return;
+            _videoFrame = videoFrame;
+            _cameraFrame = cameraFrame;
+            _capture = timestamp;
+            Enqueue(new(DateTimeOffset.UtcNow, "frame"));
+        }
     }
 
     public void Positions(IReadOnlyList<AxisTelemetry> axes)
@@ -67,16 +74,14 @@ internal sealed class RecordingCsvLog : IDisposable
     private void Enqueue(RecordingEvent entry)
     {
         var axis = entry.Axis;
-        var command = entry.Command;
         object?[] row = [_videoFrame, _cameraFrame, _capture?.ToUniversalTime().ToString("O"),
             _capture.HasValue ? (_capture.Value-_started).TotalMilliseconds : null,
             _videoFrame.HasValue ? _videoFrame.Value*1000/_fps : null,
-            axis?.Device ?? command?.Controller, axis?.Axis ?? command?.Axes, axis?.Unit, axis?.State,
+            axis?.Device, axis?.Axis, axis?.Unit, axis?.State,
             axis?.C1, axis?.C2, axis?.Moving, axis?.Limit, axis?.SampleUtc?.ToUniversalTime().ToString("O"),
             axis?.AgeMs, axis is null ? null : IsValid(axis), entry.Kind,
             entry.Utc.ToUniversalTime().ToString("O"), (entry.Utc-_started).TotalMilliseconds,
-            command?.RequestId, command?.Controller, command?.Command, command?.Name,
-            command?.PayloadHex, command?.ReplyHex, command?.Outcome, command?.Detail ?? entry.Detail];
+            entry.Detail];
         if (!_rows.Writer.TryWrite(row))
             Interlocked.CompareExchange(ref _error, "Recording event queue overflowed or closed; the CSV is incomplete.", null);
     }

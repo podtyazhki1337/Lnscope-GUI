@@ -48,7 +48,7 @@ folder. The 8-character suffix keeps simultaneous camera recordings apart. The
 folder contains exactly two files: `name.mp4` and `name.csv`. Nothing is
 overwritten.
 
-The CSV is a sparse event log, not one row per frame. UTF-8, comma-delimited,
+The CSV combines a frame timeline with sparse axis feedback. UTF-8, comma-delimited,
 quoted, invariant decimal points, UTC timestamps. Rows are queued without
 blocking device I/O and flushed continuously.
 
@@ -56,7 +56,7 @@ blocking device I/O and flushed continuously.
 |---|---|
 | `recording_start` | Once, at the start |
 | `position` | Initial state of every axis, then only when C1, C2, moving, limit, connection state or validity changes |
-| `command` | A motion or write command was sent to the controller, or any command failed. Successful read-only polling is not logged |
+| `frame` | Once per accepted video frame, with its source frame number and capture time |
 | `recording_stop` | Once, with written and dropped frame counts in `detail` |
 
 Every row carries the current video context (`video_frame`, `camera_frame`,
@@ -68,12 +68,12 @@ Position columns: `device`, `axis`, `unit`, `state`, `c1`, `c2`, `moving`,
 Ready device, finite coordinates and feedback younger than 3 seconds. A
 disconnected axis gets empty coordinates and `valid=False`, never zeros.
 
-Command columns: `command_id`, `controller`, `command` (hex ID), `command_name`,
-`axis` (addresses), `payload_hex`, `reply_hex`, `outcome`, `detail`. Outcomes:
-`acknowledged`, `reply_received`, `sent_unconfirmed` (no reply is defined for
-this command — sent, not confirmed as executed), `send_failed`,
-`failed_after_send`, `rejected`. Emergency Stop A0FF is always logged as
-`sent_unconfirmed`.
+For replay, match each zero-based MP4 frame to its `frame` row and use
+`capture_utc` to align it with axis observations by `position_sample_utc`.
+Retain the last observed value per device and axis until the next update.
+Respect invalid or disconnected intervals. Motion between samples and individual
+handset inputs are unknown. The SM-10 adapter polls axis feedback and exposes
+no verified handset input events. The recording omits host command traces.
 
 Positions are read from the existing feedback cache; logging adds no COM
 traffic. Axis samples are asynchronous and not interpolated. Normal stop, Stop

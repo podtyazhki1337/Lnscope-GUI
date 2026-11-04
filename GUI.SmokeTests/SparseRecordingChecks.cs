@@ -1,7 +1,6 @@
 using System.IO;
 using GUI.Recording;
 using LnScope.Core.Devices;
-using LnScope.Devices.LuigsNeumann.Sm10;
 using Microsoft.VisualBasic.FileIO;
 
 internal static class SparseRecordingChecks
@@ -40,22 +39,20 @@ internal static class SparseRecordingChecks
         state = state with { Limit = "Positive" }; journal.Position(state);
         state = state with { AgeMs = 4000 }; journal.Position(state);
         state = state with { State = "Disconnected", C1 = null, C2 = null, Moving = null, Limit = "unknown" }; journal.Position(state);
-        var command = new Sm10CommandTrace(DateTimeOffset.UtcNow, "test-request", "FAKE", "0xA0FF", "Stop", "1;4", "A000", "", "sent_unconfirmed", "No ACK, execution \"unconfirmed\".");
-        journal.Command(command);
-        journal.Command(command with { Utc = DateTimeOffset.UtcNow, Outcome = "send_failed", Detail = "Test failure\nwith a second line" });
         recorder.Push(new(new byte[64*48],64,48,64,CameraPixelFormat.Mono8,4,DateTimeOffset.UtcNow));
         await recorder.StopAsync();
         journal.Position(state with { C1 = 999 });
         Check(recorder.Status.StartsWith("saved "), "sparse CSV and video finalize successfully");
         var rows = ReadCsv(Path.ChangeExtension(first, ".csv"));
-        Check(rows.All(r => r.Length == 27), "event CSV preserves quoted commas, quotes and newlines");
+        Check(rows.All(r => r.Length == 20), "all recording events match the telemetry-only schema");
         var positions = rows.Skip(1).Where(r => r[16] == "position").ToArray();
         Check(positions.Length == 7 && positions.Select(r => r[9]).SequenceEqual(new[] {"12","13","12","12","12","12",""}),
             "only value/state changes are logged, including moves and return between video frames");
         Check(positions[5][15] == "False" && positions[6][8] == "Disconnected", "stale feedback and disconnect transitions are explicit");
-        var commands = rows.Skip(1).Where(r => r[16] == "command").ToArray();
-        Check(commands.Length == 2 && commands.All(r => r[19] == "test-request") && commands[0][25] == "sent_unconfirmed" && commands[1][26].Contains('\n'),
-            "command identity, no-ACK status, errors and exact timestamps survive CSV output");
+        var frames = rows.Skip(1).Where(r => r[16] == "frame").ToArray();
+        Check(frames.Length == recorder.WrittenFrames && frames.Select(r => r[0]).SequenceEqual(new[] {"0","1","2","3","4"}) &&
+            frames.All(r => r[0] == r[1] && DateTimeOffset.TryParse(r[2], out _) && r[9] == ""),
+            "every saved frame has a capture timestamp without duplicated coordinates");
         Check(positions.Skip(1).All(r => r[0].Length > 0 && DateTimeOffset.TryParse(r[17], out _)), "sparse updates reference video frames and their own UTC event time");
         Check(Directory.GetFiles(Path.GetDirectoryName(first)!).Length == 2, "session folder contains only video and CSV");
         Check(recorder.Start("camera",64,48,10,CameraPixelFormat.Mono8), "second recording starts with the same configured file name");
