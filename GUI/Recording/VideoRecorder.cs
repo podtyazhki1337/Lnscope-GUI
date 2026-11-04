@@ -125,7 +125,7 @@ public sealed class VideoRecorder : IAsyncDisposable
                 {
                     coordinates = new StreamWriter(new FileStream(Path.ChangeExtension(path, ".csv"), FileMode.CreateNew,
                         FileAccess.Write, FileShare.Read), new System.Text.UTF8Encoding(false)) { AutoFlush = true };
-                    csvLog = new RecordingCsvLog(coordinates, effectiveFps, _journal);
+                    csvLog = new RecordingCsvLog(coordinates, effectiveFps, _journal, _telemetry);
                 }
                 catch
                 {
@@ -141,7 +141,6 @@ public sealed class VideoRecorder : IAsyncDisposable
                     SingleWriter = false
                 });
                 var session = new Session(process, queue, width, height, format, csvLog!, effectiveFps);
-                session.Coordinates.Positions(_telemetry());
                 _session = session;
                 CurrentFile = path;
                 _written = _dropped = 0;
@@ -176,11 +175,10 @@ public sealed class VideoRecorder : IAsyncDisposable
             var packed = new byte[checked(rowBytes * frame.Height)];
             for (var y = 0; y < frame.Height; y++)
                 Buffer.BlockCopy(frame.Data, y * frame.Stride, packed, y * rowBytes, rowBytes);
+            s.Coordinates.Positions(_telemetry());
             if (!s.Queue.Writer.TryWrite(new RecordedFrame(packed, frame.Number, frame.Timestamp)))
                 Interlocked.Increment(ref s.Dropped);
             else s.Coordinates.FrameAccepted(s.Accepted++, frame.Number, frame.Timestamp);
-            // Also detect stale-feedback transitions while video continues, without serial reads.
-            s.Coordinates.Positions(_telemetry());
         }
     }
 

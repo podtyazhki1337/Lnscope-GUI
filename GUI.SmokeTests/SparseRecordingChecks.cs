@@ -21,10 +21,11 @@ internal static class SparseRecordingChecks
     public static async Task RunAsync()
     {
         var root = Path.Combine(AppContext.BaseDirectory, "sparse-recording-checks", Guid.NewGuid().ToString("N"));
-        var journal = new RecordingJournal();
+        var journal = new RecordingJournal(new Dictionary<string, string> { ["stage"] = "COM3", ["manipulator"] = "COM3" });
         var state = new AxisTelemetry("stage", "X", "um", "Ready", 12, 12, false, "None", DateTimeOffset.UtcNow, 0);
+        var stationary = state with { Device = "manipulator", C1 = 42, C2 = 42 };
         var options = new RecordingOptions { OutputDirectory = root, FileNameTemplate = "constant.mp4", QueueCapacity = 8 };
-        await using var recorder = new VideoRecorder(options, Console.WriteLine, () => [state], journal);
+        await using var recorder = new VideoRecorder(options, Console.WriteLine, () => [state, stationary], journal);
         Check(recorder.Start("camera", 64, 48, 10, CameraPixelFormat.Mono8), "sparse recording starts");
         var first = recorder.CurrentFile!;
         for (var i = 0; i < 4; i++)
@@ -44,16 +45,20 @@ internal static class SparseRecordingChecks
         journal.Position(state with { C1 = 999 });
         Check(recorder.Status.StartsWith("saved "), "sparse CSV and video finalize successfully");
         var rows = ReadCsv(Path.ChangeExtension(first, ".csv"));
-        Check(rows.All(r => r.Length == 20), "all recording events match the telemetry-only schema");
-        var positions = rows.Skip(1).Where(r => r[16] == "position").ToArray();
-        Check(positions.Length == 7 && positions.Select(r => r[9]).SequenceEqual(new[] {"12","13","12","12","12","12",""}),
-            "only value/state changes are logged, including moves and return between video frames");
-        Check(positions[5][15] == "False" && positions[6][8] == "Disconnected", "stale feedback and disconnect transitions are explicit");
-        var frames = rows.Skip(1).Where(r => r[16] == "frame").ToArray();
-        Check(frames.Length == recorder.WrittenFrames && frames.Select(r => r[0]).SequenceEqual(new[] {"0","1","2","3","4"}) &&
-            frames.All(r => r[0] == r[1] && DateTimeOffset.TryParse(r[2], out _) && r[9] == ""),
-            "every saved frame has a capture timestamp without duplicated coordinates");
-        Check(positions.Skip(1).All(r => r[0].Length > 0 && DateTimeOffset.TryParse(r[17], out _)), "sparse updates reference video frames and their own UTC event time");
+        int Col(string name) => Array.IndexOf(rows[0], name);
+        Check(rows.All(r => r.Length == rows[0].Length && r.All(v => v.Length > 0)), "snapshot rows have no empty fields");
+        Check(rows[1][0] == "initial" && rows[1][Col("stage_X_um")] == "12" &&
+            rows[1][Col("manipulator_X_um")] == "42" && rows.Skip(1).All(r =>
+                r[Col("stage_port")] == "COM3" && r[Col("manipulator_port")] == "COM3"), "initial snapshot includes both devices and their shared port");
+        var positions = rows.Where(r => r[0] == "position").ToArray();
+        Check(positions.Select(r => r[Col("stage_X_um")]).SequenceEqual(new[] {"13","12","12","12","12","NA"}),
+            "moves and returns between frames remain visible");
+        Check(positions[4][Col("stage_X_valid")] == "False" && positions[5][Col("stage_X_state")] == "Disconnected",
+            "stale and disconnected feedback are explicit");
+        var frames = rows.Where(r => r[0] == "frame").ToArray();
+        Check(frames.Length == recorder.WrittenFrames && frames.Select(r => r[Col("video_frame")]).SequenceEqual(new[] {"0","1","2","3","4"}) &&
+            frames.All(r => DateTimeOffset.TryParse(r[Col("capture_utc")], out _) && r[Col("manipulator_X_um")] == "42"),
+            "each video frame carries its capture timestamp and coordinates");
         Check(Directory.GetFiles(Path.GetDirectoryName(first)!).Length == 2, "session folder contains only video and CSV");
         Check(recorder.Start("camera",64,48,10,CameraPixelFormat.Mono8), "second recording starts with the same configured file name");
         recorder.Push(new(new byte[64*48],64,48,64,CameraPixelFormat.Mono8,0,DateTimeOffset.UtcNow));

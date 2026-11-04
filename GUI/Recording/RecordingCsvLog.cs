@@ -23,13 +23,44 @@ internal sealed class RecordingCsvLog : IDisposable
     public string? Error => Volatile.Read(ref _error);
     public Task Writer { get; }
 
-    public RecordingCsvLog(StreamWriter writer, double fps, RecordingJournal? journal)
+    private readonly AxisTelemetry[] _axes;
+    private readonly string[] _devices;
+
+    public RecordingCsvLog(StreamWriter writer, double fps, RecordingJournal? journal,
+        Func<IReadOnlyList<AxisTelemetry>> snapshot)
     {
-        _writer = writer; _fps = fps; _journal = journal;
-        _writer.WriteLine("video_frame,camera_frame,capture_utc,capture_elapsed_ms,video_time_ms,device,axis,unit,state,c1,c2,moving,limit,position_sample_utc,position_age_ms,valid,event,event_utc,event_elapsed_ms,detail");
+        _writer = writer;
+        _fps = fps;
+        _journal = journal;
+        lock (_gate)
+        {
+            if (_journal is not null) _journal.Emitted += OnEvent;
+            try
+            {
+                _axes = snapshot().ToArray();
+                _devices = _axes.Select(a => a.Device).Distinct().ToArray();
+                var header = new List<string> { "event", "elapsed_ms", "event_utc", "video_frame", "camera_frame",
+                    "capture_utc", "video_time_ms" };
+                header.AddRange(_devices.Select(d => $"{d}_port"));
+                header.AddRange(_axes.Select(a => $"{a.Device}_{a.Axis}_{a.Unit}"));
+                foreach (var a in _axes)
+                {
+                    _last[(a.Device, a.Axis)] = (a, IsValid(a));
+                    var prefix = $"{a.Device}_{a.Axis}_";
+                    header.AddRange(new[] { "reference_" + a.Unit, "state", "moving", "limit", "sample_utc", "valid" }
+                        .Select(field => prefix + field));
+                }
+                header.Add("detail");
+                _writer.WriteLine(string.Join(",", header.Select(Csv)));
+                Enqueue(new(_started, "initial", Detail: _axes.Length == 0 ? "no_positioners" : "start"));
+            }
+            catch
+            {
+                if (_journal is not null) _journal.Emitted -= OnEvent;
+                throw;
+            }
+        }
         Writer = Task.Run(WriteAsync);
-        lock (_gate) Enqueue(new(_started, "recording_start"));
-        if (_journal is not null) _journal.Emitted += OnEvent;
     }
 
     public void FrameAccepted(long videoFrame, long cameraFrame, DateTimeOffset timestamp)
@@ -46,9 +77,7 @@ internal sealed class RecordingCsvLog : IDisposable
 
     public void Positions(IReadOnlyList<AxisTelemetry> axes)
     {
-        if (axes.Count == 0)
-            OnEvent(new(DateTimeOffset.UtcNow, "position", new("", "", "", "no_positioners", null, null, null, "unknown", null, null)));
-        else foreach (var axis in axes) OnEvent(new(DateTimeOffset.UtcNow, "position", axis));
+        foreach (var axis in axes) OnEvent(new(DateTimeOffset.UtcNow, "position", axis));
     }
 
     private void OnEvent(RecordingEvent entry)
@@ -59,10 +88,12 @@ internal sealed class RecordingCsvLog : IDisposable
             if (entry.Axis is { } axis)
             {
                 var valid = IsValid(axis);
-                if (_last.TryGetValue((axis.Device, axis.Axis), out var old) && old.Valid == valid &&
+                var key = (axis.Device, axis.Axis);
+                if (!_last.TryGetValue(key, out var old)) return;
+                _last[key] = (axis, valid);
+                if (old.Valid == valid &&
                     old.Axis.Unit == axis.Unit && old.Axis.State == axis.State && old.Axis.C1 == axis.C1 &&
                     old.Axis.C2 == axis.C2 && old.Axis.Moving == axis.Moving && old.Axis.Limit == axis.Limit) return;
-                _last[(axis.Device, axis.Axis)] = (axis, valid);
             }
             Enqueue(entry);
         }
@@ -73,16 +104,22 @@ internal sealed class RecordingCsvLog : IDisposable
 
     private void Enqueue(RecordingEvent entry)
     {
-        var axis = entry.Axis;
-        object?[] row = [_videoFrame, _cameraFrame, _capture?.ToUniversalTime().ToString("O"),
-            _capture.HasValue ? (_capture.Value-_started).TotalMilliseconds : null,
-            _videoFrame.HasValue ? _videoFrame.Value*1000/_fps : null,
-            axis?.Device, axis?.Axis, axis?.Unit, axis?.State,
-            axis?.C1, axis?.C2, axis?.Moving, axis?.Limit, axis?.SampleUtc?.ToUniversalTime().ToString("O"),
-            axis?.AgeMs, axis is null ? null : IsValid(axis), entry.Kind,
-            entry.Utc.ToUniversalTime().ToString("O"), (entry.Utc-_started).TotalMilliseconds,
-            entry.Detail];
-        if (!_rows.Writer.TryWrite(row))
+        var row = new List<object?> { entry.Kind, (entry.Utc - _started).TotalMilliseconds,
+            entry.Utc.ToUniversalTime().ToString("O"), _videoFrame, _cameraFrame,
+            _capture?.ToUniversalTime().ToString("O"), _videoFrame * 1000.0 / _fps };
+        foreach (var device in _devices)
+            row.Add(_journal?.Ports.GetValueOrDefault(device) ?? "unknown");
+        foreach (var axis in _axes)
+            row.Add(_last[(axis.Device, axis.Axis)].Axis.C2);
+        foreach (var axis in _axes)
+        {
+            var (value, valid) = _last[(axis.Device, axis.Axis)];
+            row.AddRange([value.C1, value.State, value.Moving, value.Limit,
+                value.SampleUtc?.ToUniversalTime().ToString("O"), valid]);
+        }
+        row.Add(entry.Axis is { } changed ? $"{changed.Device}.{changed.Axis}" :
+            string.IsNullOrEmpty(entry.Detail) ? "-" : entry.Detail);
+        if (!_rows.Writer.TryWrite(row.ToArray()))
             Interlocked.CompareExchange(ref _error, "Recording event queue overflowed or closed; the CSV is incomplete.", null);
     }
 
@@ -124,7 +161,9 @@ internal sealed class RecordingCsvLog : IDisposable
 
     private static string Csv(object? value)
     {
-        var text = value is IFormattable f ? f.ToString(null, CultureInfo.InvariantCulture) : value?.ToString() ?? "";
+        var text = value is IFormattable f ? f.ToString(null, CultureInfo.InvariantCulture) : value?.ToString() ?? "NA";
+        if (text.Length == 0) return "NA";
+        if (text.IndexOfAny([',', '"', '\r', '\n']) < 0) return text;
         return "\"" + text.Replace("\"", "\"\"") + "\"";
     }
 

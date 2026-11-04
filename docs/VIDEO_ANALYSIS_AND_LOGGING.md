@@ -48,37 +48,23 @@ folder. The 8-character suffix keeps simultaneous camera recordings apart. The
 folder contains exactly two files: `name.mp4` and `name.csv`. Nothing is
 overwritten.
 
-The CSV combines a frame timeline with sparse axis feedback. UTF-8, comma-delimited,
-quoted, invariant decimal points, UTC timestamps. Rows are queued without
-blocking device I/O and flushed continuously.
+The first data row (`initial`) contains the latest observed coordinates of all
+configured axes when recording starts. Each device has its own port column.
+Devices on the same controller show the same COM port. Simulators show
+`simulated`. Disconnected devices retain their configured port.
 
-| `event` | Written when |
-|---|---|
-| `recording_start` | Once, at the start |
-| `position` | Initial state of every axis, then only when C1, C2, moving, limit, connection state or validity changes |
-| `frame` | Once per accepted video frame, with its source frame number and capture time |
-| `recording_stop` | Once, with written and dropped frame counts in `detail` |
+Each `frame` row contains the zero-based MP4 frame number, the source camera
+frame number, its capture time and the complete latest observed axis state.
+Columns such as `stage_X_um` contain user coordinates (C2). Reference
+coordinates (C1), device state, movement, limit, sample UTC and validity
+follow the coordinate columns. Compare capture UTC with each axis sample UTC
+to align asynchronous observations. Use only valid samples for training.
 
-Every row carries the current video context (`video_frame`, `camera_frame`,
-`capture_utc`, `capture_elapsed_ms`, `video_time_ms`) so it can be matched to
-the MP4, plus its own `event_utc` and `event_elapsed_ms`.
-
-Position columns: `device`, `axis`, `unit`, `state`, `c1`, `c2`, `moving`,
-`limit`, `position_sample_utc`, `position_age_ms`, `valid`. `valid` requires a
-Ready device, finite coordinates and feedback younger than 3 seconds. A
-disconnected axis gets empty coordinates and `valid=False`, never zeros.
-
-For replay, match each zero-based MP4 frame to its `frame` row and use
-`capture_utc` to align it with axis observations by `position_sample_utc`.
-Retain the last observed value per device and axis until the next update.
-Respect invalid or disconnected intervals. Motion between samples and individual
-handset inputs are unknown. The SM-10 adapter polls axis feedback and exposes
-no verified handset input events. The recording omits host command traces.
-
-Positions are read from the existing feedback cache; logging adds no COM
-traffic. Axis samples are asynchronous and not interpolated. Normal stop, Stop
-live, mode changes, disconnect and shutdown finalize both files. Encoder or log
-errors are reported as failures; an interrupted recording may be partial.
+Between frames, `position` rows preserve observed changes, including a move
+and return. The detail column identifies the changed axis. The final
+`recording_stop` row includes written and dropped frame counts. `NA` means
+a measurement or frame reference is unavailable. Zero is a measured value.
+Values use invariant decimals and CSV quoting only where needed.
 
 ## Video display controls
 

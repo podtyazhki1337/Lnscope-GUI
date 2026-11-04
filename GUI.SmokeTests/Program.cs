@@ -124,9 +124,9 @@ internal static class Program
         {
             await VerifyVideoAsync(video);
             var rows = File.ReadAllLines(Path.ChangeExtension(video, ".csv"));
-            Check(rows.Length > 1 && rows[0].Contains("c1,c2"), "camera recording creates a matching coordinate sidecar");
+            Check(rows.Length > 1 && rows[0].Contains("_reference_"), "camera recording creates a matching coordinate sidecar");
             Check(rows.Skip(1).Any(row => row.Contains("Ready")), "coordinate sidecar includes connected positioner feedback");
-            Check(rows.Skip(1).Any(row => row.Contains("\"True\",\"position\"")), "fresh feedback is marked valid");
+            Check(rows.Skip(1).Any(row => row.Contains(",True,")), "fresh feedback is marked valid");
         }
         await using (var vision = new GUI.Devices.PythonWorker(null, maxResponseLength: 4 * 1024 * 1024))
         {
@@ -156,8 +156,8 @@ internal static class Program
         Check(recorder.WrittenFrames > 0 && recorder.Status.StartsWith("saved "), "padded rows and simultaneous stops");
         await VerifyVideoAsync(recorder.CurrentFile!);
         var rows = File.ReadAllLines(Path.ChangeExtension(recorder.CurrentFile!, ".csv"));
-        Check(rows.Count(row => row.Contains("\"position\"")) == 1, "unchanged missing-coordinate state is logged once");
-        Check(rows[0].Contains("position_age_ms") && rows.Any(row => row.Contains("no_positioners")), "missing coordinates are explicit, not fabricated zeros");
+        Check(rows.Count(row => row.StartsWith("initial,")) == 1, "unchanged missing-coordinate state is logged once");
+        Check(rows[0].Contains("event_utc") && rows.Any(row => row.Contains("no_positioners")), "missing coordinates are explicit, not fabricated zeros");
 
         options.CodecArguments = "-c:v deliberately_missing_encoder";
         Check(recorder.Start("failure", 64, 48, 10, CameraPixelFormat.Mono8), "encoder failure scenario starts");
